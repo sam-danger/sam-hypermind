@@ -8,5 +8,5 @@ eventlet
 python-dotenv
 requests
 flask-cors
-requests-oauthlib==1.3.1
+requests-oauthlib
 
