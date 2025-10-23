@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>📝 Notlarım / Randevu</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+  body {
+    background-image: url("/static/notes-bg.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    color: white;
+  }
+
+
+    h1 {
+      text-align: center;
+      margin: 40px 0 20px;
+      color: #cccccc;
+    }
+
+    .note-form {
+      max-width: 600px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .note-form input,
+    .note-form textarea {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      backdrop-filter: blur(6px);
+    }
+
+    .note-form button {
+      background: #444;
+      color: black;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .note-form button:hover {
+      background: #e53935;
+    }
+
+    .note-list {
+      max-width: 700px;
+      margin: 30px auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .note-card {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 16px;
+      border-radius: 12px;
+      backdrop-filter: blur(4px);
+      position: relative;
+    }
+
+    .note-card h3 {
+      margin: 0 0 8px;
+      color: #e53935;
+    }
+
+    .note-card time {
+      font-size: 12px;
+      color: #bbb;
+    }
+
+    .delete-btn {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      background: none;
+      border: none;
+      color: #ff4f4f;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0; top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(3px);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-icerik {
+  background: #121212;
+  padding: 30px;
+  border: 1px solid #444;
+  border-radius: 12px;
+  color: #fff;
+  max-width: 350px;
+  text-align: center;
+}
+
+.modal-butons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.modal-butons button {
+  padding: 10px 20px;
+  font-weight: bold;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: transparent;
+    border: 2px solid #555;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 18px;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    line-height: 30px;
+    text-align: center;
+    z-index: 9999;
+}
+
+.back-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+
+#iptalEt {
+  background-color: #444;
+  color: white;
+}
+
+#silOnayla {
+  background-color: #ff4d4d;
+  color: white;
+}
+  </style>
+</head>
+<body>
+
+<!-- Sesli komut için görünmez yönlendirme bağlantıları -->
+<div style="display: none;">
+  <a href="/chat" id="goto-chat"><span class="visually-hidden">Chat</span></a>
+  <a href="/notlar" id="goto-notlar"><span class="visually-hidden">Notlar</span></a>
+  <a href="/data" id="goto-veri"><span class="visually-hidden">Veri</span></a>
+  <a href="/profil" id="goto-profil"><span class="visually-hidden">Profil</span></a>
+  <a href="/index" id="goto-home"><span class="visually-hidden">Ana Sayfa</span></a>
+</div>
+
+
+  <button class="back-btn" onclick="window.location.href='/index'">←</button>
+
+
+  <h1>📝 N̳o̳t̳l̳a̳r̳ı̳m̳ ̳/̳ ̳R̳a̳n̳d̳e̳v̳u̳</h1>
+
+  <form class="note-form" id="noteForm">
+    <input type="text" id="title" placeholder="Başlık" required>
+    <textarea id="content" rows="4" placeholder="Not veya randevu ayrıntısı" required></textarea>
+    <input type="datetime-local" id="datetime">
+    <button type="submit">Ekle</button>
+  </form>
+
+  <div class="note-list" id="noteList"></div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", loadNotes);
+
+    document.getElementById("noteForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const body = {
+    title: document.getElementById("title").value.trim(),
+    content: document.getElementById("content").value.trim(),
+    datetime: document.getElementById("datetime").value
+  };
+  if (!body.title || !body.content) {
+    alert("Başlık ve içerik boş olamaz.");
+    return;
+  }
+  await fetch("/add_note", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+
+  e.target.reset();
+
+  // ✅ SESLİ BİLDİRİM
+  speak("Not başarıyla eklendi.");
+
+  loadNotes();
+});
+
+
+    async function loadNotes() {
+  const res = await fetch("/get_notes");
+  const notes = await res.json();
+  const list = document.getElementById("noteList");
+  list.innerHTML = "";
+
+  if (!notes.length) {
+    list.innerHTML = "<p style='text-align:center;'>Henüz not eklenmedi.</p>";
+    speak("Henüz not eklenmedi.");
+    return;
+  }
+
+  notes.forEach((n, i) => {
+    const card = document.createElement("div");
+    card.className = "note-card";
+    card.innerHTML = `
+      <button class="delete-btn" onclick="silNot(${i})">&times;</button>
+      <h3>${n.title}</h3>
+      <p>${n.content}</p>
+      ${n.datetime ? `<time>${new Date(n.datetime).toLocaleString()}</time>` : ""}
+    `;
+    list.appendChild(card);
+  });
+
+  speak(`Toplam ${notes.length} not bulundu.`);
+}
+
+
+function silNot(index) {
+  silinecekIndex = index;
+  document.getElementById("silmeOnay").style.display = "flex";
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("iptalEt").onclick = function () {
+    document.getElementById("silmeOnay").style.display = "none";
+    silinecekIndex = null;
+  };
+
+  document.getElementById("silOnayla").onclick = async function () {
+  if (silinecekIndex !== null) {
+    await fetch(`/delete_note/${silinecekIndex}`, {
+      method: "DELETE"
+    });
+
+    loadNotes();
+
+    // ✅ SESLİ BİLDİRİM
+    speak("Not silindi.");
+
+    document.getElementById("silmeOnay").style.display = "none";
+    silinecekIndex = null;
+  }
+};
+
+
+  </script>
+
+<!-- Silme Onay Modali -->
+<div id="silmeOnay" class="modal">
+  <div class="modal-icerik">
+    <p>🗑️ Bu notu silmek istediğinize emin misiniz?</p>
+    <div class="modal-butons">
+      <button id="iptalEt">İptal</button>
+      <button id="silOnayla">Sil</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let samTimeout;
+let samOverlay;
+
+function createSecurityOverlay() {
+    samOverlay = document.createElement("div");
+    samOverlay.id = "samOverlay";
+    samOverlay.style.position = "fixed";
+    samOverlay.style.top = 0;
+    samOverlay.style.left = 0;
+    samOverlay.style.width = "100%";
+    samOverlay.style.height = "100%";
+    samOverlay.style.background = "rgba(0, 0, 0, 0.9)";
+    samOverlay.style.backdropFilter = "blur(10px)";
+    samOverlay.style.display = "flex";
+    samOverlay.style.alignItems = "center";
+    samOverlay.style.justifyContent = "center";
+    samOverlay.style.zIndex = 999999;
+    samOverlay.innerHTML = `<div style="color:#00ffff; font-size:20px; text-align:center;">
+        🔒 SAM Güvenlik Modu <br><br>
+        Uzun süreli hareketsizlik algılandı.<br>
+        Sistemi devam ettirmek için ekrana dokunun...
+    </div>`;
+    document.body.appendChild(samOverlay);
+}
+
+function removeSecurityOverlay() {
+    if (samOverlay) {
+        samOverlay.remove();
+        samOverlay = null;
+    }
+}
+
+function resetSamInactivityTimer() {
+    clearTimeout(samTimeout);
+    samTimeout = setTimeout(() => {
+        createSecurityOverlay();
+    }, 120000); // 2 dakika (120000 ms)
+}
+
+// Her etkileşimde sıfırla
+["click", "mousemove", "keydown", "touchstart"].forEach(evt => {
+    document.addEventListener(evt, () => {
+        removeSecurityOverlay();
+        resetSamInactivityTimer();
+    });
+});
+
+window.addEventListener("load", resetSamInactivityTimer);
+</script>
+
+<script>
+// 🔊 Sesli yanıt oynatıcı
+function speak(text) {
+  if (!window.speechSynthesis) return;
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "tr-TR";
+  utterance.volume = 1.0;
+  utterance.pitch = 1;
+  utterance.rate = 1;
+
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
+}
+</script>
+
+</body>
+</html>

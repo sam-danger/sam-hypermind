@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Veri İşlemleri</title>
+
+  <!-- 🌈 TEMEL STİL -->
+  <style>
+/* ── Modal zemin ── */
+#memoryModal {
+  display: none;                 /* JS açınca block olur */
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,.6);
+  z-index: 999;                  /* her şeyin üstünde */
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal-content {
+  background-color: #1e1e1e;
+  color: #fff;
+  margin: 15% auto;
+  padding: 20px 30px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 0 15px #00ffcc;
+  text-align: center;
+  backdrop-filter: blur(8px);
+}
+
+
+/* ── Modal kutu ── */
+#memoryBox {
+  margin: 60px auto;
+  max-width: 600px;
+  background: rgba(30,30,30,.95);
+  padding: 24px 32px;
+  border-radius: 16px;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(0,0,0,.7);
+  backdrop-filter: blur(4px);
+}
+
+#filterResults{
+  max-height:300px;
+  overflow:auto;
+}
+
+/* data.html - içine <style> bloğu veya ana CSS dosyanıza ekleyin */
+.back-btn{
+    position: fixed;      /* Her zaman görünür */
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    font-size: 0.95rem;
+    color: #fff;
+    background: rgba(255,255,255,0.06);   /* Koyu temaya yarı saydam */
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+    backdrop-filter: blur(4px);           /* Hafif cam efekti */
+    transition: background .25s, border .25s;
+}
+
+.back-btn:hover{
+    background: rgba(255,255,255,0.14);
+    border-color: rgba(255,255,255,0.25);
+}
+.back-btn svg{
+    flex-shrink: 0;
+}
+
+
+
+
+#memoryBox button { margin: 4px 2px; }
+
+    body{
+      margin:0;padding:0;
+      font-family:"Segoe UI",sans-serif;
+      background:url("/static/veri.png") no-repeat center/cover fixed;
+      color:#fff
+    }
+    .data-header-container{
+      position:absolute;top:40px;left:50%;transform:translateX(-50%);
+      display:flex;align-items:center;z-index:10
+    }
+    .data-header{
+      font-size:32px;font-weight:bold;margin-right:10px;
+      text-shadow:2px 2px 4px rgba(0,0,0,.5)
+    }
+    .data-icon{height:38px;filter:brightness(0) saturate(100%) invert(17%) sepia(91%) saturate(5587%) hue-rotate(356deg) brightness(104%) contrast(119%)}
+
+    /* ----- Kartlar, butonlar ----- */
+    .data-wrapper{max-width:960px;margin:80px auto 60px;padding:0 20px;display:flex;flex-direction:column;gap:48px;position:relative;z-index:2}
+    .search-container,.filter-container{
+      width:100%;max-width:800px;margin:0 auto;background:rgba(30,30,30,.85);
+      padding:24px 32px;border-radius:12px;color:#fff
+    }
+    h3{margin:0 0 16px;font-size:20px;color:#ff5a5f}
+    .search-container input,.filter-container input,.filter-container select{
+      width:100%;padding:10px 12px;margin-bottom:16px;border:none;border-radius:8px;background:rgba(0,0,0,.35);color:#fff
+    }
+    .search-container button,.filter-container button{
+      width:100%;padding:12px;font-size:15px;font-weight:bold;border:none;border-radius:8px;
+      background:linear-gradient(135deg,#2196f3,#4dd0e1);color:#fff;cursor:pointer;transition:.3s
+    }
+    .search-container button:hover,.filter-container button:hover{
+      background:linear-gradient(135deg,#1976d2,#26c6da)
+    }
+    #searchResults,#filterResults{background:rgba(20,20,20,.7);padding:10px;border-radius:10px;margin-top:10px}
+
+    /* Profesyonel “kart” ızgarası */
+.overlay-container{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:24px;
+  padding:60px 40px;
+  max-width:1000px;
+  margin:100px auto;   /* sayfa ortası */
+}
+
+.blurred-swal {
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+}
+
+.back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: transparent;
+    border: 2px solid #555;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 18px;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    line-height: 30px;
+    text-align: center;
+    z-index: 9999;
+}
+
+.back-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+
+.data-button{
+  all:unset;                       /* önceki border/pos temizle */
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  height:56px;                     /* tek yükseklik */
+  font:600 15px "Segoe UI",sans-serif;
+  color:#fff;
+  background:rgba(0,0,0,.45);
+  border-radius:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,.25);
+  transition:.25s;
+  backdrop-filter:blur(3px);
+}
+.data-button:hover{
+  transform:translateY(-3px);
+  background:rgba(255,255,255,.15);
+}
+@media(max-width:600px){
+  .overlay-container{gap:14px;padding:40px 20px;}
+  .data-button{font-size:13px;height:48px;}
+}
+
+button.mini{all:unset;cursor:pointer;padding:8px 14px;
+  background:#2196f3;border-radius:8px;font:600 13px Segoe UI,sans-serif;}
+button.mini:hover{background:#1976d2;}
+
+.modal{display:none;position:fixed;inset:0;z-index:30;
+       backdrop-filter:blur(2px);background:rgba(0,0,0,.55);
+       align-items:center;justify-content:center;}
+.modal .box{background:#101820dd;padding:28px 32px;border-radius:14px;
+            width:90%;max-width:460px;box-shadow:0 6px 18px #0009;}
+.modal h3{margin:0 0 14px;color:#fff}
+.modal p{color:#ddd;margin:0 0 18px;font-size:14px}
+.modal input{width:100%;padding:10px 12px;margin-bottom:18px;
+             border-radius:8px;border:none;background:#222;color:#fff}
+.row{display:flex;gap:12px;justify-content:flex-end}
+button.mini{all:unset;cursor:pointer;padding:8px 16px;
+           background:#2196f3;border-radius:8px;font:600 13px Segoe UI,sans-serif}
+button.mini:hover{background:#1976d2}
+.out{margin-top:14px;font-size:13px;color:#ddd}
+  </style>
+</head>
+
+
+<body>
+
+<!-- Sesli komut için görünmez yönlendirme bağlantıları -->
+<div style="display: none;">
+  <a href="/chat" id="goto-chat"><span class="visually-hidden">Chat</span></a>
+  <a href="/notlar" id="goto-notlar"><span class="visually-hidden">Notlar</span></a>
+  <a href="/data" id="goto-veri"><span class="visually-hidden">Veri</span></a>
+  <a href="/profil" id="goto-profil"><span class="visually-hidden">Profil</span></a>
+  <a href="/index" id="goto-home"><span class="visually-hidden">Ana Sayfa</span></a>
+</div>
+
+
+<button class="back-btn" onclick="window.location.href='/index'">←</button>
+
+  <!-- Başlık -->
+  <div class="data-header-container">
+    <h1 class="data-header">𝑉𝑒𝑟𝑖 𝐼̇𝑠̧𝑙𝑒𝑚𝑙𝑒𝑟𝑖</h1>
+    <img src="/static/fingerprint.png" class="data-icon" alt="Parmak İzi">
+  </div>
+
+
+
+ <!-- Ana İşlem Butonları -->
+<div class="overlay-container">
+
+  <!-- 🧹 TEMİZLİK / YÖNETİM -->
+  <button class="data-button" onclick="clearChat()">📄 Sohbeti Temizle</button>
+  <button class="data-button" onclick="searchChats()">🔍 Sohbetlerde Arama</button>
+  <button class="data-button" onclick="filterToday()">📅 Bugünkü Mesajlar</button>
+<button class="data-button" onclick="showStats()">📊 Veri İstatistikleri</button>
+<button class="data-button" onclick="exportChat()">📥 Sohbeti PDF Olarak İndir</button>
+ <button class="data-button" onclick="openAutoCleanModal()">🕒 Zamanlanmış Temizlik</button>
+ 
+
+</div>
+
+
+
+
+<!-- 📄 Sohbeti Temizle Onay -->
+<div id="chatModal" class="modal">
+  <div class="box">
+    <h3>📄 Sohbeti Temizle</h3>
+    <p>Mevcut sohbet geçmişi sıfırlansın mı?</p>
+    <div class="row">
+      <button class="mini" onclick="closeChatC()">İptal</button>
+      <button class="mini" onclick="runChatC()">Evet, Sil</button>
+    </div>
+    <div id="chatOut" class="out"></div>
+  </div>
+</div>
+
+<!-- 🔐 Şifreli Dışa Aktarma -->
+<div id="secModal" class="modal">
+  <div class="box">
+    <h3>🔐 Şifreli Dışa Aktarma</h3>
+    <input id="zipPass" type="password" placeholder="Şifre belirleyin…">
+    <div class="row">
+      <button class="mini" onclick="closeSec()">İptal</button>
+      <button class="mini" onclick="runSec()">Gönder</button>
+    </div>
+    <div id="secOut" class="out"></div>
+  </div>
+</div>
+
+<!-- 🗑️ Bellek Kaydı Sil -->
+<div id="delModal" class="modal">
+  <div class="box">
+    <h3>🗑️ Kaydı Sil</h3>
+    <p id="delMsg"></p>
+
+    <div class="row">
+      <button class="mini" onclick="closeDel()">İptal</button>
+      <button class="mini" onclick="runDel()">Sil</button>
+    </div>
+
+    <div id="delOut" class="out"></div>
+  </div>
+</div>
+
+
+<!-- 🔍 Sohbet Arama Kutusu -->
+<div id="searchModal" style="display:none;
+     position:fixed; inset:0; backdrop-filter:blur(2px);
+     background:rgba(0,0,0,.55); z-index:20;
+     align-items:center; justify-content:center;">
+  <div style="background:#101820dd; padding:28px 32px; border-radius:14px;
+              width:90%; max-width:500px; box-shadow:0 6px 18px #0009;">
+    <h3 style="margin-top:0; color:#fff;">🔍 Sohbetlerde Arama</h3>
+    <input id="searchInput" type="text" placeholder="Aranacak kelime…"
+           style="width:100%; padding:10px 12px; border-radius:8px;
+                  border:none; background:#222; color:#fff; font-size:14px;">
+    <div style="margin-top:18px; display:flex; gap:12px; justify-content:flex-end;">
+      <button onclick="closeSearch()" class="mini">İptal</button>
+      <button onclick="runSearch()"  class="mini">Ara</button>
+    </div>
+    <div id="searchOut" style="margin-top:18px; font-size:13px; color:#ddd;"></div>
+  </div>
+</div>
+
+
+<div id="filterResults"
+     style="max-width:800px;
+            margin:-120px auto 120px;   /* ↑ 20 px yukarı it */
+            font-size:14px;">
+</div>
+
+
+
+
+  <!-- ⬇️ TÜM JS TEK BLOKTA -->
+  <script>
+    /* === VERİ İŞLEMLERİ === */
+
+    function clearChat(){ document.getElementById("chatModal").style.display="flex"; }
+function closeChatC(){document.getElementById("chatModal").style.display="none";}
+async function runChatC(){
+  const out = document.getElementById("chatOut");
+  out.innerHTML = "<em>Siliniyor…</em>";
+  const r = await fetch("/clear-chat",{method:"POST"});
+  const j = await r.json().catch(()=>({success:false}));
+
+  out.textContent = j.message || (j.success?"Tamamlandı":"Hata");
+  if(j.success) setTimeout(closeChatC, 2000); // ← otomatik kapat
+}
+
+    function clearMemory(){ document.getElementById("memModal").style.display="flex"; }
+function closeMem(){   document.getElementById("memModal").style.display="none"; }
+async function runMem(){
+  const out = document.getElementById("memOut");
+  out.innerHTML = "<em>Siliniyor…</em>";
+  const r = await fetch("/clear-memory",{method:"POST"});
+  const j = await r.json().catch(()=>({success:false}));
+
+  out.textContent = j.message || (j.success?"Tamamlandı":"Hata");
+  if(j.success) setTimeout(closeMem, 2000);   // ← otomatik kapat
+}
+
+    function exportChat(){ window.open("/export-chat","_blank"); }
+    function backupMemory(){ window.open("/export-memory","_blank"); }
+
+    /* 🔍 Modal arama */
+function searchChats(){
+  document.getElementById("searchInput").value = "";
+  document.getElementById("searchOut").innerHTML = "";
+  document.getElementById("searchModal").style.display = "flex";
+  document.getElementById("searchInput").focus();
+}
+
+function closeSearch(){
+  document.getElementById("searchModal").style.display = "none";
+}
+
+async function runSearch(){
+  const q = document.getElementById("searchInput").value.trim();
+  const outBox = document.getElementById("searchOut");
+  if(!q){ outBox.textContent = "Lütfen kelime girin."; return; }
+
+  outBox.innerHTML = "<em>Aranıyor…</em>";
+
+  const res = await fetch("/search-chat", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({query: q})
+  });
+  const data = await res.json().catch(()=>({success:false}));
+
+  if(!data.success || !data.matches?.length){
+    outBox.textContent = "Sonuç bulunamadı.";
+    return;
+  }
+
+  outBox.innerHTML =
+    "<b>"+ data.matches.length +" sonuç:</b><ul style='padding-left:18px'>" +
+    data.matches.map(m=>`<li><b>${m.role}:</b> ${m.content}</li>`).join("") +
+    "</ul>";
+}
+
+    function scheduledClean() {
+    fetch("/temizlik-zamanli", { method: "POST" })
+    .then(res => res.json())
+    .then(data => {
+        if (data.durum) {
+            Swal.fire({
+                icon: 'success',
+                title: '✔️ Zamanlanmış Temizlik Çalıştı',
+                text: data.durum,
+                background: '#1b1c1f',
+                color: '#ffffff',
+                iconColor: '#00cc88',
+                timer: 2500,
+                showConfirmButton: false,
+                customClass: { popup: 'custom-swal' }
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: '❌ Hata!',
+                text: data.hata || "Zamanlı temizlik çalıştırılamadı.",
+                background: '#1b1c1f',
+                color: '#ffffff',
+                iconColor: '#ff5555',
+                timer: 3000,
+                showConfirmButton: false,
+                customClass: { popup: 'custom-swal' }
+            });
+        }
+    });
+}
+
+
+/* 📅 Bugünkü mesajları getir */
+async function filterToday(){
+  const box = document.getElementById("filterResults");
+  box.innerHTML = "<em>Bugünün mesajları getiriliyor...</em>";
+
+  // /filter-chat GET (bugün) —> JSON: {success:true, matches:[…]}
+  const res = await fetch("/filter-chat");
+  const out = await res.json().catch(()=>({success:false}));
+
+  if(!out.success){
+    box.textContent = "Liste alınamadı.";       // 403 / 500?
+    return;
+  }
+  if(!out.matches.length){
+    box.textContent = "Bugün için mesaj yok.";
+    return;
+  }
+
+  box.innerHTML =
+    "<h4>📅 Bugünkü Mesajlar</h4><ul>" +
+    out.matches.map(m =>
+      `<li><b>${m.role}:</b> ${m.content}</li>`).join("") +
+    "</ul>";
+}
+
+/* === 🛠️ Belleği DÜZENLE =================================================== */
+function editMemory(){
+  document.getElementById("memEditModal").style.display = "flex";
+  loadMemList();
+}
+function closeMemEdit(){
+  document.getElementById("memEditModal").style.display = "none";
+  document.getElementById("memEditOut").textContent = "";
+  document.getElementById("newMemTxt").value = "";
+}
+
+/* Listeyi çekip doldurur */
+async function loadMemList(){
+  const box = document.getElementById("memList");
+  box.innerHTML = "<em>Yükleniyor…</em>";
+
+  const r   = await fetch("/memory/list", {method:"POST"});
+  const arr = await r.json().catch(()=>[]);
+
+  if(!Array.isArray(arr) || !arr.length){
+    box.innerHTML = "<i>Hiç kayıt yok.</i>";
+    return;
+  }
+
+  /* 2-c:  ➟  Düzenle/Sil düğmesi satırı */
+  box.innerHTML = arr.map(it => `
+    <div style="margin-bottom:8px">
+      <b>[${it.id}]</b> ${it.icerik}
+      <button class="mini" style="margin-left:6px"
+              onclick="editMem(${it.id}, decodeURIComponent('${encodeURIComponent(it.icerik)}'))">
+        Düzenle
+      </button>
+      <button class="mini" style="background:#e53935"
+              onclick="delMem(${it.id})">
+        Sil
+      </button>
+    </div>`
+  ).join("");
+}
+
+
+/* Yeni kayıt ekle */
+async function addMem(){
+  const txt = document.getElementById("newMemTxt").value.trim();
+  if(!txt) return;
+  const r = await fetch("/memory/add",{method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({icerik:txt,etiket:"manuel"})});
+  const j = await r.json().catch(()=>({}));
+  document.getElementById("memEditOut").textContent = j.durum || "Eklendi";
+  loadMemList();
+  
+}
+
+/* Kaydı sil */
+/* ——— Silme Modalı ——— */
+let pendingDel = null;               // seçilen id’yi tutar
+
+function delMem(id){
+  pendingDel = id;                   // global değişkene at
+  document.getElementById("delMsg").textContent =
+        id + " nolu kayıt silinsin mi?";
+  document.getElementById("delOut").textContent = "";
+  document.getElementById("delModal").style.display = "flex";
+}
+
+function closeDel(){
+  document.getElementById("delModal").style.display = "none";
+  pendingDel = null;
+}
+
+async function runDel(){
+  if(pendingDel === null) return;
+  const out = document.getElementById("delOut");
+  out.innerHTML = "<em>Siliniyor…</em>";
+
+  const r = await fetch(`/memory/delete/${pendingDel}`, {method:"DELETE"});
+  const j = await r.json().catch(()=>({}));
+
+  out.textContent = j.durum || (j.success ? "Silindi" : "Hata");
+  loadMemList();                     // listeyi tazele
+
+setTimeout(closeDel, 2000);        // 2 sn sonra modalı kapat
+}
+
+
+let pendingEdit = null;           // hangi kayıt düzenleniyor?
+
+function editMem(id, current){
+  pendingEdit = id;
+  document.getElementById("editInput").value = current;
+  document.getElementById("editOut").textContent = "";
+  document.getElementById("editModal").style.display = "flex";
+}
+
+function closeEdit(){
+  document.getElementById("editModal").style.display = "none";
+  pendingEdit = null;
+}
+
+async function runEdit(){
+  if(pendingEdit === null) return;              // güvenlik
+
+  const yeni = document.getElementById("editInput").value.trim();
+  const out  = document.getElementById("editOut");
+
+  if(!yeni){
+    out.textContent = "İçerik boş olamaz.";
+    return;
+  }
+
+  out.innerHTML = "<em>Kaydediliyor…</em>";
+
+  const r = await fetch(`/memory/update/${pendingEdit}`, {
+    method : "PUT",
+    headers: { "Content-Type": "application/json" },
+    body   : JSON.stringify({ icerik: yeni })   // <- backend ‘icerik’ bekliyor
+  });
+  const j = await r.json().catch(()=>({}));
+
+  out.textContent = j.durum || (j.success ? "Güncellendi" : "Hata");
+  loadMemList();                                 // listeyi tazele
+  setTimeout(closeEdit, 2000);                   // pencereyi kapat
+}
+
+    
+    /* 🏷 Mesaja etiket ekleme paneli */
+async function tagChats() {
+  const res = await fetch("/search-chat", {   // hazır /search-chat yerine
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ query: "" })       // tüm konuşmayı çek
+  });
+  const out = await res.json();
+  if (!out.success) { alert("Sohbet okunamadı"); return; }
+
+  // Basit seçim listesi
+  const list = out.matches.map((m,i)=> `[${i}] ${m.role}: ${m.content}`).join("\n");
+  const idx  = prompt("Etiketlenecek mesajın index numarası:\n\n"+list);
+  if (idx === null) return;
+
+  const tagLine = prompt("Etiket(ler) (virgülle ayır):");
+  if (!tagLine) return;
+
+  const color = prompt("Hex renk kodu (#ffb703 gibi) – boş geçebilirsin:", "#4dd0e1");
+
+  await fetch("/tag-message", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      idx: Number(idx),
+      tags: tagLine.split(",").map(t=>t.trim()).filter(Boolean),
+      color: color || null
+    })
+  });
+  alert("✅ Etiket eklendi");
+}
+
+    function exportEncrypted(){ document.getElementById("secModal").style.display="flex"; }
+function closeSec(){        document.getElementById("secModal").style.display="none"; }
+async function runSec(){
+  const pass = document.getElementById("zipPass").value.trim();
+  const out  = document.getElementById("secOut");
+  if(!pass){ out.textContent = "Şifre girin."; return; }
+
+  out.innerHTML = "<em>Hazırlanıyor…</em>";
+  const form = new FormData(); form.append("password", pass);
+
+  const r = await fetch("/secure-export", {method:"POST", body:form});
+  if(!r.ok){ out.textContent = "Hata: "+r.status; return; }
+
+  const blob = await r.blob();
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href = url; a.download = "secure_backup.zip"; a.click();
+  URL.revokeObjectURL(url);
+
+  out.innerHTML = "<span style='color:#00e676'>✅ İndirildi.</span>";
+  setTimeout(closeSec, 2200);                 // ← otomatik kapat
+}
+
+    /* 📦 Toplu dışa aktarma */
+async function exportAll(){
+  const res = await fetch("/bulk-export");
+  if(!res.ok){
+    alert("❌ Hata: " + res.statusText);
+    return;
+  }
+  const blob = await res.blob();
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href = url;
+  a.download = "full_backup.zip";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+
+/* 📄 Temizlik geçmişini göster */
+async function showLogs(){
+  const box = document.getElementById("filterResults");
+  box.innerHTML = "<em>Loglar getiriliyor...</em>";
+
+  const res = await fetch("/cleanup-logs");
+  const out = await res.json();
+
+  if(!out.success){
+    box.textContent = "Log okunamadı."; return;
+  }
+  if(!out.logs.length){
+    box.textContent = "Henüz temizlik logu yok."; return;
+  }
+
+  box.innerHTML =
+    "<h4>📄 Temizlik Geçmişi</h4><ul>" +
+    out.logs.map(l => `<li>[${l.time}] <b>${l.user}</b> – ${l.action} → <i>${l.target}</i></li>`).join("") +
+    "</ul>";
+}
+  </script>
+<div id="memoryModal">
+  <div id="memoryBox">
+    <!-- JS buraya listeyi basacak -->
+  </div>
+</div>
+
+<script>
+document.getElementById("manuelTemizlikBtn").addEventListener("click", function () {
+    fetch("/temizlik-manuel", { method: "POST" })
+    .then(res => res.json())
+    .then(data => {
+        if (data.durum) {
+            Swal.fire({
+                icon: 'success',
+                title: '✔️ Temizlik Tamamlandı',
+                text: data.durum,
+                background: '#1b1c1f',
+                color: '#ffffff',
+                iconColor: '#00cc88',
+                timer: 2500,
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'custom-swal'
+                }
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: '❌ Hata!',
+                text: data.hata || "Bilinmeyen bir hata oluştu.",
+                background: '#1b1c1f',
+                color: '#ffffff',
+                iconColor: '#ff5555',
+                timer: 3000,
+                showConfirmButton: false,
+                customClass: {
+                    popup: 'custom-swal'
+                }
+            });
+        }
+    });
+});
+</script>
+
+<script>
+function loadCleanupLogs() {
+  fetch("/api/temizlik_loglari")
+    .then(response => response.json())
+    .then(data => {
+      const container = document.getElementById("log-container");
+      container.innerHTML = ""; // önce temizle
+
+      if (data.logs.length === 0) {
+        container.innerHTML = "<p>🕵️ Henüz hiç temizlik kaydı yok.</p>";
+        return;
+      }
+
+      let html = "<ul style='padding-left: 20px'>";
+      data.logs.forEach(log => {
+        html += `<li style="margin-bottom: 8px;">
+          <strong>[${log.timestamp}]</strong> 
+          ${log.username} – ${log.operation} → ${log.details}
+        </li>`;
+      });
+      html += "</ul>";
+      container.innerHTML = html;
+    })
+    .catch(error => {
+      console.error("Loglar yüklenirken hata:", error);
+      document.getElementById("log-container").innerHTML = "<p style='color:red;'>❌ Loglar alınamadı.</p>";
+    });
+}
+</script>
+
+<script>
+async function showStats() {
+  const box = document.getElementById("filterResults");
+  box.innerHTML = "<em>İstatistikler getiriliyor...</em>";
+
+  const res = await fetch("/data-stats");
+  const data = await res.json().catch(() => ({ success: false }));
+
+  if (!data.success) {
+    box.textContent = "İstatistik alınamadı.";
+    return;
+  }
+
+  box.innerHTML = `
+    <h4>📊 Veri İstatistikleri</h4>
+    <ul>
+      <li><b>Kullanıcı:</b> ${data.username}</li>
+      <li><b>Sohbet Sayısı:</b> ${data.chat_count}</li>
+      <li><b>Bellek Kaydı:</b> ${data.memory_count}</li>
+      <li><b>Son Sohbet:</b> ${data.last_chat || "Yok"}</li>
+      <li><b>Son Bellek Girişi:</b> ${data.last_memory || "Yok"}</li>
+    </ul>
+  `;
+}
+</script>
+
+
+
+
+<script>
+function openAutoCleanModal() {
+  document.getElementById("autoCleanModal").style.display = "block";
+}
+
+function closeAutoCleanModal() {
+  document.getElementById("autoCleanModal").style.display = "none";
+}
+</script>
+
+
+
+
+
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<div id="autoCleanModal" class="modal">
+  <div class="modal-content">
+    <h3>🕒 Zamanlanmış Temizlik</h3>
+    <p>
+      Her gece saat <strong>03:00</strong>’te <strong>30 günden eski</strong> sohbet ve bellek kayıtları otomatik olarak silinir.<br><br>
+      Bu işlem sistem tarafından otomatik yapılır, kullanıcı müdahalesi gerekmez.
+    </p>
+    <p style="color: lime; font-weight: bold;">✅ Otomatik Temizlik Aktif</p>
+    <div class="row">
+      <button class="mini" onclick="closeAutoCleanModal()">Tamam</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let samTimeout;
+let samOverlay;
+
+function createSecurityOverlay() {
+    samOverlay = document.createElement("div");
+    samOverlay.id = "samOverlay";
+    samOverlay.style.position = "fixed";
+    samOverlay.style.top = 0;
+    samOverlay.style.left = 0;
+    samOverlay.style.width = "100%";
+    samOverlay.style.height = "100%";
+    samOverlay.style.background = "rgba(0, 0, 0, 0.9)";
+    samOverlay.style.backdropFilter = "blur(10px)";
+    samOverlay.style.display = "flex";
+    samOverlay.style.alignItems = "center";
+    samOverlay.style.justifyContent = "center";
+    samOverlay.style.zIndex = 999999;
+    samOverlay.innerHTML = `<div style="color:#00ffff; font-size:20px; text-align:center;">
+        🔒 SAM Güvenlik Modu <br><br>
+        Uzun süreli hareketsizlik algılandı.<br>
+        Sistemi devam ettirmek için ekrana dokunun...
+    </div>`;
+    document.body.appendChild(samOverlay);
+}
+
+function removeSecurityOverlay() {
+    if (samOverlay) {
+        samOverlay.remove();
+        samOverlay = null;
+    }
+}
+
+function resetSamInactivityTimer() {
+    clearTimeout(samTimeout);
+    samTimeout = setTimeout(() => {
+        createSecurityOverlay();
+    }, 120000); // 2 dakika (120000 ms)
+}
+
+// Her etkileşimde sıfırla
+["click", "mousemove", "keydown", "touchstart"].forEach(evt => {
+    document.addEventListener(evt, () => {
+        removeSecurityOverlay();
+        resetSamInactivityTimer();
+    });
+});
+
+window.addEventListener("load", resetSamInactivityTimer);
+</script>
+
+
+</body>
+</html>

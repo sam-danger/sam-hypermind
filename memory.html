@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Bellek Yönetimi</title>
+    <style>
+        body {
+            background: #0f0f0f;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 40px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #00e0ff;
+        }
+        .memory-entry {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #222;
+            border-left: 4px solid #00e0ff;
+        }
+        .timestamp {
+            color: #999;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bellek Kayıtları</h1>
+        {% if memory %}
+            {% for item in memory %}
+                <div class="memory-entry">
+                    <div class="timestamp">{{ item.timestamp }}</div>
+                    <p><strong>Siz:</strong> {{ item.user_input }}</p>
+                    <p><strong>SAM:</strong> {{ item.bot_reply }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Henüz kayıtlı bir bellek bulunamadı.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>SAM | Sohbet Geçmişi</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #111;
+            color: #eee;
+            padding: 40px;
+        }
+        h2 {
+            text-align: center;
+            color: #00e0ff;
+        }
+        .history-container {
+            max-width: 800px;
+            margin: auto;
+            background: #1c1c1c;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .message {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #2a2a2a;
+            border-left: 4px solid #00e0ff;
+        }
+        .user {
+            color: #00ffae;
+        }
+        .assistant {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <h2>💬 Sohbet Geçmişi</h2>
+    <div class="history-container">
+        {% for entry in history %}
+            <div class="message">
+                {% if entry.role == "user" %}
+                    <div class="user"><strong>Kullanıcı:</strong> {{ entry.content }}</div>
+                {% elif entry.role == "assistant" %}
+                    <div class="assistant"><strong>SAM:</strong> {{ entry.content }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

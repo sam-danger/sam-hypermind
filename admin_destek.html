@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>📩 Admin Destek Paneli</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: url("/static/sam_admin_bg.png") no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            color: #fff;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            padding: 20px 30px;
+            max-width: 600px; /* daha da küçültüldü */
+            margin: 20px auto;
+            height: 85vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2 {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .message-scroll-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow: hidden;
+        }
+
+         .message-box {
+            flex: none;
+            height: 25vh; /* kutu yüksekliği azaltıldı */
+            overflow-y: auto;
+            padding: 12px;
+            border: 1px solid #444;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .message {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 50px;
+            resize: vertical;
+            margin-top: 10px;
+            border-radius: 6px;
+            border: none;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #00bcd4;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            margin-top: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #008c9e;
+        }
+
+        .sil-butonu-wrapper {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .sil-butonu-wrapper form {
+            display: inline-block;
+        }
+
+        .sil-butonu-wrapper button {
+            background-color: #e53935;
+            padding: 10px 20px;
+        }
+
+        .sil-butonu-wrapper button:hover {
+            background-color: #b71c1c;
+        }
+
+.sil-buton-ozel {
+    position: fixed;
+    bottom: 180px;  /* aşağıdan uzaklık */
+    left: 50%;     /* sayfanın ortası */
+    transform: translateX(-50%);
+    z-index: 9999;
+}
+
+.sil-buton-ozel button {
+    background-color: #b53c3c;  /* mat kırmızı */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    box-shadow: none;
+    transition: background-color 0.3s ease;
+}
+
+.sil-buton-ozel button:hover {
+    background-color: #932d2d;  /* hover için daha koyu mat */
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📨 Canlı Destek Mesajları</h1>
+
+        <div class="message-scroll-wrapper">
+            <!-- Gelen Mesajlar -->
+            <div class="message-box" id="mesajListesi">
+                {% for mesaj in mesajlar %}
+                    <div class="message">
+                        <strong>{{ mesaj.kullanici }}</strong> ({{ mesaj.tarih }})<br>
+                        {{ mesaj.mesaj }}<br>
+                        <form method="POST" action="/admin/yanitla">
+                            <input type="hidden" name="mesaj_id" value="{{ mesaj.id }}">
+                            <textarea name="yanit" placeholder="Yanıt yaz..."></textarea>
+                            <button type="submit">Yanıtla</button>
+                        </form>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Gönderilen Yanıtlar -->
+            <div>
+                <h2>📬 Gönderilen Yanıtlar</h2>
+                <div class="message-box" id="cevapListesi">
+                    {% for cevap in cevaplar %}
+                        <div class="message">
+                            <strong>→ {{ cevap.admin }}</strong> ({{ cevap.tarih }}):<br>
+                            {{ cevap.yanit }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form id="yanitlariSilForm" method="POST" action="/admin/yanitlari-sil" class="sil-buton-ozel">
+    <button type="button" onclick="silOnayiGoster()" style="background-color:#932d2d;">
+        🗑️ Tüm Gönderilen Yanıtları Sil
+    </button>
+</form>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function silOnayiGoster() {
+            Swal.fire({
+                title: 'Emin misiniz?',
+                text: "Tüm gönderilen yanıtlar silinecek!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#888',
+                confirmButtonText: 'Evet, sil',
+                cancelButtonText: 'Vazgeç'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById("yanitlariSilForm").submit();
+                }
+            })
+        }
+    </script>
+
+    <!-- WebSocket -->
+    <script>
+        const socket = io("/admin");
+
+        socket.on("connect", () => {
+            console.log("✅ WebSocket bağlı: /admin");
+        });
+
+        socket.on("yeni_mesaj", function(data) {
+            const mesajListesi = document.getElementById("mesajListesi");
+            if (!mesajListesi) return;
+
+            const mesajDiv = document.createElement("div");
+            mesajDiv.classList.add("message");
+
+            mesajDiv.innerHTML = `
+                <strong>${data.kullanici}</strong> (${data.tarih})<br>
+                ${data.mesaj}
+                <form method="POST" action="/admin/yanitla">
+                    <input type="hidden" name="mesaj_id" value="${data.id}">
+                    <textarea name="yanit" placeholder="Yanıt yaz..." required></textarea>
+                    <button type="submit">Yanıtla</button>
+                </form>
+            `;
+
+            mesajListesi.appendChild(mesajDiv);
+            mesajListesi.scrollTop = mesajListesi.scrollHeight;
+        });
+    </script>
+
+    <!-- Otomatik Cevap Ekleme -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll("form[action='/admin/yanitla']").forEach(form => {
+            form.addEventListener("submit", async function (e) {
+                e.preventDefault();
+
+                const formData = new FormData(form);
+                const response = await fetch("/admin/yanitla", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const yanitText = formData.get("yanit");
+                    const admin = "Yönetici";
+                    const tarih = new Date().toLocaleString();
+
+                    const div = document.createElement("div");
+                    div.classList.add("message");
+                    div.innerHTML = `<strong>→ ${admin}</strong> (${tarih}):<br>${yanitText}`;
+
+                    document.getElementById("cevapListesi").appendChild(div);
+                    form.querySelector("textarea").value = "";
+                } else {
+                    Swal.fire({
+                        title: "❌ Yanıt Gönderilemedi!",
+                        text: "Lütfen internet bağlantınızı veya sunucuyu kontrol edin.",
+                        icon: "error",
+                        confirmButtonText: "Tamam",
+                        confirmButtonColor: "#d33"
+                    });
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+[
+  {
+    "user": "AlperenSam",
+    "time": "2025-07-11T14:58:23",
+    "action": "clear_chat",
+    "target": "users_data\\AlperenSam\\chat_history.json"
+  },
+  {
+    "user": "AlperenSam",
+    "time": "2025-07-11T14:58:24",
+    "action": "clear_chat",
+    "target": "users_data\\AlperenSam\\chat_history.json"
+  },
+  {
+    "user": "AlperenSam",
+    "time": "2025-07-11T17:47:00",
+    "action": "scheduled",
+    "target": "veritabanı"
+  },
+  {
+    "kullanici": "AlperenSam",
+    "zaman": "2025-07-12 13:10",
+    "tur": "secure_export",
+    "kaynak": "2 dosya"
+  },
+  {
+    "kullanici": "AlperenSam",
+    "zaman": "2025-07-12 13:17",
+    "tur": "bulk_export",
+    "kaynak": "4 dosya"
+  },
+  {
+    "kullanici": "AlperenSam",
+    "zaman": "2025-07-12 13:21",
+    "tur": "secure_export",
+    "kaynak": "2 dosya"
+  },
+  {
+    "kullanici": "AlperenSam",
+    "zaman": "2025-07-12 13:22",
+    "tur": "secure_export",
+    "kaynak": "2 dosya"
+  },
+  {
+    "kullanici": "AlperenSam",
+    "zaman": "2025-07-12 13:32",
+    "tur": "secure_export",
+    "kaynak": "2 dosya"
+  },
+  {
+    "kullanici": "AlperenSam",
+    "zaman": "2025-07-12 13:39",
+    "tur": "secure_export",
+    "kaynak": "2 dosya"
+  },
+  {
+    "kullanici": "AlperenSam",
+    "zaman": "2025-07-12 13:44",
+    "tur": "secure_export",
+    "kaynak": "2 dosya"
+  },
+  {
+    "kullanici": "AlperenSam",
+    "zaman": "2025-07-12 14:27",
+    "tur": "secure_export",
+    "kaynak": "2 dosya"
+  },
+  {
+    "kullanici": "AlperenSam",
+    "zaman": "2025-07-12 14:27",
+    "tur": "bulk_export",
+    "kaynak": "4 dosya"
+  },
+  {
+    "kullanici": "AlperenSam",
+    "zaman": "2025-07-12 15:20",
+    "tur": "scheduled",
+    "kaynak": "veritabanı"
+  },
+  {
+    "username": "AlperenSam",
+    "type": "scheduled",
+    "target": "veritabanı",
+    "timestamp": "2025-07-12 16:08"
+  },
+  {
+    "username": "ayse",
+    "type": "scheduled",
+    "target": "veritabanı",
+    "timestamp": "2025-07-12 16:08"
+  },
+  {
+    "username": "AlperenSam",
+    "type": "scheduled",
+    "target": "veritabanı",
+    "timestamp": "2025-07-12 16:14"
+  },
+  {
+    "username": "ayse",
+    "type": "scheduled",
+    "target": "veritabanı",
+    "timestamp": "2025-07-12 16:14"
+  }
+]

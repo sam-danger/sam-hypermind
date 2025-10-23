@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: sam-hypermind
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn sam_core_system:app
+    plan: free

@@ -1,0 +1,363 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: url("ChatGPT Image 4 Tem 2025 23_25_43.png") no-repeat center center fixed;
+  background-size: cover;
+  color: #cceeff; /* Daha yumuşak açık mavi ton */
+}
+
+h1 {
+  text-align: center;
+  padding: 40px 10px 20px;
+  font-size: 32px;
+  color: #cceeff;
+  /* Parlaklık efekti kaldırıldı */
+}
+
+/* Panel grid sistemi */
+.panel-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+  gap: 30px;
+  max-width: 1440px;
+  margin: auto;
+  padding: 20px 40px 80px;
+  box-sizing: border-box;
+}
+
+/* Panel kutuları */
+.panel {
+  background-color: rgba(0, 0, 0, 0.55); /* Biraz daha koyulaştırıldı */
+  border: 1px solid #33999955;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: none; /* Neon gölge kaldırıldı */
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Panel başlıkları */
+.panel h2 {
+  margin-top: 0;
+  font-size: 20px;
+  color: #99cddc;
+  font-weight: bold;
+}
+
+/* Liste ve paragraflar */
+.panel ul {
+  padding-left: 20px;
+  margin: 10px 0;
+}
+
+.panel ul li,
+.panel p {
+  margin-bottom: 6px;
+  color: #ddeeff;
+}
+
+/* Buton stilleri */
+button {
+  margin: 6px 6px 0 0;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  background-color: #1f2f2f;
+  color: #b3e7e7;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: #355a5a;
+}
+.memory-scroll-container {
+    max-height: 250px;  /* Sabit yükseklik */
+    overflow-y: auto;   /* Yatay değil, dikey kaydırma */
+    padding-right: 10px; /* Scrollbar'a mesafe */
+    margin-bottom: 15px;
+}
+.memory-scroll-container {
+  max-height: 250px;
+  overflow-y: auto;
+  padding-right: 10px;
+  margin-bottom: 15px;
+}
+.panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%; /* Panelin uzamasını engelle */
+  overflow: hidden; /* Taşmayı engelle */
+}
+.panel-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.panel {
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.05);
+  height: 450px; /* 🔥 SABİT YÜKSEKLİK */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.memory-scroll-container {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 15px;
+  padding-right: 10px;
+}
+.panel-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); /* daha küçük */
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.panel {
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 255, 255, 0.15);
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.05);
+  height: 320px; /* 🔥 daha kısa sabit yükseklik */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.memory-scroll-container {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  padding-right: 8px;
+}
+.panel-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* daha dar */
+  gap: 16px;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.panel {
+  background-color: rgba(0, 0, 0, 0.35);
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 255, 0.12);
+  box-shadow: 0 0 6px rgba(0, 255, 255, 0.04);
+  height: 260px; /* 🔻 daha kısa yükseklik */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.memory-scroll-container {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 8px;
+  padding-right: 6px;
+}
+.panel-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 0 40px;
+}
+
+.panel {
+  background-color: rgba(0, 0, 0, 0.35);
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 255, 255, 0.1);
+  box-shadow: 0 0 6px rgba(0, 255, 255, 0.04);
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.panel h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.panel button {
+  background-color: #1e1e1e;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-top: 6px;
+}
+
+.panel button:hover {
+  background-color: #00ffff33;
+}
+
+.memory-scroll-container {
+  max-height: 140px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.panel-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));  /* Panel minimum genişliği büyütüldü */
+  gap: 28px;
+  max-width: 1700px;                                             /* Genel konteyner genişliği büyütüldü */
+  margin: 50px auto;
+  padding: 0 48px;
+}
+
+.panel {
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 255, 255, 0.15);
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.06);
+  min-height: 240px; /* Aynen korunuyor */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.panel {
+  padding: 12px 14px; /* daha az iç boşluk */
+}
+
+.panel h2 {
+  margin-bottom: 8px;
+}
+
+.panel p,
+.panel li {
+  margin: 4px 0; /* paragraf ve liste elemanları arası daha az boşluk */
+  line-height: 1.4;
+  font-size: 14px;
+}
+.panel button {
+  margin: 4px 6px 4px 0;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+.panel {
+  padding: 10px 14px;
+}
+.panel p,
+.panel li {
+  margin: 3px 0;
+  line-height: 1.4;
+  font-size: 13px;
+}
+
+.panel button {
+  margin: 3px 5px 3px 0;
+  padding: 5px 8px;
+  font-size: 13px;
+}
+.panel h2 {
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+/* Panellerin içini sıkıştır */
+.panel {
+  padding: 10px 12px;
+  margin: 8px;
+  font-size: 13px;
+}
+
+/* Başlıkları biraz küçült ve yakınlaştır */
+.panel h2 {
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+/* Yazılar daha sıkı dursun */
+.panel p,
+.panel li {
+  margin: 2px 0;
+  line-height: 1.4;
+}
+
+/* Butonları sıkıştır */
+.panel button {
+  margin: 3px 4px 3px 0;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+/* Listeyi daralt ve sınırlı alana koy */
+.panel ul {
+  max-height: 100px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* Grid arası boşluğu azalt */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 10px;
+  padding: 10px;
+}
+.panel form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 10px;
+}
+
+.panel label {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.panel input {
+  padding: 8px;
+  background-color: rgba(255,255,255,0.05);
+  color: white;
+  border: 1px solid #00cccc;
+  border-radius: 6px;
+}
+
+.panel button:hover {
+  background-color: #009999;
+}
+#profile-editor {
+  max-height: 300px; /* Gerekirse 280px veya 320px yap */
+  overflow-y: auto;
+  padding-right: 10px;
+}
+#profile-editor::-webkit-scrollbar {
+  width: 6px;
+}
+#profile-editor::-webkit-scrollbar-thumb {
+  background-color: #3aa8c1;
+  border-radius: 10px;
+}
+#profile-editor::-webkit-scrollbar-track {
+  background: transparent;
+}

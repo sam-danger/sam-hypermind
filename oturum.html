@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+
+<html lang="tr">
+<head>
+<meta charset="utf-8"/>
+<title>🔐 Oturum ve Hesap İşlemleri</title>
+<link href="/static/style.css" rel="stylesheet"/>
+<style>
+       body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    color: #fff;
+    background: url("/static/bg_oturum.jpg") no-repeat center center fixed;
+    background-size: cover;
+    backdrop-filter: brightness(0.6);
+}
+
+        .container {
+    max-width: 700px;
+    margin: 50px auto;
+    background: rgba(10, 10, 10, 0.85);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 30px rgba(0,255,255,0.1);
+    position: relative;
+}
+
+        h1 {
+            font-size: 26px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 12px;
+            text-align: center;
+            color: #00ffff;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background-color 0.3s;
+            margin-bottom: 10px;
+        }
+
+       
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: transparent;
+            border: 2px solid #555;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 18px;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            line-height: 30px;
+            text-align: center;
+        }
+
+        .back-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            background-color: #2c2c2c;
+            color: white;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .message-box {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .success { background-color: #2ecc71; color: white; }
+        .error   { background-color: #e74c3c; color: white; }
+
+.glass-form {
+    max-width: 600px;
+    margin: 60px auto;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0,255,255,0.1);
+    color: #fff;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(5px);
+  background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+  background: rgba(30, 30, 30, 0.95);
+  margin: 10% auto;
+  padding: 30px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 400px;
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0,255,255,0.2);
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  backdrop-filter: blur(5px);
+}
+
+.modal-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.modal-buttons button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#modalCancel {
+  background-color: #444;
+  color: white;
+}
+
+#modalConfirm {
+  background-color: #00ffff;
+  color: #000;
+}
+
+.container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.panel {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+}
+
+.panel h1 {
+    font-size: 20px;
+    color: #00ffff;
+    margin-bottom: 30px;
+}
+
+button {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 14px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #ddd;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background: rgba(0, 255, 255, 0.1);
+    color: #fff;
+    border-color: rgba(0,255,255,0.3);
+    box-shadow: 0 0 10px rgba(0,255,255,0.2);
+}
+
+@media screen and (max-width: 600px) {
+    .panel {
+        padding: 25px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 12px 16px;
+    }
+}
+
+.section-title {
+    color: #b0b0b0;        /* Mat gri-beyaz tonu */
+    font-weight: 500;
+    font-size: 26px;
+    margin-bottom: 20px;
+    text-shadow: none;     /* Neon efektini iptal eder */
+}
+
+
+    </style>
+</head>
+<body>
+
+<!-- Sesli komut için görünmez yönlendirme bağlantıları -->
+<div style="display: none;">
+  <a href="/chat" id="goto-chat"><span class="visually-hidden">Chat</span></a>
+  <a href="/notlar" id="goto-notlar"><span class="visually-hidden">Notlar</span></a>
+  <a href="/data" id="goto-veri"><span class="visually-hidden">Veri</span></a>
+  <a href="/profil" id="goto-profil"><span class="visually-hidden">Profil</span></a>
+  <a href="/index" id="goto-home"><span class="visually-hidden">Ana Sayfa</span></a>
+</div>
+
+
+<div class="glass-form">
+<button class="back-btn" onclick="window.location.href='/index'">←</button>
+<h1 class="section-title"> Oturum ve Hesap İşlemleri</h1>
+<button id="logoutBtn" class="logout-btn"> Oturumu Kapat</button>
+<button onclick="openModal('freeze')">Hesabımı Dondur</button>
+<button onclick="openModal('logoutall')">Tüm Oturumları Sonlandır</button>
+<button onclick="openModal('delete')">Hesabımı Sil</button>
+<div class="message-box" id="messageBox"></div>
+</div>
+<script>
+  function showMessage(message, type) {
+      const box = document.getElementById("messageBox");
+      box.textContent = message;
+      box.className = "message-box " + type;
+      box.style.display = "block";
+      setTimeout(() => { box.style.display = "none"; }, 3000);
+  }
+
+  function customConfirm(message, callback) {
+      const box = document.getElementById("customConfirm");
+      const text = document.getElementById("confirmText");
+      const yes = document.getElementById("confirmYes");
+      const no = document.getElementById("confirmNo");
+
+      text.textContent = message;
+      box.style.display = "flex";
+
+      yes.onclick = () => {
+          box.style.display = "none";
+          callback(true);
+      };
+
+      no.onclick = () => {
+          box.style.display = "none";
+          callback(false);
+      };
+  }
+
+  async function logout() {
+      customConfirm("Oturumunuzu kapatmak üzeresiniz. Emin misiniz?", async (onay) => {
+          if (onay) {
+              const res = await fetch("/logout", { method: "POST" });
+              const data = await res.json();
+              showMessage(data.message || "Oturum kapatıldı.", "success");
+              setTimeout(() => location.href = "/", 1000);
+          }
+      });
+  }
+
+  async function logoutAll() {
+      customConfirm("Tüm oturumlardan çıkmak üzeresiniz. Devam edilsin mi?", async (onay) => {
+          if (onay) {
+              const res = await fetch("/logout_all", { method: "POST" });
+              const data = await res.json();
+              showMessage(data.message || "Tüm oturumlar sonlandırıldı.", "success");
+          }
+      });
+  }
+
+  async function freezeAccount() {
+      const password = document.getElementById("passwordInput").value;
+      if (!password) {
+          showMessage("Hesabı dondurmak için şifre girin.", "error");
+          return;
+      }
+
+      customConfirm("Hesabınızı dondurmak üzeresiniz. Emin misiniz?", async (onay) => {
+          if (onay) {
+              const res = await fetch("/freeze_account", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ password })
+              });
+              const data = await res.json();
+              showMessage(data.message, data.success ? "success" : "error");
+              if (data.success && data.redirect) {
+                  setTimeout(() => location.href = data.redirect, 1500);
+              }
+          }
+      });
+  }
+
+  async function deleteAccount() {
+      const password = document.getElementById("passwordInput").value;
+      if (!password) {
+          showMessage("Hesabı silmek için şifre girin.", "error");
+          return;
+      }
+
+      customConfirm("Hesabınız kalıcı olarak silinecek. Emin misiniz?", async (onay) => {
+          if (onay) {
+              const res = await fetch("/delete_account", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ password })
+              });
+              const data = await res.json();
+              showMessage(data.message, data.success ? "success" : "error");
+              if (data.success && data.redirect) {
+                  setTimeout(() => location.href = data.redirect, 1500);
+              }
+              if (data.success && data.redirect) {
+                  setTimeout(() => location.href = data.redirect, 1500);
+              }
+          }
+      });
+  }
+
+document.getElementById("logoutBtn").addEventListener("click", function () {
+    fetch("/logout", {
+        method: "POST",
+    })
+    .then(response => response.json())
+    .then(data => {
+        showMessage(data.message, data.success ? "success" : "error");
+        if (data.success && data.redirect) {
+            setTimeout(() => {
+                window.location.href = data.redirect;
+            }, 1500);
+        }
+    });
+});
+
+document.getElementById("logoutAllBtn").addEventListener("click", function () {
+    fetch("/logout_all", {
+        method: "POST",
+    })
+    .then(response => response.json())
+    .then(data => {
+        showMessage(data.message, data.success ? "success" : "error");
+        if (data.success && data.redirect) {
+            setTimeout(() => {
+                window.location.href = data.redirect;
+            }, 1500);
+        }
+    });
+});
+
+</script>
+<!-- 🔽 MODERN ONAY KUTUSU -->
+<div id="customConfirm" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center;">
+<div style="background:#1e1e1e; padding:20px 30px; border-radius:10px; max-width:400px; text-align:center; box-shadow:0 0 20px rgba(0,255,255,0.2);">
+<p id="confirmText" style="margin-bottom:20px; color:white;"></p>
+<button id="confirmYes" style="margin-right:10px; padding:10px 20px; background:#00cec9; border:none; border-radius:6px; color:#fff;">Evet</button>
+<button id="confirmNo" style="padding:10px 20px; background:#555; border:none; border-radius:6px; color:#fff;">Hayır</button>
+</div>
+</div>
+
+<!-- MODAL Onay Penceresi -->
+<div id="customModal" class="modal">
+  <div class="modal-content">
+    <h3 id="modalTitle">Onay Gerekli</h3>
+    <p id="modalText">Bu işlemi gerçekleştirmek istediğinize emin misiniz?</p>
+    <input type="password" id="modalPassword" placeholder="Şifrenizi girin ">
+    <div class="modal-buttons">
+      <button id="modalCancel">İptal</button>
+      <button id="modalConfirm">Onayla</button>
+    </div>
+  </div>
+</div>
+<script>
+let currentAction = "";
+
+function openModal(action) {
+    currentAction = action;
+    document.getElementById("modalPassword").value = "";
+    document.getElementById("modalTitle").innerText = "Onay Gerekli";
+    
+    if (action === "freeze") {
+        document.getElementById("modalText").innerText = "Hesabınızı dondurmak istediğinizden emin misiniz?";
+    } else if (action === "delete") {
+        document.getElementById("modalText").innerText = "Hesabınızı silmek istediğinizden emin misiniz?";
+    } else if (action === "logoutall") {
+        document.getElementById("modalText").innerText = "Tüm oturumlardan çıkmak istiyor musunuz?";
+    }
+
+    document.getElementById("customModal").style.display = "block";
+}
+
+document.getElementById("modalCancel").onclick = function () {
+    document.getElementById("customModal").style.display = "none";
+};
+
+document.getElementById("modalConfirm").onclick = async function () {
+    const password = document.getElementById("modalPassword").value;
+    let url = "";
+    let data = {};
+
+    if (currentAction === "freeze") {
+        url = "/freeze_account";
+        data = { password };
+    } else if (currentAction === "delete") {
+        // 🧠 SAM YETKİ ONAYI
+        const izin = await fetch("/sam-yetki-onayi", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ islem: "hesap sil" })
+        }).then(res => res.json());
+
+        if (!izin.izin) {
+            showMessage(izin.sebep || "SAM bu işlemi onaylamadı.");
+            document.getElementById("customModal").style.display = "none";
+            return;
+        }
+
+        url = "/delete_account";
+        data = { password };
+    } else if (currentAction === "logoutall") {
+        url = "/logout_all";
+        data = {};
+    }
+
+    try {
+        const res = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+
+        if (result.success) {
+            showMessage(result.message || "İşlem başarılı");
+            setTimeout(() => {
+                window.location.href = "/login";
+            }, 2000);
+        } else {
+            showMessage(result.message || "İşlem başarısız");
+        }
+    } catch (err) {
+        showMessage("Sunucu hatası!");
+    }
+
+    document.getElementById("customModal").style.display = "none";
+};
+
+
+function showMessage(msg) {
+    const box = document.createElement("div");
+    box.innerText = msg;
+    box.style.position = "fixed";
+    box.style.bottom = "20px";
+    box.style.left = "50%";
+    box.style.transform = "translateX(-50%)";
+    box.style.background = "#111";
+    box.style.color = "#fff";
+    box.style.padding = "12px 20px";
+    box.style.borderRadius = "10px";
+    box.style.boxShadow = "0 0 10px #00ffff";
+    box.style.zIndex = 99999;
+    document.body.appendChild(box);
+    setTimeout(() => box.remove(), 3000);
+}
+</script>
+
+<!-- SweetAlert2 kütüphanesi -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        // Aktif modal varsa, onun içindeki onay butonunu bul ve tıkla
+        const modal = document.getElementById('customModal');
+        if (modal && modal.style.display === 'block') {
+            const confirmBtn = document.getElementById('modalConfirm');
+            if (confirmBtn) {
+                confirmBtn.click();
+                return;
+            }
+        }
+
+        // Oturumu Kapat butonuna odaklanılmışsa tıkla
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn && document.activeElement === logoutBtn) {
+            logoutBtn.click();
+            return;
+        }
+
+        // Alternatif: logout butonu odakta olmasa bile çalıştır
+        // logoutBtn?.click();
+    }
+});
+</script>
+
+<script>
+let samTimeout;
+let samOverlay;
+
+function createSecurityOverlay() {
+    samOverlay = document.createElement("div");
+    samOverlay.id = "samOverlay";
+    samOverlay.style.position = "fixed";
+    samOverlay.style.top = 0;
+    samOverlay.style.left = 0;
+    samOverlay.style.width = "100%";
+    samOverlay.style.height = "100%";
+    samOverlay.style.background = "rgba(0, 0, 0, 0.9)";
+    samOverlay.style.backdropFilter = "blur(10px)";
+    samOverlay.style.display = "flex";
+    samOverlay.style.alignItems = "center";
+    samOverlay.style.justifyContent = "center";
+    samOverlay.style.zIndex = 999999;
+    samOverlay.innerHTML = `<div style="color:#00ffff; font-size:20px; text-align:center;">
+        🔒 SAM Güvenlik Modu <br><br>
+        Uzun süreli hareketsizlik algılandı.<br>
+        Sistemi devam ettirmek için ekrana dokunun...
+    </div>`;
+    document.body.appendChild(samOverlay);
+}
+
+function removeSecurityOverlay() {
+    if (samOverlay) {
+        samOverlay.remove();
+        samOverlay = null;
+    }
+}
+
+function resetSamInactivityTimer() {
+    clearTimeout(samTimeout);
+    samTimeout = setTimeout(() => {
+        createSecurityOverlay();
+    }, 120000); // 2 dakika (120000 ms)
+}
+
+// Her etkileşimde sıfırla
+["click", "mousemove", "keydown", "touchstart"].forEach(evt => {
+    document.addEventListener(evt, () => {
+        removeSecurityOverlay();
+        resetSamInactivityTimer();
+    });
+});
+
+window.addEventListener("load", resetSamInactivityTimer);
+</script>
+
+
+</body></html>

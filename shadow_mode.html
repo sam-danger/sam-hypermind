@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>🕵️‍♂️ SAM Shadow Mode —</title>
+<style>
+:root{
+  --neon: #00ffc8;
+  --accent:#00e0ff;
+  --bg:#020b10;
+  --panel: rgba(0,255,200,0.04);
+  --danger: #ff5555;
+}
+html,body{
+  height:100%;margin:0;font-family:'Poppins', sans-serif,Inter,Segoe UI,system-ui,Arial;
+  background:radial-gradient(circle at 30% 30%, #00182a, #000);
+  color:var(--neon);
+  overflow:hidden;
+}
+body::before{
+  content:"";
+  position:fixed; inset:0;
+  background:conic-gradient(from 0deg, rgba(0,255,200,0.06), rgba(0,90,110,0.04), rgba(0,255,200,0.06));
+  filter: blur(120px);
+  z-index:0;
+  animation:spin 90s linear infinite;
+  pointer-events:none;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.container{position:relative; z-index:2; max-width:1100px; margin:18px auto; padding:18px;}
+header{display:flex; gap:12px; align-items:center;}
+header .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(90deg,#003,#015);display:flex;align-items:center;justify-content:center;font-weight:700}
+h1{margin:0;font-size:20px;color:var(--accent)}
+p.lead{margin:6px 0 0 0;color:#9ff;opacity:.9;font-size:13px}
+.grid{display:grid; grid-template-columns: 380px 1fr; gap:14px; margin-top:16px; align-items:start;}
+.panel{background:rgba(0,0,0,0.45); border:1px solid rgba(0,255,200,0.06); padding:12px; border-radius:10px; box-shadow: 0 8px 30px rgba(0,0,0,0.6);}
+#left { position:relative; height:640px; display:flex; flex-direction:column; gap:10px; }
+#statusBox{padding:10px; display:flex; gap:10px; align-items:center;}
+.dot{width:12px;height:12px;border-radius:50%}
+.dot.off{background:#444}
+.dot.on{background:#0f0}
+.controls{display:flex; gap:8px; margin-left:auto}
+.btn{background:transparent;border:1px solid rgba(0,255,200,0.12); padding:8px 10px; border-radius:8px; color:var(--neon); cursor:pointer; font-weight:600}
+.btn.primary{background:linear-gradient(90deg,var(--neon),var(--accent)); color:#001; border:none}
+.btn.warn{border-color:rgba(255,85,85,0.25); color:var(--danger)}
+#miniLog{flex:1; overflow:auto; font-family:monospace; font-size:12px; line-height:1.35; padding:8px; background:rgba(0,0,0,0.2); border-radius:8px}
+#miniLog p{margin:6px 0}
+#right { display:flex; flex-direction:column; gap:10px; height:640px; }
+#visuals{display:flex; gap:10px}
+#camPreview{width:320px;height:240px;border-radius:8px;border:1px solid rgba(0,255,200,0.08); overflow:hidden; background:#000; position:relative}
+#camPreview video{width:100%; height:100%; object-fit:cover}
+#camOverlay{position:absolute; inset:0; pointer-events:none}
+#suspicionChartWrap{flex:1; min-height:240px; background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.45)); border-radius:8px; padding:6px; display:flex; flex-direction:column; justify-content:center; align-items:center}
+#suspicionScore{font-size:38px; font-weight:800; color:var(--neon); text-shadow:0 0 12px rgba(0,255,200,0.12)}
+#miniStats{display:flex; gap:8px; margin-top:8px}
+.stat{flex:1; background:rgba(0,0,0,0.25); padding:8px; border-radius:6px; text-align:center; font-weight:700}
+canvas{max-width:100%}
+.modal{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); z-index:9999; visibility:hidden; opacity:0; transition:opacity .18s}
+.modal.open{visibility:visible; opacity:1}
+.card{width:min(820px,96%); background:#02121a; border:1px solid rgba(0,255,200,0.06); padding:16px; border-radius:12px}
+.consent-row{display:flex; gap:8px; align-items:center; justify-content:flex-end; margin-top:10px}
+.muted{opacity:.8; color:#9ec}
+.tiny{font-size:12px; color:#9df}
+#micBarContainer { width: 80%; height: 15px; background: rgba(0,255,255,0.1); margin: 10px auto; border-radius: 10px; overflow: hidden; }
+#micBar { height: 100%; width: 0; background: lime; }
+@media (max-width:980px){ .grid{grid-template-columns: 1fr; align-items:stretch} #left{height:auto} #right{height:auto} }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<div class="logo">SAM</div>
+<div>
+<h1>SHADOW MODE —</h1>
+<p class="lead">Etik-first, izin tabanlı yerel analiz.</p>
+</div>
+<div style="margin-left:auto; display:flex; gap:8px; align-items:center">
+<div id="statusBox" class="panel">
+<span class="dot off" id="statusDot"></span>
+<span id="statusText" class="tiny">Shadow Mode Kapalı</span>
+</div>
+<div class="panel" style="display:flex;gap:8px;align-items:center">
+<button id="toggleBtn" class="btn primary">AÇ</button>
+<button id="revokeBtn" class="btn warn">Rızayı Kaldır</button>
+</div>
+</div>
+</header>
+<div class="grid">
+<!-- LEFT PANEL -->
+<div id="left">
+<div class="panel">
+<div style="display:flex; align-items:center; gap:8px;">
+<div style="font-weight:800">Kontrol Paneli</div>
+<div class="muted tiny"></div>
+<div style="margin-left:auto" class="controls">
+</div>
+</div>
+<hr style="border-color:rgba(0,255,200,0.03); margin:8px 0" />
+<div id="miniLog"></div>
+<div id="micBarContainer"><div id="micBar"></div></div>
+<div style="display:flex; gap:8px; margin-top:8px;">
+<div style="flex:1; font-size:12px; color:#9df">Kayıt: <span id="consentLabel">Rıza Yok</span></div>
+<div style="font-size:12px; color:#9df">Son Özet: <span id="lastSummary">-</span></div>
+</div>
+</div>
+<div class="panel">
+<div style="display:flex; gap:8px; align-items:center;">
+<div style="font-weight:800">Etkinlik Algılama</div>
+<div class="muted tiny">fare, klavye, sekme odak</div>
+</div>
+<hr style="border-color:rgba(0,255,200,0.03); margin:8px 0" />
+<div style="display:flex; gap:8px;">
+<div class="stat" id="mouseStat">Fare: 0</div>
+<div class="stat" id="keyStat">Tuş: 0</div>
+<div class="stat" id="tabStat">OdaK: Aktif</div>
+</div>
+<div style="margin-top:10px; font-size:12px; color:#9df">Otomatik sınıflandırma: <strong id="activityLabel">Bilinmiyor</strong></div>
+</div>
+<div class="panel">
+<div style="font-weight:800">Açıklama & Gizlilik</div>
+<hr style="border-color:rgba(0,255,200,0.03); margin:8px 0" />
+<p class="tiny muted">Shadow Mode yalnızca lokal analiz yapar. Kamera ve mikrofon yalnızca kullanıcı açık rızası ile kullanılır. Veri gönderilmez; gönderilecekse şifreli, anonim özet şeklinde olmalıdır.</p>
+<p class="tiny muted">Rıza kaldırıldığında tüm medya erişimleri kapatılır ve önbellek temizlenir.</p>
+</div>
+</div>
+<!-- RIGHT PANEL -->
+<div id="right">
+<div id="visuals" class="panel">
+<div id="camPreview">
+<video id="camVideo" autoplay muted playsinline></video>
+<canvas id="camOverlay"></canvas>
+</div>
+<div id="suspicionChartWrap">
+<div id="suspicionScore">0</div>
+<canvas id="suspicionChart" width="360" height="220"></canvas>
+<div id="miniStats">
+<div class="stat">Faces: <span id="facesCnt">0</span></div>
+<div class="stat">Motion: <span id="motionLbl">false</span></div>
+<div class="stat">Sound: <span id="soundLbl">0</span></div>
+</div>
+</div>
+</div>
+<div class="panel" style="display:flex; gap:8px; align-items:center; justify-content:space-between;">
+<div style="font-weight:800">Zaman Serileri</div>
+<div style="display:flex; gap:8px;">
+<div class="tiny muted">Glitch grafik: anormallik skorunu gösterir</div>
+</div>
+</div>
+<div class="panel">
+<canvas id="historyChart" width="900" height="120"></canvas>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Consent Modal -->
+<div class="modal" id="consentModal">
+<div class="card">
+<h2 style="color:var(--neon)">Shadow Mode — İzin Talebi</h2>
+<p class="muted">Bu modül, sadece izin verdiğiniz sürece kamera ve mikrofonu kullanır. Görüntü/ses sunucuya gönderilmez. Sadece anonimleştirilmiş özetler gönderilebilir.</p>
+<div style="display:flex; gap:12px; align-items:center; margin-top:12px;">
+<label style="flex:1; color:#9ec"><input type="checkbox" id="consentCheckbox" /> &nbsp; Özetlerin anonim gönderilmesine izin veriyorum</label>
+<button id="consentDecline" class="btn ghost">Reddet</button>
+<button id="consentAccept" class="btn primary">Kabul Et ve Başlat</button>
+</div>
+</div>
+</div>
+
+<div class="panel">
+  <div style="font-weight:800">Sistem Bilgileri</div>
+  <hr style="border-color:rgba(0,255,200,0.03); margin:8px 0" />
+  <div id="systemStats" style="display:flex; gap:10px; flex-direction:column; font-size:12px;">
+    <div>CPU Çekirdek: <span id="cpuCores">0</span></div>
+    <div>RAM: <span id="ramTotal">0 GB</span> | Kullanım: <span id="ramUsed">0 MB</span></div>
+    <div>GPU: <span id="gpuInfo">Bilinmiyor</span></div>
+  </div>
+</div>
+
+<script>
+// Sistem bilgilerini güncelle
+const cpuCoresEl = document.getElementById('cpuCores');
+const ramTotalEl = document.getElementById('ramTotal');
+const ramUsedEl = document.getElementById('ramUsed');
+const gpuInfoEl = document.getElementById('gpuInfo');
+
+function updateSystemStats(){
+  // CPU
+  const cores = navigator.hardwareConcurrency || 'Bilinmiyor';
+  cpuCoresEl.textContent = cores;
+
+  // RAM
+  const total = navigator.deviceMemory ? navigator.deviceMemory+' GB' : 'Bilinmiyor';
+  ramTotalEl.textContent = total;
+
+  if(performance && performance.memory){
+    const usedMB = Math.round(performance.memory.usedJSHeapSize/1048576);
+    ramUsedEl.textContent = usedMB+' MB';
+  }
+
+  // GPU
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+    const gpu = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+    gpuInfoEl.textContent = gpu;
+  } catch {
+    gpuInfoEl.textContent = 'GPU Bilgisi alınamadı';
+  }
+}
+
+// 2 saniyede bir güncelle
+setInterval(updateSystemStats, 2000);
+updateSystemStats();
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.8.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface"></script>
+
+<script>
+// Genel değişkenler
+const toggleBtn = document.getElementById('toggleBtn');
+const revokeBtn = document.getElementById('revokeBtn');
+const statusDot = document.getElementById('statusDot');
+const statusText = document.getElementById('statusText');
+const miniLog = document.getElementById('miniLog');
+const consentModal = document.getElementById('consentModal');
+const consentAccept = document.getElementById('consentAccept');
+const consentDecline = document.getElementById('consentDecline');
+const consentCheckbox = document.getElementById('consentCheckbox');
+const consentLabel = document.getElementById('consentLabel');
+const camVideo = document.getElementById('camVideo');
+const camOverlay = document.getElementById('camOverlay');
+const overlayCtx = camOverlay.getContext('2d');
+const micBar = document.getElementById("micBar");
+
+let collecting=false, hasConsent=localStorage.getItem('shadow_consent')==='1';
+let mediaStream=null, audioCtx=null, analyser=null, soundLevel=0;
+let faceModel=null, motionPrev=null, facesCount=0;
+let mouseCount=0,keyCount=0,lastActivityTs=Date.now();
+let suspicionChart, historyChart, historyData=[];
+
+// Log fonksiyonu
+function log(msg,color='#0ff'){const p=document.createElement('p');p.textContent=`[${new Date().toLocaleTimeString()}] ${msg}`;p.style.color=color;miniLog.prepend(p);while(miniLog.childElementCount>120)miniLog.removeChild(miniLog.lastChild);}
+
+// UI durum
+function setStatus(on,txt){statusDot.className='dot '+(on?'on':'off');statusText.textContent=txt;toggleBtn.textContent=on?'KAPAT':'AÇ';toggleBtn.classList.toggle('primary',!on);}
+
+// Charts
+function initCharts(){
+  const ctx = document.getElementById('suspicionChart').getContext('2d');
+  suspicionChart = new Chart(ctx,{type:'doughnut',data:{labels:['suspicion','ok'],datasets:[{data:[0,100],backgroundColor:['rgba(255,85,85,0.9)','rgba(0,255,200,0.08)']}]},options:{cutout:'75%',plugins:{legend:{display:false}},animation:{duration:200}}});
+  const hctx = document.getElementById('historyChart').getContext('2d');
+  historyChart = new Chart(hctx,{type:'line',data:{labels:[],datasets:[{label:'Threat score',data:[],borderColor:'#ff5555',tension:0.3,fill:false}]},options:{plugins:{legend:{display:false}},scales:{y:{min:0,max:100}}}});
+}
+initCharts();
+
+// Şüphe puanı
+function computeSuspicion({motion,faces,sound,inactive,unfocused,anomalyScore=0}){
+  let score=0;
+  score+=motion?30:0;
+  score+=Math.min(30,Math.round(sound*30));
+  score+=unfocused?20:0;
+  if(faces===0 && motion) score+=15;
+  if(inactive && motion) score+=25;
+  score+=Math.min(10,anomalyScore*10);
+  return Math.min(100,Math.round(score));
+}
+
+// Hareket algılama
+const tmpCanvas=document.createElement('canvas'); const tmpCtx=tmpCanvas.getContext('2d');
+function detectMotionFrame(video,sensitivity=18){
+  if(!video||video.videoWidth===0) return false;
+  tmpCanvas.width=160; tmpCanvas.height=Math.round(160*video.videoHeight/video.videoWidth);
+  tmpCtx.drawImage(video,0,0,tmpCanvas.width,tmpCanvas.height);
+  const frame=tmpCtx.getImageData(0,0,tmpCanvas.width,tmpCanvas.height);
+  let moved=false;
+  if(motionPrev){
+    for(let i=0;i<frame.data.length;i+=4){
+      const c=(frame.data[i]+frame.data[i+1]+frame.data[i+2])/3;
+      const p=(motionPrev.data[i]+motionPrev.data[i+1]+motionPrev.data[i+2])/3;
+      if(Math.abs(c-p)>sensitivity){moved=true;break;}
+    }
+  }
+  motionPrev=frame; return moved;
+}
+
+// Mikrofon seviyesi
+function updateSoundLevel(){
+  if(!analyser) return;
+  const arr=new Uint8Array(analyser.fftSize);
+  analyser.getByteTimeDomainData(arr);
+  let sum=0;
+  for(let i=0;i<arr.length;i++){const v=(arr[i]-128)/128; sum+=v*v;}
+  const rms=Math.sqrt(sum/arr.length);
+  soundLevel=Math.min(1,rms*2);
+  micBar.style.width=(soundLevel*100).toFixed(0)+'%';
+  micBar.style.backgroundColor=soundLevel>0.7?"#ff5555":"#00ff80";
+}
+
+// Yüz modeli
+async function loadFaceModelIfNeeded(){
+  if(faceModel) return;
+  faceModel = await blazeface.load();
+  log('Yüz modeli yüklendi.');
+}
+
+// Başlat
+async function startCollection(){
+  if(collecting) return;
+  if(!hasConsent){consentModal.classList.add('open'); return;}
+  collecting=true;
+  setStatus(true,'Shadow Mode Aktif (izin verildi)');
+  consentLabel.textContent='Onaylı';
+  try{
+    mediaStream=await navigator.mediaDevices.getUserMedia({video:{width:640},audio:true});
+    camVideo.srcObject=mediaStream; await camVideo.play();
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    const src=audioCtx.createMediaStreamSource(mediaStream);
+    analyser=audioCtx.createAnalyser(); analyser.fftSize=1024;
+    src.connect(analyser);
+    await loadFaceModelIfNeeded();
+    requestAnimationFrame(mainLoop);
+    log('Toplama başlatıldı','#0f0');
+  }catch(e){console.warn(e); log('Kamera/Mikrofon erişilemedi','#ff5555'); stopCollection();}
+}
+
+// Durdur
+function stopCollection(){
+  collecting=false;
+  setStatus(false,'Shadow Mode Kapalı');
+  consentLabel.textContent='Rıza Var';
+  if(mediaStream){mediaStream.getTracks().forEach(t=>t.stop()); mediaStream=null;}
+  if(audioCtx){audioCtx.close(); audioCtx=null;}
+  log('Toplama durduruldu','#ff5555');
+}
+
+// Ana döngü
+async function mainLoop(){
+  if(!collecting) return;
+  const motionDetected=detectMotionFrame(camVideo);
+  updateSoundLevel();
+  let faces=0;
+  if(faceModel && camVideo.videoWidth>0){
+    const predictions=await faceModel.estimateFaces(camVideo,false);
+    faces=predictions.length;
+    overlayCtx.clearRect(0,0,camOverlay.width,camOverlay.height);
+    overlayCtx.strokeStyle='rgba(0,255,200,0.8)';
+    overlayCtx.lineWidth=2;
+    predictions.forEach(p=>{
+      const [x,y,w,h]=[p.topLeft[0],p.topLeft[1],p.bottomRight[0]-p.topLeft[0],p.bottomRight[1]-p.topLeft[1]];
+      overlayCtx.strokeRect(x*camOverlay.width/camVideo.videoWidth,y*camOverlay.height/camVideo.videoHeight,w*camOverlay.width/camVideo.videoWidth,h*camOverlay.height/camVideo.videoHeight);
+    });
+  }
+  facesCount=faces;
+  const inactive=(Date.now()-lastActivityTs)>5000;
+  const unfocused=document.hidden;
+  const score=computeSuspicion({motion:motionDetected,faces,sound:soundLevel,inactive,unfocused});
+  suspicionChart.data.datasets[0].data=[score,100-score]; suspicionChart.update();
+  document.getElementById('suspicionScore').textContent=score;
+  document.getElementById('facesCnt').textContent=faces;
+  document.getElementById('motionLbl').textContent=motionDetected;
+  document.getElementById('soundLbl').textContent=soundLevel.toFixed(2);
+
+  historyData.push(score); if(historyData.length>100) historyData.shift();
+  historyChart.data.labels=historyData.map((_,i)=>i);
+  historyChart.data.datasets[0].data=historyData; historyChart.update();
+
+  requestAnimationFrame(mainLoop);
+}
+
+// Consent modal
+consentAccept.onclick=()=>{
+  if(!consentCheckbox.checked){alert('Lütfen izin verin.');return;}
+  hasConsent=true; localStorage.setItem('shadow_consent','1'); consentModal.classList.remove('open'); startCollection();
+};
+consentDecline.onclick=()=>{consentModal.classList.remove('open'); log('Kullanıcı rıza vermedi','#ff5555');};
+
+// Toggle
+toggleBtn.onclick=()=>{if(collecting) stopCollection(); else startCollection();}
+revokeBtn.onclick=()=>{hasConsent=false; localStorage.setItem('shadow_consent','0'); stopCollection(); log('Rıza kaldırıldı','#ff5555');};
+
+// Activity
+document.addEventListener('mousemove',()=>{mouseCount++; lastActivityTs=Date.now(); document.getElementById('mouseStat').textContent='Fare: '+mouseCount;});
+document.addEventListener('keydown',()=>{keyCount++; lastActivityTs=Date.now(); document.getElementById('keyStat').textContent='Tuş: '+keyCount;});
+document.addEventListener('visibilitychange',()=>{document.getElementById('tabStat').textContent='OdaK: '+(document.hidden?'Pasif':'Aktif');});
+
+// Screenshot
+document.getElementById('screenshotBtn').onclick=()=>{
+  const cv=document.createElement('canvas'); cv.width=camVideo.videoWidth; cv.height=camVideo.videoHeight;
+  cv.getContext('2d').drawImage(camVideo,0,0);
+  const link=document.createElement('a'); link.href=cv.toDataURL('image/png'); link.download='shadow_snapshot.png'; link.click();
+  log('Anlık görüntü alındı','#0ff');
+};
+
+// Log indir
+document.getElementById('downloadLog').onclick=()=>{
+  const blob=new Blob([miniLog.innerText],'text/plain');
+  const link=document.createElement('a'); link.href=URL.createObjectURL(blob); link.download='shadow_log.txt'; link.click();
+  log('Log indirildi','#0ff');
+};
+
+// Başlat
+if(hasConsent) startCollection();
+</script>
+</body>
+</html>

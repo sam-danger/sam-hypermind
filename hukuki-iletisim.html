@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>⚖️ Hukuki İletişim</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #0f0f0f, #1a1a1a);
+      color: #ffffff;
+      padding: 30px 20px;
+      margin: 0;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.65);
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 800px;
+      margin: auto;
+      box-shadow: 0 0 20px rgba(0,255,255,0.1);
+    }
+
+    h1 {
+      color: #00ffff;
+      text-align: center;
+      font-size: 24px;
+    }
+
+    h2 {
+      color: #00ccff;
+      margin-top: 30px;
+      font-size: 18px;
+    }
+
+    p {
+      margin-bottom: 15px;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    ul {
+      margin-left: 20px;
+      font-size: 15px;
+    }
+
+    a {
+      color: #00ffff;
+      text-decoration: none;
+    }
+
+    .info-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid #00ffff44;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      border: 1px solid #444;
+      background: #222;
+      color: #fff;
+    }
+
+    button {
+      background: #00cccc;
+      color: black;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 20px 10px; }
+      .container { padding: 20px; }
+      h1 { font-size: 20px; }
+      h2 { font-size: 16px; }
+      p, ul { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚖️ Hukuki İletişim Bilgileri</h1>
+
+    <p>
+      SAM Yapay Zeka Sistemleri’ne yönelik tüm <strong>hukuki talepler, resmi başvurular ve yasal iletişim süreçleri</strong> için aşağıdaki bilgiler geçerlidir.
+    </p>
+
+    <h2>🏢 Yetkili Şirket / Veri Sorumlusu</h2>
+    <div class="info-box">
+      <p><strong>Unvan:</strong> SAM Yapay Zeka Sistemleri</p>
+      <p><strong>Vergi Kimlik Numarası:</strong> 1234567890</p>
+      <p><strong>Ticaret Sicil No:</strong> 012345-İstanbul</p>
+      <p><strong>Tebligat Adresi:</strong> Yıldız Mahallesi, Hukuk Sokak, No:1, Beşiktaş / İstanbul</p>
+    </div>
+
+    <h2>📧 Resmi Başvuru E-Postası</h2>
+    <div class="info-box">
+      <p>Tüm resmi başvurularınızı aşağıdaki e-posta adresine iletebilirsiniz:</p>
+      <p>
+        <a href="mailto:sam.core.system@gmail.com?subject=KVKK%20Talebi&amp;body=Lütfen%20yasal%20talebinizi%20belirtiniz.">
+          legal@samplatformu.com
+        </a>
+      </p>
+    </div>
+
+    <h2>📄 Değerlendirilebilecek Başvuru Konuları</h2>
+    <ul>
+      <li>Kişisel verilerin işlenmesine yönelik şikayet ve talepler (KVKK / GDPR)</li>
+      <li>Üyelik / hizmet iptali ve sözleşme fesih talepleri</li>
+      <li>Resmi şikayet bildirimleri ve yasal ihtarnameler</li>
+    </ul>
+
+    <h2>🕓 Yanıt Süresi</h2>
+    <p>
+      Gönderilen başvurular, 6698 sayılı KVKK ve ilgili diğer mevzuatlar kapsamında en geç
+      <strong>15 iş günü</strong> içinde değerlendirilerek başvuru sahibine dönüş sağlanır.
+    </p>
+
+    <h2>📌 Not</h2>
+    <p>
+      Bu sayfa yalnızca yasal talepler ve resmi iletişim içindir. Genel sorular ve teknik destek için lütfen
+      <a href="/canli-destek">Canlı Destek</a> kanalımızı kullanınız.
+    </p>
+
+    <h2>📨 Hızlı Hukuki Başvuru Formu</h2>
+    <p>Resmi başvurunuzu aşağıdaki form aracılığıyla da gönderebilirsiniz:</p>
+
+    <form method="POST" action="/hukuki-iletisim">
+      <label for="adsoyad">Ad Soyad</label>
+      <input type="text" id="adsoyad" name="adsoyad" required>
+
+      <label for="email">E-posta</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="mesaj">Mesaj</label>
+      <textarea id="mesaj" name="mesaj" rows="5" required></textarea>
+
+      <button type="submit">Gönder</button>
+    </form>
+  </div>
+
+  <!-- ✅ Gönderildi Toast Mesajı -->
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("gonderildi") === "true") {
+      const toast = document.createElement("div");
+      toast.textContent = "✅ Başvurunuz başarıyla gönderildi.";
+      toast.style.position = "fixed";
+      toast.style.top = "30px";
+      toast.style.left = "50%";
+      toast.style.transform = "translateX(-50%)";
+      toast.style.background = "rgba(0, 255, 255, 0.1)";
+      toast.style.border = "1px solid #00ffff";
+      toast.style.color = "#00ffff";
+      toast.style.padding = "12px 24px";
+      toast.style.borderRadius = "8px";
+      toast.style.fontSize = "15px";
+      toast.style.zIndex = "9999";
+      toast.style.backdropFilter = "blur(8px)";
+      toast.style.boxShadow = "0 0 12px rgba(0,255,255,0.3)";
+      toast.style.transition = "opacity 0.5s ease";
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        setTimeout(() => toast.remove(), 500);
+      }, 3500);
+    }
+  </script>
+</body>
+</html>

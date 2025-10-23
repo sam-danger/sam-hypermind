@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Gelişmiş Kullanıcı Yönetimi</title>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+body { background:#111; color:#eee; font-family:Arial; padding:20px; }
+table { width:100%; border-collapse: collapse; margin-top:20px; }
+th, td { padding:10px; border:1px solid #444; text-align:left; }
+button { padding:5px 10px; margin:2px; cursor:pointer; }
+input, select { padding:5px; margin:2px; }
+.active-btn { background:green; color:#fff; }
+.inactive-btn { background:red; color:#fff; }
+.tooltip {
+    position: absolute;
+    background:#222; color:#fff;
+    padding:8px; border-radius:5px;
+    font-size:12px; box-shadow:0 0 5px #000;
+    display:none;
+    z-index:10;
+}
+tr[data-id] { position: relative; }
+.model-section {
+    margin-top:40px; padding:10px; border:1px solid #444; border-radius:5px;
+    background:#1a1a1a;
+}
+</style>
+</head>
+<body>
+
+<h2>👥 Gelişmiş Kullanıcı Yönetimi</h2>
+<input type="text" id="search" placeholder="Ara: ad, soyad, email, rol, durum" onkeyup="filterTable()">
+
+<table id="userTable">
+<tr>
+<th>ID</th><th>Ad</th><th>Soyad</th><th>Email</th><th>Rol</th><th>Durum</th><th>İşlemler</th>
+</tr>
+{% for user in users %}
+<tr data-id="{{ user.id }}" onmouseover="showDetails({{ user.id }}, this)" onmouseout="hideDetails(this)">
+<td>{{ user.id }}</td>
+<td contenteditable="true" class="ad">{{ user.ad }}</td>
+<td contenteditable="true" class="soyad">{{ user.soyad }}</td>
+<td contenteditable="true" class="email">{{ user.email }}</td>
+<td>
+<select class="rol">
+<option value="kullanici" {% if user.rol=="kullanici" %}selected{% endif %}>Kullanıcı</option>
+<option value="admin" {% if user.rol=="admin" %}selected{% endif %}>Admin</option>
+<option value="moderator" {% if user.rol=="moderator" %}selected{% endif %}>Moderator</option>
+</select>
+</td>
+<td>
+<button class="{{ 'active-btn' if user.durum=='aktif' else 'inactive-btn' }}" onclick="toggleActive({{ user.id }}, this)">
+{{ 'Aktif' if user.durum=='aktif' else 'Pasif' }}</button>
+</td>
+<td>
+<button onclick="saveUser({{ user.id }}, this)">💾 Kaydet</button>
+<button onclick="deleteUser({{ user.id }}, this)">🗑 Sil</button>
+<button onclick="resetPassword({{ user.id }}, this)">🔑 Şifre Sıfırla</button>
+<button onclick="sendActivation({{ user.id }}, this)">📨 Aktivasyon</button>
+<button onclick="changeRole({{ user.id }}, this)">🛠 Rol Değiştir</button>
+</td>
+<td class="tooltip"></td>
+</tr>
+{% endfor %}
+</table>
+
+<div id="tooltip" class="tooltip"></div>
+
+<!-- Yapay Zekâ Model Sürümü -->
+<div class="model-section">
+<h3>🤖 Yapay Zekâ Güncelleme & Model Sürümü</h3>
+<p id="modelInfo">Model bilgisi yükleniyor...</p>
+<button onclick="checkModel()">Güncelleme Kontrol Et</button>
+</div>
+
+<script>
+function filterTable() {
+    const input = document.getElementById("search").value.toLowerCase();
+    document.querySelectorAll("#userTable tr[data-id]").forEach(row => {
+        const ad = row.querySelector(".ad").textContent.toLowerCase();
+        const soyad = row.querySelector(".soyad").textContent.toLowerCase();
+        const email = row.querySelector(".email").textContent.toLowerCase();
+        const rol = row.querySelector(".rol").value.toLowerCase();
+        const durum = row.querySelector("td button").textContent.toLowerCase();
+        row.style.display = ad.includes(input) || soyad.includes(input) || email.includes(input) || rol.includes(input) || durum.includes(input) ? "" : "none";
+    });
+}
+
+function saveUser(userId, btn) {
+    const row = btn.closest("tr");
+    const data = {
+        ad: row.querySelector(".ad").textContent.trim(),
+        soyad: row.querySelector(".soyad").textContent.trim(),
+        email: row.querySelector(".email").textContent.trim(),
+        rol: row.querySelector(".rol").value,
+        durum: row.querySelector("td button").textContent==="Aktif" ? "aktif" : "pasif"
+    };
+    fetch(`/admin/users/edit/${userId}`, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data)})
+    .then(r=>r.json()).then(res=>{
+        if(res.success) Swal.fire("✅","Kullanıcı güncellendi","success");
+        else Swal.fire("❌",res.error,"error");
+    });
+}
+
+function deleteUser(userId, btn) {
+    Swal.fire({title:'Silmek istediğine emin misin?', icon:'warning', showCancelButton:true}).then(r=>{
+        if(r.isConfirmed){
+            fetch(`/admin/users/delete/${userId}`, {method:"POST"}).then(r=>r.json()).then(res=>{
+                if(res.success){ btn.closest("tr").remove(); Swal.fire("✅ Silindi","Kullanıcı silindi","success"); }
+            });
+        }
+    });
+}
+
+function resetPassword(userId, btn) {
+    Swal.fire({title:'Şifre sıfırlansın mı?', icon:'question', showCancelButton:true}).then(r=>{
+        if(r.isConfirmed){
+            fetch(`/admin/users/reset-password/${userId}`, {method:"POST"}).then(r=>r.json()).then(res=>{
+                if(res.success) Swal.fire("🔑 Şifre Sıfırlandı","Link gönderildi: "+res.message,"success");
+                else Swal.fire("❌", res.error,"error");
+            });
+        }
+    });
+}
+
+function toggleActive(userId, btn) {
+    fetch(`/admin/users/toggle-active/${userId}`, {method:"POST"}).then(r=>r.json()).then(res=>{
+        if(res.success){
+            btn.textContent = res.durum==="aktif" ? "Aktif" : "Pasif";
+            btn.className = res.durum==="aktif" ? "active-btn" : "inactive-btn";
+        }
+    });
+}
+
+function sendActivation(userId, btn) {
+    fetch(`/admin/users/send-activation/${userId}`, {method:"POST"}).then(r=>r.json()).then(res=>{
+        if(res.success) Swal.fire("📨 Aktivasyon","Mail gönderildi","success");
+        else Swal.fire("❌", res.error,"error");
+    });
+}
+
+function changeRole(userId, btn) {
+    const row = btn.closest("tr");
+    const rol = row.querySelector(".rol").value;
+    fetch(`/admin/users/change-role/${userId}`, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({rol})})
+    .then(r=>r.json()).then(res=>{
+        if(res.success) Swal.fire("🛠 Rol Güncellendi","Yeni rol: "+res.new_role,"success");
+        else Swal.fire("❌", res.error,"error");
+    });
+}
+
+// Tooltip detayları göster
+function showDetails(userId, row) {
+    fetch(`/admin/users/details/${userId}`).then(r=>r.json()).then(data=>{
+        const tooltip = document.getElementById("tooltip");
+        tooltip.innerHTML = `<b>IP:</b> ${data.last_login_ip}<br><b>Son Giriş:</b> ${data.last_login_time}<br><b>Toplam Oturum:</b> ${data.total_session_time} dk`;
+        const rect = row.getBoundingClientRect();
+        tooltip.style.top = (rect.top + window.scrollY + row.offsetHeight) + "px";
+        tooltip.style.left = (rect.left + window.scrollX) + "px";
+        tooltip.style.display = "block";
+    });
+}
+
+function hideDetails(row){
+    const tooltip = document.getElementById("tooltip");
+    tooltip.style.display = "none";
+}
+
+// Yapay Zekâ Model Kontrol
+function checkModel() {
+    fetch("/admin/model-info")
+    .then(res => res.json())
+    .then(data => {
+        const info = document.getElementById("modelInfo");
+        let html = `Model: ${data.model_name}<br>
+                    Sürüm: ${data.current_version}<br>
+                    Güncel Sürüm: ${data.latest_version}<br>`;
+        if(data.update_available){
+            html += `<b style="color:yellow;">Güncelleme mevcut!</b>`;
+        } else {
+            html += `<b style="color:green;">Model güncel.</b>`;
+        }
+        info.innerHTML = html;
+    })
+    .catch(err => {
+        document.getElementById("modelInfo").innerHTML = "Hata: Model bilgisi alınamadı.";
+        console.error(err);
+    });
+}
+
+// Sayfa yüklendiğinde çalıştır
+document.addEventListener("DOMContentLoaded", checkModel);
+
+</script>
+</body>
+</html>

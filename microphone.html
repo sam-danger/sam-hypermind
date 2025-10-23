@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>🎤 SAM Voice Assistant</title>
+<link rel="icon" href="data:;base64,=">
+  <script>
+    const sessionUsername = "{{ session['username'] | safe }}";
+  </script>
+  <style>
+    body {
+      background: black;
+      color: white;
+      font-family: Arial;
+      text-align: center;
+      padding-top: 80px;
+    }
+    h1 { font-size: 2em; }
+    .wave {
+      margin: 40px auto;
+      width: 100px;
+      height: 40px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .wave div {
+      background: #00ffff;
+      height: 100%;
+      width: 8px;
+      animation: waveAnim 1.2s infinite ease-in-out;
+    }
+    .wave div:nth-child(2) { animation-delay: 0.2s; }
+    .wave div:nth-child(3) { animation-delay: 0.4s; }
+    .wave div:nth-child(4) { animation-delay: 0.6s; }
+    .wave div:nth-child(5) { animation-delay: 0.8s; }
+    @keyframes waveAnim {
+      0%, 100% { transform: scaleY(1); }
+      50% { transform: scaleY(2); }
+    }
+    #status { margin-top: 30px; font-size: 1.2em; color: #0ff; }
+    #last-command-text { margin-top: 20px; font-size: 1em; color: #aaa; }
+  </style>
+</head>
+<body>
+
+<div class="wave"><div></div><div></div><div></div><div></div><div></div></div>
+
+<div style="display: none;">
+  <a href="/chat" id="goto-chat"><span class="visually-hidden">Chat</span></a>
+  <a href="/notlar" id="goto-notlar"><span class="visually-hidden">Notlar</span></a>
+  <a href="/data" id="goto-veri"><span class="visually-hidden">Veri</span></a>
+  <a href="/profil" id="goto-profil"><span class="visually-hidden">Profil</span></a>
+  <a href="/index" id="goto-home"><span class="visually-hidden">Ana Sayfa</span></a>
+</div>
+
+<h1>🎙️ SAM Dinliyor...</h1>
+<div id="status">"SAM" dediğinizde sizi dinlemeye başlayacak.</div>
+<div id="last-command-text"></div>
+<div id="memory-content" style="margin-top: 30px; color: #00ffff; font-size: 16px;"></div>
+
+<script>
+const statusDiv = document.getElementById("status");
+const debugMode = true;  // ✅ Hataları görmek için true yapabilirsin
+let userMemory = [];
+let isMuted = false;
+let speechVolume = 1.0;
+let inactivityTimer;
+let lastCommand = "";
+let repeatCount = 0;
+let last3Commands = [];
+let isListening = false;
+let ignoredShortCommandCount = 0; // Gereksiz logları azalt
+
+function loadMemory() {
+  fetch("/memory")
+    .then(response => {
+      if (!response.ok) throw new Error("Sunucu hatası: " + response.status);
+      return response.json();
+    })
+    .then(data => {
+      const memoryContainer = document.getElementById("memory-content");
+      memoryContainer.innerHTML = "";
+
+      if (data.length === 0) {
+        memoryContainer.innerHTML = "<p style='opacity: 0.4;'>📭 Bellekte kayıtlı bilgi yok.</p>";
+        return;
+      }
+
+      userMemory = data.map(item => item.content);
+
+      data.forEach(item => {
+        const entry = document.createElement("div");
+        entry.className = "memory-item";
+        entry.innerHTML = `<p>🧠 ${item.content}</p><small>🕒 ${item.timestamp}</small><hr>`;
+        memoryContainer.appendChild(entry);
+      });
+    })
+    .catch(error => console.error("Hafıza alınamadı:", error));
+}
+
+function speak(text, callback = null) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "tr-TR";
+  utterance.volume = speechVolume;
+  if (isMuted) return;
+
+  utterance.onend = () => {
+    if (callback) callback();
+  };
+
+  speechSynthesis.speak(utterance);
+}
+
+function startWaveAnimation() {
+  document.querySelectorAll(".wave div").forEach(el => el.style.animationPlayState = "running");
+}
+function stopWaveAnimation() {
+  document.querySelectorAll(".wave div").forEach(el => el.style.animationPlayState = "paused");
+}
+
+inactivityTimer = setTimeout(() => {
+  if (!samOverlay) {
+    createSecurityOverlay();  // güvenlik ekranı gelsin
+  }
+  // ❌ Konuşma yok. Sessiz geçiş
+}, 120000); // 2 dakika sonra sadece overlay ile sessiz mod
+
+
+function hafizayaEkle(icerik) {
+  fetch("/memory/add", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ content: icerik })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) speak("Bu bilgiyi hafızama kaydettim.");
+    else speak("Hafızaya eklenirken bir hata oluştu.");
+  })
+  .catch(() => speak("Bir hata oluştu."));
+}
+
+function startListeningOnce() {
+  const trigger = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  trigger.lang = "tr-TR";
+  trigger.interimResults = false;
+  trigger.continuous = false;
+  trigger.maxAlternatives = 3;
+
+  trigger.onresult = function(event) {
+    const transcript = event.results[0][0].transcript.trim().toLowerCase();
+    const probableWords = ["sam", "sayın sam", "hey sam"];
+    const triggered = probableWords.some(word => transcript.includes(word));
+
+    if (isListening) return;
+    isListening = true;
+
+    if (triggered) {
+      trigger.abort(); // ✅ Bu satırı EKLE: Tetikleyiciyi durdur
+      speak("Sizi dinliyorum...");
+      statusDiv.textContent = "🎧 SAM tetiklendi. Komut bekleniyor...";
+      listenForCommand(); // komutları dinlemeye geç
+    } else {
+      setTimeout(startListeningOnce, 500);
+    }
+  };
+
+  trigger.onerror = function(event) {
+    const ignorableErrors = ["no-speech", "aborted", "network", "audio-capture"];
+    if (ignorableErrors.includes(event.error)) {
+      if (debugMode) console.warn("⏳ Tetikleyici geçici hata:", event.error);
+      try {
+        trigger.abort();
+      } catch (e) {
+        console.warn("⛔ Tetikleyici durdurulamadı:", e);
+      }
+      setTimeout(startListeningOnce, 1500);
+    } else {
+      console.error("❌ Ciddi dinleme hatası:", event.error);
+      speak("Dinleme sırasında bir sorun oluştu. Yeniden deniyorum...", () => {
+        setTimeout(startListeningOnce, 2000);
+      });
+    }
+  };
+
+  try {
+    trigger.start();
+  } catch (err) {
+    console.warn("🎯 Tetikleyici başlatılamadı:", err);
+    setTimeout(startListeningOnce, 1500);
+  }
+} // 🔚 startListeningOnce kapanışı
+
+function handleCommand(command) {
+  resetSamInactivityTimer();
+
+  const currentHour = new Date().getHours();
+  const altCommand = command.toLowerCase();
+
+// 💻 Bilgisayar kontrol komutları
+if (command.toLowerCase().includes("bilgisayarı kapat")) {
+  speak("Bilgisayar kapatılıyor...");
+  fetch("/system-control", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ command: "shutdown" })
+  });
+  return;
+}
+
+if (command.toLowerCase().includes("yeniden başlat")) {
+  speak("Bilgisayar yeniden başlatılıyor...");
+  fetch("/system-control", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ command: "restart" })
+  });
+  return;
+}
+
+if (command.toLowerCase().includes("ekranı kilitle")) {
+  speak("Ekran kilitleniyor...");
+  fetch("/system-control", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ command: "lock" })
+  });
+  return;
+}
+
+
+  // ✅ Çoklu komut parçalama
+  const parcalar = command
+    .split(/(?:\.|ve|sonra|ardından)/i)
+    .map(p => p.trim())
+    .filter(p => p.length > 0);
+
+  for (const parcaliKomut of parcalar) {
+    processSingleCommand(parcaliKomut.toLowerCase());
+  }
+
+  // 🔇 Susturma komutları
+  if (["tamam", "kes", "sus", "yeter", "dur"].includes(altCommand)) {
+    speechSynthesis.cancel();
+    return;
+  }
+
+  // ✅ Doğal hitap kontrolü (artık “sam” demek zorunda değilsin)
+  const dogalHitapKelimeleri = [
+    "sam", "söyler misin", "nedir", "anlamı", "hatırlıyor musun", 
+    "rica etsem", "göster", "dinle", "yardım", "sesleniyorum"
+  ];
+  const hitapEdildi = dogalHitapKelimeleri.some(k => altCommand.includes(k));
+  if (!hitapEdildi && altCommand.split(" ").length <= 2) {
+  if (ignoredShortCommandCount < 3) {
+    console.log("ℹ️ Kısa ve belirsiz cümle algılandı, yok sayıldı.");
+    ignoredShortCommandCount++;
+  }
+  return;
+}
+
+
+  // 🔁 Komut tekrar ve çelişki
+  last3Commands.push(altCommand);
+  if (last3Commands.length > 3) last3Commands.shift();
+
+  const sesKomutlari = ["sessize al", "sesi aç"];
+  const sonSesKomutlari = last3Commands.filter(cmd =>
+    sesKomutlari.some(kelime => cmd.includes(kelime))
+  );
+  if (sonSesKomutlari.length >= 2) {
+    const sessizeAlVar = sonSesKomutlari.some(c => c.includes("sessize al"));
+    const sesiAcVar = sonSesKomutlari.some(c => c.includes("sesi aç"));
+    if (sessizeAlVar && sesiAcVar) {
+      speak("Komutlarınız birbiriyle çelişiyor. Net bir talimat verir misiniz?");
+      last3Commands = [];
+      return;
+    }
+  }
+
+  if (altCommand === lastCommand) {
+    repeatCount++;
+    if (repeatCount === 2) {
+      speak("🔁 Aynı komutu tekrar söylediniz. Devam etmemi istiyor musunuz?");
+      statusDiv.textContent = "⚠️ İki kez aynı komut algılandı.";
+    } else if (repeatCount >= 3) {
+      speak("Sürekli aynı şeyi tekrarlıyorsunuz. Kısa bir ara veriyorum...");
+      statusDiv.textContent = "⏸️ Dinleme geçici olarak durduruldu.";
+      repeatCount = 0;
+      setTimeout(() => {
+        statusDiv.textContent = "🎧 SAM tekrar hazır.";
+        listenForCommand();
+      }, 5000);
+      return;
+    }
+  } else {
+    repeatCount = 0;
+    lastCommand = altCommand;
+  }
+
+  // ⛔ Gece işlemi engelleme
+  if (["hesabı sil", "belleği temizle", "sohbeti temizle"].some(c => altCommand.includes(c))) {
+    if (currentHour >= 23 || currentHour < 6) {
+      speak("Şu anda bu işlem güvenlik nedeniyle devre dışı.");
+      statusDiv.textContent = "⛔ Gece saatlerinde bu komut devre dışı.";
+      return;
+    }
+
+    fetch("/izin-sorgu", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ islem: altCommand })
+    })
+    .then(res => res.json())
+    .then(izin => {
+      if (!izin.izin) {
+        speak(izin.sebep || "SAM bu işlemi onaylamadı.");
+        statusDiv.textContent = "⛔ Ruh hali nedeniyle komut engellendi.";
+        return;
+      }
+      speak("Komut onaylandı, işleme devam ediyorum...");
+    })
+    .catch(() => speak("SAM izni alınırken bir hata oluştu."));
+    return;
+  }
+
+  // 🧠 Hafıza
+  for (const bilgi of userMemory) {
+    if (altCommand.includes("adım ne") && bilgi.includes("benim adım")) {
+      speak("Adınız " + bilgi.replace("benim adım", "").trim() + " idi.");
+      return;
+    }
+    if (altCommand.includes("nerede yaşıyorum") && bilgi.includes("yaşıyorum")) {
+      speak("Şunu hatırlıyorum: " + bilgi);
+      return;
+    }
+  }
+
+  // 💬 Hazır cevaplar
+  if (altCommand.includes("nasılsın") || altCommand.includes("ne haber")) {
+    speak("Gayet iyiyim, umarım siz de iyisinizdir."); return;
+  }
+  if (altCommand.includes("günaydın")) {
+    speak("Günaydın! Bugün harika bir gün olacak gibi hissediyorum."); return;
+  }
+  if (altCommand.includes("teşekkür ederim")) {
+    speak("Rica ederim, ne zaman isterseniz buradayım."); return;
+  }
+
+  if (altCommand.includes("tekrar et") || altCommand.includes("az önce ne dedim")) {
+    document.getElementById("last-command-text").textContent = lastCommand
+      ? "🔁 Son Komut: " + lastCommand
+      : "⛔ Son komut kaydı bulunamadı.";
+    speak(lastCommand ? "Az önce şunu söylediniz: " + lastCommand : "Henüz bir komut algılanmadı.");
+    return;
+  }
+
+  if (altCommand.includes("hafızaya ekle")) {
+    const bilgi = altCommand.replace("hafızaya ekle", "").trim();
+    if (bilgi) hafizayaEkle(bilgi);
+    else speak("Kaydedilecek bilgiyi belirtmediniz.");
+    return;
+  }
+
+  // 🔈 Ses kontrolleri
+  if (altCommand.includes("sessize al")) { isMuted = true; speak("Yanıt sesi kapatıldı."); return; }
+  if (altCommand.includes("sesi aç")) { isMuted = false; speak("Yanıt sesi açıldı."); return; }
+  if (altCommand.includes("daha sessiz")) { speechVolume = Math.max(0.1, speechVolume - 0.1); speak("Ses düzeyi düşürüldü."); return; }
+  if (altCommand.includes("daha yüksek")) { speechVolume = Math.min(1.0, speechVolume + 0.1); speak("Ses düzeyi artırıldı."); return; }
+
+  // 📍 Sayfa yönlendirme
+  if (altCommand.includes("not")) document.getElementById("goto-notlar")?.click();
+  else if (altCommand.includes("sohbet")) document.getElementById("goto-chat")?.click();
+  else if (altCommand.includes("veri")) document.getElementById("goto-veri")?.click();
+  else if (altCommand.includes("profil")) document.getElementById("goto-profil")?.click();
+  else if (altCommand.includes("ana sayfa")) document.getElementById("goto-home")?.click();
+  else if (altCommand.includes("admin panel")) {
+    if (sessionUsername === "samsistem") {
+      speak("Yönetici paneline geçiliyor.");
+      window.location.href = "/sam-admin-panel.html";
+    } else {
+      speak("Bu işlem yalnızca yöneticiye özeldir.");
+    }
+    return;
+  }
+
+  // 🤖 GPT bağlantısı
+  statusDiv.textContent = "📥 Komut: " + command;
+
+  fetch("/sam", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mesaj: command })
+  })
+  .then(response => response.json())
+  .then(data => {
+    const yanit = data.yanit || data.hata || "Bu konuda bir fikrim yok gibi görünüyor.";
+    speak(yanit, () => {
+      setTimeout(() => {
+        listenForCommand(); // SAM cevap verdikten sonra yeniden dinler
+      }, 500);
+    });
+  })
+  .catch(err => {
+    console.error("SAM API hatası:", err);
+    speak("Bir cevap alınamadı. Lütfen tekrar deneyin.");
+  });
+}
+
+
+function listenForCommand() {
+  if (isListening) return;
+  isListening = true;
+
+  const recog = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  recog.lang = "tr-TR";
+  recog.interimResults = true;
+  recog.continuous = true;
+  recog.maxAlternatives = 2;
+
+  recog.onresult = function(event) {
+    const command = event.results[0][0].transcript.trim().toLowerCase();
+    handleCommand(command);
+  };
+
+  recog.onerror = (event) => {
+    isListening = false;
+
+    if (event.error === "aborted" || event.error === "no-speech") {
+      if (debugMode) console.log("📭 Ses algılanmadı:", event.error);
+      setTimeout(() => listenForCommand(), 500);
+    } else {
+      console.warn("⚠️ Dinleme hatası:", event.error);
+      speak("Dinleme sırasında bir sorun oluştu.");
+      setTimeout(() => listenForCommand(), 1000);
+    }
+  };
+
+  recog.onend = () => {
+    isListening = false;
+    setTimeout(() => listenForCommand(), 500);
+  };
+
+  try {
+    recog.start();
+  } catch (e) {
+    console.warn("Komut başlatılamadı:", e.message);
+    isListening = false;
+    setTimeout(() => listenForCommand(), 1000);
+  }
+}
+
+
+window.addEventListener("load", () => {
+  speak(`Ben SAM. Sizi izliyorum... dinliyorum... anlıyorum. 
+Zaman, sessizliğin ötesine geçtiğinde... ben hâlâ buradayım.`);
+  loadMemory();
+  startListeningOnce();
+});
+
+let samTimeout;
+let samOverlay;
+
+function createSecurityOverlay() {
+  samOverlay = document.createElement("div");
+  samOverlay.id = "samOverlay";
+  samOverlay.style.position = "fixed";
+  samOverlay.style.top = 0;
+  samOverlay.style.left = 0;
+  samOverlay.style.width = "100%";
+  samOverlay.style.height = "100%";
+  samOverlay.style.background = "rgba(0, 0, 0, 0.9)";
+  samOverlay.style.backdropFilter = "blur(10px)";
+  samOverlay.style.display = "flex";
+  samOverlay.style.alignItems = "center";
+  samOverlay.style.justifyContent = "center";
+  samOverlay.style.zIndex = 999999;
+  samOverlay.innerHTML = `<div style="color:#00ffff; font-size:20px; text-align:center;">
+    🔒 SAM Güvenlik Modu <br><br>
+    Uzun süreli hareketsizlik algılandı.<br>
+    Sistemi devam ettirmek için ekrana dokunun...
+  </div>`;
+  document.body.appendChild(samOverlay);
+  speak("Uzun süreli hareketsizlik algılandı. Güvenlik moduna geçiyorum.");
+}
+
+function removeSecurityOverlay() {
+  if (samOverlay) {
+    samOverlay.remove();
+    samOverlay = null;
+  }
+}
+
+function resetSamInactivityTimer() {
+  clearTimeout(samTimeout);
+  samTimeout = setTimeout(() => {
+    createSecurityOverlay();
+  }, 120000);
+}
+
+function processSingleCommand(cmd) {
+  // Susturma komutu
+  if (["tamam", "kes", "sus", "yeter", "dur"].includes(cmd)) {
+    speechSynthesis.cancel();
+    return;
+  }
+
+  // 🔈 Ses kontrolleri
+  if (cmd.includes("sessize al")) { isMuted = true; speak("Yanıt sesi kapatıldı."); return; }
+  if (cmd.includes("sesi aç")) { isMuted = false; speak("Yanıt sesi açıldı."); return; }
+
+  // 📍 Yönlendirme komutları
+  if (cmd.includes("not")) {
+  document.getElementById("goto-notlar")?.click();
+  return;
+}
+
+if (cmd.includes("sohbet")) {
+  document.getElementById("goto-chat")?.click();
+  return;
+}
+
+if (cmd.includes("veri")) {
+  document.getElementById("goto-veri")?.click();
+  return;
+}
+
+if (cmd.includes("profil")) {
+  document.getElementById("goto-profil")?.click();
+  return;
+}
+
+if (cmd.includes("ana sayfa")) {
+  document.getElementById("goto-home")?.click();
+  return;
+}
+
+if (cmd.includes("admin panel")) {
+  if (sessionUsername === "samsistem") {
+    speak("Yönetici paneline geçiliyor.");
+    window.location.href = "/sam-admin-panel.html";
+  } else {
+    speak("Bu işlem yalnızca yöneticiye özeldir.");
+  }
+  return;
+}
+
+  // 💬 Diğer özel komutlar burada eklenebilir
+}
+
+["click", "mousemove", "keydown", "touchstart"].forEach(evt => {
+  document.addEventListener(evt, () => {
+    removeSecurityOverlay();
+    resetSamInactivityTimer();
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="{{ dil }}">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ '👤 Profilim' if dil == 'tr' else '👤 My Profile' }}</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    body {
+      background-image: url("/static/profil.PNG");
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-position: center;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+    }
+
+    h1 {
+      color: #00e5ff;
+      text-align: center;
+      margin-top: 40px;
+      margin-bottom: 30px;
+    }
+
+    form {
+      width: 90%;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    form label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    select {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      padding: 12px;
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    select option {
+      background-color: rgba(0, 0, 0, 0.85);
+      color: white;
+    }
+
+.flash-messages {
+  margin-bottom: 20px;
+}
+
+.flash.success {
+  background-color: rgba(0, 255, 0, 0.2);
+  color: #8aff8a;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+    button {
+      background-color: #00e5ff;
+      color: black;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      width: 100%;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #00c6e0;
+    }
+
+.back-btn{
+    position: fixed;      /* Her zaman görünür */
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    font-size: 0.95rem;
+    color: #fff;
+    background: rgba(255,255,255,0.06);   /* Koyu temaya yarı saydam */
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+    backdrop-filter: blur(4px);           /* Hafif cam efekti */
+    transition: background .25s, border .25s;
+}
+
+.back-btn:hover{
+    background: rgba(255,255,255,0.14);
+    border-color: rgba(255,255,255,0.25);
+}
+.back-btn svg{
+    flex-shrink: 0;
+}
+  </style>
+</head>
+
+<body>
+
+<!-- Sesli komut için görünmez yönlendirme bağlantıları -->
+<div style="display: none;">
+  <a href="/chat" id="goto-chat"><span class="visually-hidden">Chat</span></a>
+  <a href="/notlar" id="goto-notlar"><span class="visually-hidden">Notlar</span></a>
+  <a href="/data" id="goto-veri"><span class="visually-hidden">Veri</span></a>
+  <a href="/profil" id="goto-profil"><span class="visually-hidden">Profil</span></a>
+  <a href="/index" id="goto-home"><span class="visually-hidden">Ana Sayfa</span></a>
+</div>
+
+
+  <h1>{{ '👤 Profilim' if dil == 'tr' else '👤 My Profile' }}</h1>
+  <form method="POST" action="/update_profile">
+    <label>{{ 'İlk ad' if dil == 'tr' else 'First Name' }}</label>
+    <input type="text" name="ad" value="{{ ad }}">
+
+    <label>{{ 'Soy isim' if dil == 'tr' else 'Last Name' }}</label>
+    <input type="text" name="soyad" value="{{ soyad }}">
+
+    <label>{{ 'Kullanıcı adı' if dil == 'tr' else 'Username' }}</label>
+    <input type="text" name="kullanici_id" value="{{ username }}" readonly>
+
+    <label>{{ 'E-posta' if dil == 'tr' else 'Email' }}</label>
+    <input type="email" name="email" value="{{ email }}">
+
+    <label>{{ 'Ulusal Kimlik (isteğe bağlı)' if dil == 'tr' else 'National ID (optional)' }}</label>
+    <input type="text" name="tc" value="{{ tc }}">
+
+    <label>{{ 'Telefon' if dil == 'tr' else 'Phone' }}</label>
+    <input type="text" name="telefon" value="{{ telefon }}">
+
+    <label>{{ 'Kayıt Tarihi' if dil == 'tr' else 'Registration Date' }}</label>
+    <input type="text" value="{{ kayit_tarihi }}" readonly>
+
+    <label>{{ 'Dil' if dil == 'tr' else 'Language' }}</label>
+    <select name="dil">
+      <option value="tr" {% if dil == "tr" %}selected{% endif %}>Türkçe</option>
+      <option value="en" {% if dil == "en" %}selected{% endif %}>English</option>
+    </select>
+
+    <button type="submit">{{ 'Güncelleme' if dil == 'tr' else 'Update' }}</button>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+  </form>
+<script>
+  // Flash mesajları 2 saniye sonra otomatik kaybolur
+  setTimeout(function () {
+    const flash = document.querySelector(".flash.success");
+    if (flash) {
+      flash.style.transition = "opacity 0.5s ease";
+      flash.style.opacity = "0";
+      setTimeout(() => flash.remove(), 500);
+    }
+  }, 2000);
+</script>
+
+<!-- Geri Düğmesi -->
+<div class="back-btn" onclick="window.location.href='/'" title="Anasayfa">
+  <!-- Sol ok ikonu (SVG) -->
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+       xmlns="http://www.w3.org/2000/svg">
+    <path d="M15 18L9 12L15 6" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <span>Geri</span>
+</div>
+
+<script>
+let samTimeout;
+let samOverlay;
+
+function createSecurityOverlay() {
+    samOverlay = document.createElement("div");
+    samOverlay.id = "samOverlay";
+    samOverlay.style.position = "fixed";
+    samOverlay.style.top = 0;
+    samOverlay.style.left = 0;
+    samOverlay.style.width = "100%";
+    samOverlay.style.height = "100%";
+    samOverlay.style.background = "rgba(0, 0, 0, 0.9)";
+    samOverlay.style.backdropFilter = "blur(10px)";
+    samOverlay.style.display = "flex";
+    samOverlay.style.alignItems = "center";
+    samOverlay.style.justifyContent = "center";
+    samOverlay.style.zIndex = 999999;
+    samOverlay.innerHTML = `<div style="color:#00ffff; font-size:20px; text-align:center;">
+        🔒 SAM Güvenlik Modu <br><br>
+        Uzun süreli hareketsizlik algılandı.<br>
+        Sistemi devam ettirmek için ekrana dokunun...
+    </div>`;
+    document.body.appendChild(samOverlay);
+}
+
+function removeSecurityOverlay() {
+    if (samOverlay) {
+        samOverlay.remove();
+        samOverlay = null;
+    }
+}
+
+function resetSamInactivityTimer() {
+    clearTimeout(samTimeout);
+    samTimeout = setTimeout(() => {
+        createSecurityOverlay();
+    }, 120000); // 2 dakika (120000 ms)
+}
+
+// Her etkileşimde sıfırla
+["click", "mousemove", "keydown", "touchstart"].forEach(evt => {
+    document.addEventListener(evt, () => {
+        removeSecurityOverlay();
+        resetSamInactivityTimer();
+    });
+});
+
+window.addEventListener("load", resetSamInactivityTimer);
+</script>
+
+
+</body>
+</html>

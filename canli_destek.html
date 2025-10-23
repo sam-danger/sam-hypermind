@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>💬 Canlı Destek</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: url('/static/feedback_bg.png') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 80px auto 40px;
+      padding: 30px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 16px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 40px;
+      color: #fff;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #ddd;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 10px;
+      background: rgba(20, 20, 20, 0.5);
+      color: #fff;
+      resize: none;
+    }
+
+    button {
+      background-color: #444;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #666;
+    }
+
+
+
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: transparent;
+      border: 2px solid #555;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 18px;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+      line-height: 30px;
+      text-align: center;
+      z-index: 9999;
+    }
+
+    .back-btn:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        margin-top: 60px;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="back-btn" onclick="window.location.href='/index'">←</button>
+
+  <div class="container">
+    <h1>📬 Canlı Destek</h1>
+    <form method="POST" action="/canli-destek">
+      <label for="ad">Adınız Soyadınız</label>
+      <input type="text" id="ad" name="ad" required>
+
+      <label for="email">E-posta Adresiniz</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="mesaj">Mesajınız</label>
+      <textarea id="mesaj" name="mesaj" rows="5" required></textarea>
+
+      <button type="submit">Görüşü Gönder</button>
+    </form>
+  </div>
+
+ <script>
+  document.querySelector("form").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const form = this;
+    const formData = new FormData(form);
+
+    fetch("/canli-destek", {
+      method: "POST",
+      body: formData
+    })
+    .then(response => {
+      if (response.ok) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Teşekkürler!',
+          text: 'Mesajınız başarıyla gönderildi.',
+          timer: 2000,
+          showConfirmButton: false
+        });
+        form.reset();
+      } else {
+        throw new Error("Gönderim başarısız");
+      }
+    })
+    .catch(error => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Hata!',
+        text: 'Mesaj gönderilemedi. Lütfen tekrar deneyin.'
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

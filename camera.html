@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>📷 SAM Kamera Paneli</title>
+  <style>
+    :root {
+      --bg-color: #10151b;
+      --text-color: #f0f0f0;
+      --btn-bg: #1e2a38;
+      --btn-hover: #32475b;
+      --accent-color: #4da6ff;
+    }
+
+    body {
+      background: url('/static/camera.png') no-repeat center center fixed;
+      background-size: cover;
+      color: var(--text-color);
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      gap: 20px;
+      box-sizing: border-box;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: -1;
+    }
+
+    #notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      display: none;
+      z-index: 9999;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    h1 {
+      color: var(--accent-color);
+      font-size: 2.2em;
+      margin: 10px 0;
+    }
+
+    video {
+      width: 90%;
+      max-width: 900px;
+      aspect-ratio: 16 / 9;
+      border: 2px solid var(--accent-color);
+      border-radius: 12px;
+      background: #000;
+    }
+
+    #controls {
+      width: 90%;
+      max-width: 900px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    button, select {
+      background: var(--btn-bg);
+      border: none;
+      color: var(--text-color);
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1em;
+      text-align: center;
+      transition: background 0.2s ease;
+    }
+
+    button:hover, select:hover { background: var(--btn-hover); }
+
+    #record-indicator {
+      font-weight: bold;
+      color: red;
+      margin-top: 5px;
+    }
+
+    canvas { display: none; }
+
+    #gallery {
+      width: 90%;
+      max-width: 900px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .preview-item {
+      border: 2px solid var(--accent-color);
+      border-radius: 8px;
+      width: 150px;
+      height: 100px;
+      overflow: hidden;
+      cursor: pointer;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .preview-item img, .preview-item video {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+    }
+
+    #modal {
+      display: none;
+      position: fixed;
+      top:0; left:0;
+      width: 100%; height:100%;
+      background: rgba(0,0,0,0.9);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    #modal img, #modal video {
+      max-width: 90%;
+      max-height: 90%;
+      border: 3px solid var(--accent-color);
+      border-radius: 12px;
+    }
+
+    #modal-close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 30px;
+      color: red;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="notification"></div>
+
+<h1>📷 SAM Kamera Paneli</h1>
+<video id="video" autoplay playsinline></video>
+
+<div id="controls">
+  <button id="btn-toggle">🎬 Kamera Aç</button>
+  <button id="btn-photo">📸 Fotoğraf Çek</button>
+  <button id="btn-record">⏺️ Kayıt Başlat</button>
+  <button id="btn-stop">🛑 Kamerayı Kapat</button>
+  <button id="btn-flash">🔦 Fener</button>
+  <button id="btn-fullscreen">📺 Tam Ekran</button>
+  <button id="btn-clear">🗑️ Galeriyi Temizle</button>
+  <button id="btn-analyze">🤖 SAM Görsün ve Söylesin</button>
+  <select id="camera-select"></select>
+</div>
+
+<div id="record-indicator"></div>
+<canvas id="canvas"></canvas>
+<div id="gallery"></div>
+
+<div id="modal">
+  <span id="modal-close">✖</span>
+</div>
+
+<script>
+const notification = document.getElementById('notification');
+function showNotification(msg, duration = 3000) {
+  notification.textContent = msg;
+  notification.style.display = "block";
+  setTimeout(() => notification.style.display = "none", duration);
+}
+
+let video = document.getElementById('video');
+let canvas = document.getElementById('canvas');
+let cameraSelect = document.getElementById('camera-select');
+let btnToggle = document.getElementById('btn-toggle');
+let btnPhoto = document.getElementById('btn-photo');
+let btnRecord = document.getElementById('btn-record');
+let btnStop = document.getElementById('btn-stop');
+let btnFlash = document.getElementById('btn-flash');
+let btnFullscreen = document.getElementById('btn-fullscreen');
+let btnClear = document.getElementById('btn-clear');
+let btnAnalyze = document.getElementById('btn-analyze');
+let recordIndicator = document.getElementById('record-indicator');
+let gallery = document.getElementById('gallery');
+let modal = document.getElementById('modal');
+
+let stream = null;
+let mediaRecorder = null;
+let recordedChunks = [];
+let recording = false;
+
+// Kameraları listele
+async function listCameras() {
+  const devices = await navigator.mediaDevices.enumerateDevices();
+  const videoDevices = devices.filter(d => d.kind === 'videoinput');
+  cameraSelect.innerHTML = '';
+  videoDevices.forEach((device,index) => {
+    const option = document.createElement('option');
+    option.value = device.deviceId;
+    option.text = device.label || `Kamera ${index+1}`;
+    cameraSelect.appendChild(option);
+  });
+}
+
+// Kamera başlat
+async function startCamera(deviceId=null){
+  stopCamera();
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({ video: deviceId ? {deviceId:{exact:deviceId}} : true, audio:false });
+    video.srcObject = stream;
+    video.onloadedmetadata = () => {
+      video.play();
+      btnToggle.textContent = '🎬 Kamera Açık';
+      showNotification("Kamera başlatıldı ✅");
+    };
+  }catch(err){ showNotification('Kamera başlatılamadı: '+err.message); }
+}
+
+// Kamera durdur
+function stopCamera(){
+  if(stream){
+    stream.getTracks().forEach(track=>track.stop());
+    stream=null;
+    recording=false;
+    recordIndicator.textContent='';
+    btnToggle.textContent='🎬 Kamera Aç';
+    btnRecord.textContent='⏺️ Kayıt Başlat';
+    showNotification("Kamera kapatıldı 🛑");
+  }
+}
+
+// Fotoğraf çek
+function takePhoto(){
+  if(!stream) return showNotification('📷 Kamera açık değil!');
+  if(video.videoWidth===0 || video.videoHeight===0) return showNotification('Video henüz hazır değil');
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video,0,0,canvas.width,canvas.height);
+  const imgData = canvas.toDataURL('image/png');
+
+  const item = document.createElement('div');
+  item.className = 'preview-item';
+  const img = document.createElement('img');
+  img.src = imgData;
+  item.appendChild(img);
+  gallery.prepend(item);
+  item.onclick = () => showModal(imgData, 'image');
+
+  const a = document.createElement('a');
+  a.href = imgData;
+  a.download = 'sam_photo.png';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  showNotification("📸 Fotoğraf çekildi");
+}
+
+// Video kaydı toggle
+function toggleRecording() {
+  if(!stream) return showNotification('📹 Kamera açık değil!');
+  if(recording){
+    mediaRecorder.stop();
+    recording=false;
+    btnRecord.textContent='⏺️ Kayıt Başlat';
+    recordIndicator.textContent='';
+    showNotification("Kayıt durduruldu ⏹️");
+  } else {
+    recordedChunks=[];
+    mediaRecorder = new MediaRecorder(stream,{ mimeType:'video/webm; codecs=vp9' });
+    mediaRecorder.ondataavailable = e => { if(e.data.size>0) recordedChunks.push(e.data); };
+    mediaRecorder.onstop = ()=> {
+      const blob = new Blob(recordedChunks,{ type:'video/webm' });
+      const url = URL.createObjectURL(blob);
+
+      const item=document.createElement('div');
+      item.className='preview-item';
+      const vid=document.createElement('video');
+      vid.src=url; vid.controls=true;
+      item.appendChild(vid);
+      gallery.prepend(item);
+      item.onclick = ()=>showModal(url,'video');
+
+      const a=document.createElement('a');
+      a.href=url;
+      a.download='sam_record.webm';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    };
+    mediaRecorder.start();
+    recording=true;
+    btnRecord.textContent='⏹️ Kayıt Durdur';
+    recordIndicator.textContent='🔴 Kayıt Devam Ediyor...';
+    showNotification("Kayıt başladı 🔴");
+  }
+}
+
+// Flash toggle
+async function toggleFlash(){
+  if(!stream) return showNotification("📹 Kamera açık değil!");
+  try{
+    let track = stream.getVideoTracks()[0];
+    let caps = track.getCapabilities();
+    if(!caps.torch) return showNotification("Fener desteklenmiyor");
+    let settings = track.getSettings();
+    await track.applyConstraints({advanced:[{torch:!settings.torch}]}).then(()=>{ showNotification("Fener durumu değiştirildi 🔦"); });
+  }catch(err){ showNotification("Fener hatası: "+err.message); }
+}
+
+// Modal göster
+function showModal(src,type){
+  modal.innerHTML = '';
+  const close = document.createElement('span');
+  close.id='modal-close'; close.textContent='✖';
+  close.onclick = ()=>{ modal.style.display='none'; };
+  modal.appendChild(close);
+
+  if(type==='image'){
+    const img = document.createElement('img');
+    img.src=src;
+    modal.appendChild(img);
+  } else if(type==='video'){
+    const vid = document.createElement('video');
+    vid.src=src;
+    vid.controls=true;
+    vid.autoplay=true;
+    modal.appendChild(vid);
+  }
+  modal.style.display='flex';
+}
+
+// SAM analiz
+async function analyzeFrame(){
+  if(!stream) return showNotification("📹 Kamera açık değil!");
+  if(video.videoWidth===0 || video.videoHeight===0) return showNotification("Video henüz hazır değil");
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video,0,0,canvas.width,canvas.height);
+  const imageData = canvas.toDataURL('image/png');
+
+  try {
+    const res = await fetch('/analyze-camera-frame', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({image: imageData})
+    });
+    const data = await res.json();
+    speakText(data.message);
+    showNotification("🤖 SAM dedi ki: " + data.message, 5000);
+  } catch(err){
+    showNotification("Hata: "+err.message);
+  }
+}
+
+// Konuşma
+function speakText(text) {
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "tr-TR";
+  utterance.rate = 0.95;
+  utterance.pitch = 1.1;
+
+  const voices = speechSynthesis.getVoices();
+  const turkish = voices.find(v => v.lang.startsWith("tr"));
+  if (turkish) utterance.voice = turkish;
+
+  speechSynthesis.cancel();
+  speechSynthesis.speak(utterance);
+}
+
+// Event listener
+btnToggle.addEventListener('click',()=>{ stream?stopCamera():startCamera(cameraSelect.value); });
+btnStop.addEventListener('click', stopCamera);
+btnPhoto.addEventListener('click', takePhoto);
+btnRecord.addEventListener('click', toggleRecording);
+btnFlash.addEventListener('click', toggleFlash);
+btnFullscreen.addEventListener('click',()=>{ video.requestFullscreen?.(); });
+btnClear.addEventListener('click',()=>{ gallery.innerHTML=''; showNotification("Galeri temizlendi 🗑️"); });
+btnAnalyze.addEventListener('click', analyzeFrame);
+cameraSelect.addEventListener('change',()=>{ startCamera(cameraSelect.value); });
+
+listCameras();
+</script>
+
+<script>
+function samSpeak(text) {
+  const sentences = text.match(/[^.!?]+[.!?]+/g) || [text]; // Noktalara göre böl
+  let index = 0;
+
+  function speakNext() {
+    if (index < sentences.length) {
+      const utterance = new SpeechSynthesisUtterance(sentences[index].trim());
+      utterance.lang = "tr-TR";
+      utterance.rate = 0.95;
+      utterance.pitch = 1.1;
+      utterance.onend = () => {
+        index++;
+        speakNext(); // sıradaki cümleyi oku
+      };
+      speechSynthesis.speak(utterance);
+    }
+  }
+
+  speechSynthesis.cancel();
+  speakNext();
+}
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+Flask
+Flask-SQLAlchemy
+Flask-Login
+Flask-Mail
+Flask-SocketIO
+gunicorn
+eventlet
+python-dotenv
+requests

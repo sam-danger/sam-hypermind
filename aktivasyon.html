@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>🔐 Aktivasyon Durumu</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: url("/static/sam_register_bg.jpg") no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+      font-family: 'Roboto', sans-serif;
+      text-align: center;
+      padding-top: 100px;
+    }
+    .message-box {
+      background-color: rgba(0, 0, 0, 0.7);
+      display: inline-block;
+      padding: 30px 50px;
+      border-radius: 12px;
+      font-size: 18px;
+      box-shadow: 0 0 20px rgba(0,255,255,0.2);
+    }
+    .message-box h1 {
+      font-size: 26px;
+      margin-bottom: 20px;
+      color: #00ffff;
+    }
+    .message-box a {
+      display: inline-block;
+      margin-top: 20px;
+      color: #00ffff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .message-box a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="message-box">
+    {% if success %}
+      <h1>✅ Hesabınız başarıyla aktifleştirildi!</h1>
+      <p>Artık giriş yapabilirsiniz.</p>
+      <a href="/login">🔐 Giriş Sayfasına Git</a>
+    {% else %}
+      <h1>❌ Geçersiz veya süresi dolmuş bağlantı</h1>
+      <p>Bu aktivasyon bağlantısı artık geçerli değil.</p>
+      <a href="/register">🔁 Yeniden Kayıt Ol</a>
+    {% endif %}
+  </div>
+</body>
+</html>

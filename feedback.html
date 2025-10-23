@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>📬 Destek ve Geri Bildirim</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px 20px;
+      background: url('/static/feedback_bg.jpg') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      font-size: 26px;
+      text-align: center;
+      margin-bottom: 40px;
+      color: #fff;
+    }
+
+    h2 {
+      font-size: 20px;
+      color: #aaa;
+      margin-top: 40px;
+      margin-bottom: 12px;
+    }
+
+    .sss-item {
+      margin-bottom: 14px;
+      line-height: 1.6;
+      background-color: rgba(0, 0, 0, 0.35);
+      padding: 12px;
+      border-radius: 10px;
+    }
+
+    form {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 16px;
+      border: none;
+      border-radius: 10px;
+      background: rgba(30, 30, 30, 0.6);
+      color: #fff;
+      font-size: 15px;
+    }
+
+textarea {
+  resize: none; /* 🔧 Boyutlandırma kolunu devre dışı bırakır */
+}
+
+
+.geri-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  font-size: 16px;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 8px 14px;
+  border-radius: 8px;
+  color: #ccc;
+  transition: background 0.3s, color 0.3s;
+  z-index: 1000;
+  backdrop-filter: blur(6px);
+}
+
+.geri-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: transparent;
+    border: 2px solid #555;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 18px;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    line-height: 30px;
+    text-align: center;
+    z-index: 9999;
+}
+
+.back-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+
+.feedback-title {
+  margin-left: 780px; /* Sağa kayma miktarı */
+}
+
+    button {
+      background-color: #444;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #666;
+    }
+
+    @media screen and (max-width: 600px) {
+      h1 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sesli komut için görünmez yönlendirme bağlantıları -->
+<div style="display: none;">
+  <a href="/chat" id="goto-chat"><span class="visually-hidden">Chat</span></a>
+  <a href="/notlar" id="goto-notlar"><span class="visually-hidden">Notlar</span></a>
+  <a href="/data" id="goto-veri"><span class="visually-hidden">Veri</span></a>
+  <a href="/profil" id="goto-profil"><span class="visually-hidden">Profil</span></a>
+  <a href="/index" id="goto-home"><span class="visually-hidden">Ana Sayfa</span></a>
+</div>
+
+
+<button class="back-btn" onclick="window.location.href='/index'">←</button>
+
+
+  <h1>📬 Destek ve Geri Bildirim</h1>
+
+  <section class="sss">
+    <h2>❓ Sık Sorulan Sorular</h2>
+    <div class="sss-item"><strong>Giriş yapamıyorum:</strong> Şifrenizi unuttuysanız, giriş ekranındaki “Şifremi Unuttum” seçeneğini kullanabilirsiniz.</div>
+    <div class="sss-item"><strong>Hesabımı nasıl silerim?:</strong> Ayarlar > Hesap ve Oturum menüsünden hesabınızı kalıcı olarak silebilirsiniz.</div>
+    <div class="sss-item"><strong>Verilerim güvende mi?:</strong> Tüm verileriniz şifreli ve GDPR uyumludur.</div>
+    <div class="sss-item"><strong>Canlı destek saatleri nedir?:</strong> Canlı destek haftanın her günü 09:00–23:00 saatleri arasında aktiftir.</div>
+    <div class="sss-item"><strong>Bildirimlerimi nasıl kapatırım?:</strong> Profil ayarlarından e-posta ve sistem bildirimlerini kontrol edebilirsiniz.</div>
+    <div class="sss-item"><strong>Destek ekibi ne zaman dönüş yapar?:</strong> Genellikle 24 saat içinde geri dönüş sağlanır.</div>
+    <div class="sss-item"><strong>Şikayetimi nereye bildirebilirim?:</strong> Aşağıdaki geri bildirim formunu kullanarak destek ekibimize ulaşabilirsiniz.</div>
+  </section>
+
+  <section class="feedback-form">
+    <h2 class="feedback-title">💡 Geri Bildirim Gönder</h2>
+    <form id="feedbackForm">
+      <input type="text" name="adsoyad" placeholder="Adınız Soyadınız" required>
+      <input type="email" name="email" placeholder="E-posta Adresiniz" required>
+      <textarea name="feedback" rows="5" placeholder="Görüş veya önerinizi buraya yazın..." required></textarea>
+      <button type="submit">Gönder</button>
+    </form>
+  </section>
+
+  <script>
+    document.getElementById("feedbackForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+
+      fetch("/submit-feedback", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => {
+        if (response.ok) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Teşekkürler!',
+            text: 'Geri bildiriminiz başarıyla gönderildi.',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          this.reset();
+        } else {
+          throw new Error("Gönderim başarısız");
+        }
+      })
+      .catch(error => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Hata!',
+          text: 'Geri bildirim gönderilemedi. Lütfen tekrar deneyin.'
+        });
+      });
+    });
+  </script>
+
+<script>
+let samTimeout;
+let samOverlay;
+
+function createSecurityOverlay() {
+    samOverlay = document.createElement("div");
+    samOverlay.id = "samOverlay";
+    samOverlay.style.position = "fixed";
+    samOverlay.style.top = 0;
+    samOverlay.style.left = 0;
+    samOverlay.style.width = "100%";
+    samOverlay.style.height = "100%";
+    samOverlay.style.background = "rgba(0, 0, 0, 0.9)";
+    samOverlay.style.backdropFilter = "blur(10px)";
+    samOverlay.style.display = "flex";
+    samOverlay.style.alignItems = "center";
+    samOverlay.style.justifyContent = "center";
+    samOverlay.style.zIndex = 999999;
+    samOverlay.innerHTML = `<div style="color:#00ffff; font-size:20px; text-align:center;">
+        🔒 SAM Güvenlik Modu <br><br>
+        Uzun süreli hareketsizlik algılandı.<br>
+        Sistemi devam ettirmek için ekrana dokunun...
+    </div>`;
+    document.body.appendChild(samOverlay);
+}
+
+function removeSecurityOverlay() {
+    if (samOverlay) {
+        samOverlay.remove();
+        samOverlay = null;
+    }
+}
+
+function resetSamInactivityTimer() {
+    clearTimeout(samTimeout);
+    samTimeout = setTimeout(() => {
+        createSecurityOverlay();
+    }, 120000); // 2 dakika (120000 ms)
+}
+
+// Her etkileşimde sıfırla
+["click", "mousemove", "keydown", "touchstart"].forEach(evt => {
+    document.addEventListener(evt, () => {
+        removeSecurityOverlay();
+        resetSamInactivityTimer();
+    });
+});
+
+window.addEventListener("load", resetSamInactivityTimer);
+</script>
+
+
+</body>
+</html>

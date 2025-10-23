@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="{{ dil }}">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ 'Güvenlik Ayarları' if dil == 'tr' else 'Security Settings' }}</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    body {
+      background-image: url("/static/security-bg.jpg");
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-position: center;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+    }
+
+    .container, .scroll-wrapper {
+      background: transparent;
+      padding: 30px;
+      box-shadow: none;
+      border: none;
+    }
+
+    form, .card, .twofa-section .card {
+      background-color: rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      will-change: transform;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 15px;
+    }
+
+    input[type="password"],
+    input[type="email"],
+    input[type="tel"] {
+      background-color: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: white;
+      padding: 10px;
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    button, .twofa-save-button {
+      background-color: #00e5ff;
+      color: black;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      width: 100%;
+      font-weight: bold;
+      transition: 0.3s ease;
+      cursor: pointer;
+    }
+
+    button:hover, .twofa-save-button:hover {
+      background-color: #00c6e0;
+    }
+
+    h1, h3 {
+      color: #00e5ff;
+    }
+
+    .flash-messages {
+      margin-bottom: 20px;
+    }
+
+    .scroll-wrapper {
+      height: 111vh;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    .flash.success {
+      background-color: rgba(0, 255, 0, 0.2);
+      color: #8aff8a;
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .flash.error {
+      background-color: rgba(255, 0, 0, 0.2);
+      color: #ff8a8a;
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .back-btn{
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      font-size: 0.95rem;
+      color: #fff;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+      backdrop-filter: blur(4px);
+      transition: background .25s, border .25s;
+    }
+
+    .back-btn:hover{
+      background: rgba(255,255,255,0.14);
+      border-color: rgba(255,255,255,0.25);
+    }
+
+    .back-btn svg{
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- Sesli komut için görünmez yönlendirme bağlantıları -->
+<div style="display: none;">
+  <a href="/chat" id="goto-chat"><span class="visually-hidden">Chat</span></a>
+  <a href="/notlar" id="goto-notlar"><span class="visually-hidden">Notlar</span></a>
+  <a href="/data" id="goto-veri"><span class="visually-hidden">Veri</span></a>
+  <a href="/profil" id="goto-profil"><span class="visually-hidden">Profil</span></a>
+  <a href="/index" id="goto-home"><span class="visually-hidden">Ana Sayfa</span></a>
+</div>
+
+
+
+  <!-- Geri Düğmesi -->
+  <div class="back-btn" onclick="window.location.href='/'" title="{{ 'Geri' if dil == 'tr' else 'Back' }}">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span>{{ 'Geri' if dil == 'tr' else 'Back' }}</span>
+  </div>
+
+  <div class="scroll-wrapper">
+    <div class="container">
+      <h1>{{ '🔐 Güvenlik Ayarları' if dil == 'tr' else '🔐 Security Settings' }}</h1>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-messages">
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <!-- Şifre Güncelleme Formu -->
+      <form method="POST" action="/update_password">
+        <label>{{ 'Mevcut Şifre' if dil == 'tr' else 'Current Password' }}</label>
+        <input type="password" name="old_password" required>
+
+        <label>{{ 'Yeni Şifre' if dil == 'tr' else 'New Password' }}</label>
+        <input type="password" name="new_password" required>
+
+        <button type="submit">{{ 'Şifreyi Güncelle' if dil == 'tr' else 'Update Password' }}</button>
+      </form>
+
+      <!-- Giriş Bilgileri -->
+      <div class="card">
+        <h3>{{ '📌 Son Giriş Bilgileri' if dil == 'tr' else '📌 Last Login Info' }}</h3>
+        <p><strong>{{ 'IP Adresi' if dil == 'tr' else 'IP Address' }}:</strong> 192.168.1.1</p>
+        <p><strong>{{ 'Giriş Tarihi' if dil == 'tr' else 'Login Time' }}:</strong> 2024-07-01 12:30</p>
+        <p><strong>{{ 'Cihaz' if dil == 'tr' else 'Device' }}:</strong> Chrome (Windows)</p>
+      </div>
+
+      <!-- 2FA Ayarları -->
+      <div class="twofa-section">
+        <h3>{{ '🛡️ İki Aşamalı Doğrulama (2FA)' if dil == 'tr' else '🛡️ Two-Factor Authentication (2FA)' }}</h3>
+        <p>{{ 'Hesabınızı korumak için ekstra bir güvenlik katmanı ekleyin.' if dil == 'tr' else 'Add an extra layer of security to your account.' }}</p>
+
+        <div class="card">
+          <p><strong>{{ '📱 SMS ile 2FA' if dil == 'tr' else '📱 2FA via SMS' }}</strong></p>
+          <p>{{ 'Telefonunuza doğrulama kodu gönderilecektir.' if dil == 'tr' else 'A verification code will be sent to your phone.' }}</p>
+          <input type="tel" name="telefon" placeholder="{{ '05xx xxx xx xx' if dil == 'tr' else '+90 5XX XXX XX XX' }}">
+        </div>
+
+        <div class="card">
+          <p><strong>{{ '📧 Mail ile 2FA' if dil == 'tr' else '📧 2FA via Email' }}</strong></p>
+          <p>{{ 'Girişlerde bu e-posta adresine kod gönderilir.' if dil == 'tr' else 'A code will be sent to this email during login.' }}</p>
+          <input type="email" name="mail_2fa" placeholder="ornek@eposta.com">
+        </div>
+
+        <button class="twofa-save-button">{{ 'Kaydet ve Etkinleştir' if dil == 'tr' else 'Save and Activate' }}</button>
+      </div>
+
+      <script>
+        setTimeout(() => {
+          const flashMessages = document.querySelector('.flash-messages');
+          if (flashMessages) {
+            flashMessages.style.transition = 'opacity 0.5s ease';
+            flashMessages.style.opacity = '0';
+            setTimeout(() => flashMessages.remove(), 500);
+          }
+        }, 2000);
+      </script>
+    </div>
+  </div>
+
+<script>
+let samTimeout;
+let samOverlay;
+
+function createSecurityOverlay() {
+    samOverlay = document.createElement("div");
+    samOverlay.id = "samOverlay";
+    samOverlay.style.position = "fixed";
+    samOverlay.style.top = 0;
+    samOverlay.style.left = 0;
+    samOverlay.style.width = "100%";
+    samOverlay.style.height = "100%";
+    samOverlay.style.background = "rgba(0, 0, 0, 0.9)";
+    samOverlay.style.backdropFilter = "blur(10px)";
+    samOverlay.style.display = "flex";
+    samOverlay.style.alignItems = "center";
+    samOverlay.style.justifyContent = "center";
+    samOverlay.style.zIndex = 999999;
+    samOverlay.innerHTML = `<div style="color:#00ffff; font-size:20px; text-align:center;">
+        🔒 SAM Güvenlik Modu <br><br>
+        Uzun süreli hareketsizlik algılandı.<br>
+        Sistemi devam ettirmek için ekrana dokunun...
+    </div>`;
+    document.body.appendChild(samOverlay);
+}
+
+function removeSecurityOverlay() {
+    if (samOverlay) {
+        samOverlay.remove();
+        samOverlay = null;
+    }
+}
+
+function resetSamInactivityTimer() {
+    clearTimeout(samTimeout);
+    samTimeout = setTimeout(() => {
+        createSecurityOverlay();
+    }, 120000); // 2 dakika (120000 ms)
+}
+
+// Her etkileşimde sıfırla
+["click", "mousemove", "keydown", "touchstart"].forEach(evt => {
+    document.addEventListener(evt, () => {
+        removeSecurityOverlay();
+        resetSamInactivityTimer();
+    });
+});
+
+window.addEventListener("load", resetSamInactivityTimer);
+</script>
+
+</body>
+</html>

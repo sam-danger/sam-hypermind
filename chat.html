@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>SAM | Chat</title>
+
+  <link rel="stylesheet" href="/static/chat-style.css">
+  <script src="/static/chat-script.js" defer></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Poppins&display=swap" rel="stylesheet">
+
+  <style>
+    .admin-link {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: #00ffcc;
+      padding: 8px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      z-index: 999;
+      border: 1px solid #00ffcc;
+      transition: background-color 0.3s ease;
+    }
+
+    .admin-link:hover { background-color: rgba(0, 0, 0, 0.9); }
+
+    .dev-mode {
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      background-color: rgba(255, 0, 0, 0.7);
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-weight: bold;
+      z-index: 999;
+      border: 1px solid #ff0000;
+      font-size: 13px;
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 15px;
+        z-index: 9999;
+        box-shadow: 0 0 12px rgba(0,255,255,0.2);
+        animation: fadein 0.3s, fadeout 0.5s 2.5s;
+    }
+
+    @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
+    @keyframes fadeout { from { opacity: 1; } to { opacity: 0; } }
+
+body.normal-mode { background: linear-gradient(135deg, #000000 0%, #001a1a 100%); color: #00ffcc; }
+body.dev-mode { background: linear-gradient(135deg, #0a0014 0%, #160030 100%); color: #ff77ff; }
+
+.msg-time { font-size: 0.75em; color: #888; margin-left: 8px; }
+.message { margin: 6px 0; padding: 8px 12px; border-radius: 8px; }
+.message.user { background-color: rgba(0,255,255,0.1); text-align: left; }
+.message.sam { background-color: rgba(255,0,255,0.1); text-align: left; }
+.message.favori { background-color: rgba(255,255,0,0.1); border-left: 3px solid gold; }
+.msg-tools button { background: none; border: none; cursor: pointer; margin-left: 5px; font-size: 0.9em; }
+
+.message.user { float: right; background-color: rgba(0,255,255,0.2); }
+.message.sam { float: left; background-color: rgba(255,0,255,0.2); }
+#chat { display: flex; flex-direction: column; gap: 8px; padding: 10px; overflow-y: auto; }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.message { animation: slideIn 0.3s ease; }
+
+  </style>
+
+  <script>
+    if (window.location.protocol === "file:") {
+      alert("⚠️ Bu sayfa doğru çalışmayabilir. Doğru bağlantıya yönlendiriliyorsunuz...");
+      window.location.href = "http://127.0.0.1:5000/chat";
+    }
+
+    function showToast(message) {
+        const toast = document.createElement("div");
+        toast.className = "toast";
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => { toast.remove(); }, 3000);
+    }
+
+    function getCurrentTime() {
+      const now = new Date();
+      return now.getHours().toString().padStart(2,'0') + ":" +
+             now.getMinutes().toString().padStart(2,'0');
+    }
+
+    function appendMessageWithTools(sender, text) {
+      const chatBox = document.getElementById("chat");
+      const time = getCurrentTime();
+
+      const div = document.createElement("div");
+      div.classList.add("message", sender);
+      div.innerHTML = `<strong>${sender==="sam"?"SAM":"Sen"}:</strong> ${text} <span class="msg-time">${time}</span>
+        <span class="msg-tools">
+          <button class="msg-fav" title="Favori ekle">⭐</button>
+          <button class="msg-delete" title="Mesajı sil">🗑️</button>
+        </span>`;
+      chatBox.appendChild(div);
+
+      div.querySelector(".msg-delete").addEventListener("click", ()=>{ div.remove(); });
+      div.querySelector(".msg-fav").addEventListener("click", ()=>{ div.classList.toggle("favori"); });
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    async function internettenAra(kelime) {
+      try {
+        const response = await fetch("/internet-search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: kelime })
+        });
+        const result = await response.json();
+        if(result.success) appendMessageWithTools("sam", `🌐 İnternetten bulduğum bilgi:\n${result.summary}`);
+        else appendMessageWithTools("sam", "❌ İnternetten bilgi alınamadı.");
+      } catch { appendMessageWithTools("sam", "❌ İnternet araması başarısız."); }
+    }
+
+    function sendMessage() {
+  const input = document.getElementById("input");
+  const text = input.value.trim();
+  if(!text) return;
+
+  // TEMİZLE KOMUTU
+  if(text.toLowerCase() === "temizle") {
+    document.getElementById("chat").innerHTML = "";
+    input.value = "";
+    return;
+  }
+
+      appendMessageWithTools("user", text);
+
+      fetch("/send_message", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ user_input: text })
+      })
+      .then(res=>res.json())
+      .then(data=>{ appendMessageWithTools("sam", data.yanit); })
+      .catch(err=>console.error("Gönderim hatası:", err));
+
+      input.value = "";
+    }
+
+    document.addEventListener("DOMContentLoaded", ()=>{ 
+      const input = document.getElementById("input"); 
+      input.addEventListener("keydown", function(event){ 
+        if(event.key === "Enter"){ event.preventDefault(); sendMessage(); } 
+      }); 
+    });
+
+    function startListening() {
+      const micStatus = document.getElementById("mic-status");
+      micStatus.style.display = "block";
+      setTimeout(()=>{ micStatus.style.display="none"; showToast("🎙️ Mikrofon kapatıldı"); },3000);
+    }
+function toggleTheme() {
+  document.body.classList.toggle("normal-mode");
+  document.body.classList.toggle("dev-mode");
+}
+  </script>
+</head>
+<body>
+
+<!-- Sesli komut için görünmez yönlendirme bağlantıları -->
+<div style="display: none;">
+  <a href="/chat" id="goto-chat"><span class="visually-hidden">Chat</span></a>
+  <a href="/notlar" id="goto-notlar"><span class="visually-hidden">Notlar</span></a>
+  <a href="/data" id="goto-veri"><span class="visually-hidden">Veri</span></a>
+  <a href="/profil" id="goto-profil"><span class="visually-hidden">Profil</span></a>
+  <a href="/index" id="goto-home"><span class="visually-hidden">Ana Sayfa</span></a>
+</div>
+
+<!-- Mikrofon Durumu -->
+<div id="mic-status" style="text-align:center; color:#ff4f4f; font-weight:bold; margin-bottom:10px; display:none;">
+  🎙️ Dinleniyor... Lütfen konuşun
+</div>
+
+<!-- Chat Konteyneri -->
+<div id="chat-container">
+  <div id="giris-mesaji">Yükleniyor...</div>
+
+  <!-- Chat Geçmişi -->
+  <div id="chat"></div>
+
+  <!-- 💬 Sistem Mesaj Kutusu -->
+  <div id="sistemMesajiKutusu" style="display:none; background: rgba(0,0,0,0.6); color: #4aff4a; margin: 10px 0; padding: 12px;  border-radius: 6px;">
+      📢 <span id="sistemMesajiText"></span>
+  </div>
+
+  <!-- Giriş Alanı -->
+  <div id="input-container">
+    <input type="text" id="input" placeholder="Her Şey Senin İradene Bağlı..." />
+    <button onclick="sendMessage()">Gönder</button>
+    <button onclick="startListening()" id="mic-button" title="Konuşarak Komut Ver">
+      <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" fill="#ff4f4f" viewBox="0 0 24 24">
+        <path d="M12 15q-.825 0-1.413-.588Q10 13.825 10 13V6q0-.825.587-1.413Q11.175 4 12 4t1.413.587Q14 5.175 14 6v7q0 .825-.587 1.412Q12.825 15 12 15Zm-1 5v-2.075q-2.575-.35-4.288-2.275Q5 13.725 5 11h2q0 2.075 1.463 3.538Q9.925 16 12 16t3.537-1.462Q17 13.075 17 11h2q0 2.725-1.712 4.65Q15.575 17.575 13 17.925V20Z"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- Bağlantı Göstergesi -->
+<div class="status-indicator">
+  <span id="connection-status">🔗 Bağlantı: <span id="status-text">Kontrol ediliyor...</span></span>
+</div>
+
+<!-- Arşiv Kutusu -->
+<div id="archiveContainer" style="display:none;"></div>
+
+
+<!-- 🔘 Geliştirici Modu Butonu -->
+<div id="devModeToggle"
+     style="position: fixed; top: 100px; right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #00ffcc;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid #00ffcc;
+            z-index: 999;">
+  🧩 Geliştirici Modu: Kapalı
+</div>
+
+<script>
+let devMode = false;
+
+const devToggle = document.getElementById("devModeToggle");
+devToggle.addEventListener("click", () => {
+  devMode = !devMode;
+
+  if (devMode) {
+    devToggle.textContent = "🧠 Geliştirici Modu: Aktif";
+    devToggle.style.background = "rgba(255, 0, 100, 0.8)";
+    devToggle.style.color = "#fff";
+    document.body.style.background =
+      "linear-gradient(135deg, #0a0014 0%, #160030 100%)";
+    showToast("🧠 Derin Öğrenme Modu Etkinleştirildi");
+  } else {
+    devToggle.textContent = "🧩 Geliştirici Modu: Kapalı";
+    devToggle.style.background = "rgba(0, 0, 0, 0.7)";
+    devToggle.style.color = "#00ffcc";
+    document.body.style.background =
+      "linear-gradient(135deg, #000000 0%, #001a1a 100%)";
+    showToast("🧩 Normal moda dönüldü");
+  }
+});
+
+// ✅ sendMessage fonksiyonunu devMode parametresiyle güncelleyelim:
+function sendMessage() {
+  const input = document.getElementById("input");
+  const text = input.value.trim();
+  if (!text) return;
+
+  fetch("/send_message", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_input: text, mode: devMode ? "dev" : "normal" })
+  })
+  .then(res => res.json())
+  .then(data => {
+    const chatBox = document.getElementById("chat");
+
+    const userDiv = document.createElement("div");
+    userDiv.innerHTML = `<strong>Sen:</strong> ${text}`;
+    userDiv.classList.add("message", "user");
+    chatBox.appendChild(userDiv);
+
+    const botDiv = document.createElement("div");
+    botDiv.innerHTML = `<strong>SAM:</strong> ${data.yanit}`;
+    botDiv.classList.add("message", "sam");
+    chatBox.appendChild(botDiv);
+
+    input.value = "";
+    chatBox.scrollTop = chatBox.scrollHeight;
+  })
+  .catch(err => console.error("Gönderim hatası:", err));
+}
+
+function getCurrentTime() {
+    const now = new Date();
+    return now.getHours().toString().padStart(2,'0') + ":" +
+           now.getMinutes().toString().padStart(2,'0');
+}
+
+// sendMessage() içinde userDiv ve botDiv oluştururken:
+const time = getCurrentTime();
+userDiv.innerHTML = `<strong>Sen:</strong> ${text} <span class="msg-time">${time}</span>`;
+botDiv.innerHTML = `<strong>SAM:</strong> ${data.yanit} <span class="msg-time">${time}</span>`;
+
+</script>
+
+
+<script>
+fetch("/sistem-mesajlari")
+  .then(res => res.json())
+  .then(data => {
+    if (data && data.length > 0) {
+      let index = 0;
+      const kutu = document.getElementById("sistemMesajiKutusu");
+      const yazi = document.getElementById("sistemMesajiText");
+
+      const goster = () => {
+        if (index >= data.length) {
+          kutu.style.display = "none";
+          return;
+        }
+
+        const mesaj = data[index];
+        yazi.innerText = mesaj.mesaj;
+        kutu.style.display = "block";
+
+        fetch("/goruldu", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mesaj_id: mesaj.id })
+        });
+
+        setTimeout(() => {
+          index++;
+          goster();
+        }, 10000);
+      };
+
+      goster();
+    }
+  });
+
+async function internettenAra(kelime) {
+  const response = await fetch("/internet-search", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query: kelime })
+  });
+
+  const result = await response.json();
+
+  if (result.success) {
+    appendMessageWithTools("sam", `🌐 İnternetten bulduğum bilgi:\n\n${result.summary}`);
+    speak("İnternetten bulduğum bilgi: " + result.summary);
+  } else {
+    appendMessageWithTools("sam", "❌ İnternetten bilgi alınamadı.");
+    speak("İnternetten bilgi alınamadı.");
+  }
+}
+
+function sendMessage() {
+  const input = document.getElementById("input");
+  const text = input.value.trim();
+  if (!text) return;
+
+  if (text.toLowerCase().includes("ara:")) {
+    const aranan = text.split("ara:")[1].trim();
+    internettenAra(aranan);
+    return;
+  }
+
+  fetch("/send_message", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_input: text })
+  })
+  .then(res => res.json())
+  .then(data => {
+    const chatBox = document.getElementById("chat");
+
+    const userDiv = document.createElement("div");
+    userDiv.innerHTML = `<strong>Sen:</strong> ${text}`;
+    userDiv.classList.add("message", "user");
+    chatBox.appendChild(userDiv);
+
+    const botDiv = document.createElement("div");
+    botDiv.innerHTML = `<strong>SAM:</strong> ${data.yanit}`;
+    botDiv.classList.add("message", "sam");
+    chatBox.appendChild(botDiv);
+
+    input.value = "";
+    chatBox.scrollTop = chatBox.scrollHeight;
+  })
+  .catch(err => console.error("Gönderim hatası:", err));
+}
+
+// ✅ Enter tuşu ile mesaj gönderme
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("input");
+  input.addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      sendMessage();
+    }
+  });
+});
+if(Notification.permission !== "granted") Notification.requestPermission();
+
+function notify(msg) {
+  if(Notification.permission === "granted") {
+    new Notification("SAM", { body: msg });
+  }
+}
+</script>
+
+</body>
+</html>

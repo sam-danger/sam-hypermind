@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Blockchain Security — Real-time Panel (Onay Gerekiyor)</title>
+<link rel="icon" href="data:," />
+<style>
+:root{--neon:#00ffc8;--accent:#00e0ff;--bg:#020b10}
+html,body{height:100%;margin:0;font-family:Inter,Segoe UI,system-ui,Arial;background:radial-gradient(circle at 10% 10%, #001018,#000);color:var(--neon)}
+.container{max-width:1200px;margin:14px auto;padding:14px}
+.header{display:flex;align-items:center;gap:12px}
+h1{margin:0;color:var(--accent)}
+.controls{margin-left:auto;display:flex;gap:8px;align-items:center}
+.panel{background:rgba(0,0,0,0.45);border:1px solid rgba(0,255,200,0.06);padding:12px;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.6)}
+.grid{display:grid;grid-template-columns:360px 1fr;gap:12px;margin-top:14px;align-items:start}
+.small{font-size:12px;opacity:.9;color:#9df}
+#log{height:420px;overflow:auto;padding:8px;font-family:monospace;font-size:13px;background:rgba(0,0,0,0.12);border-radius:8px}
+.statRow{display:flex;gap:8px;margin-top:8px}
+.stat{flex:1;background:rgba(0,0,0,0.25);padding:8px;border-radius:6px;text-align:center;font-weight:700}
+.canvasWrap{padding:8px}
+button.btn{background:transparent;border:1px solid rgba(0,255,200,0.12);padding:8px 10px;border-radius:8px;color:var(--neon);cursor:pointer}
+button.primary{background:linear-gradient(90deg,var(--neon),var(--accent));color:#001;border:none}
+footer{margin-top:12px;color:#6ff;font-size:12px}
+
+/* Consent modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:9999}
+.consentCard{width:720px;background:#02121a;border:1px solid rgba(0,255,200,0.06);padding:18px;border-radius:12px;color:var(--neon)}
+.consentText{max-height:340px;overflow:auto;background:rgba(0,0,0,0.06);padding:10px;border-radius:8px;margin-bottom:12px;font-size:13px;color:#9df}
+.consentActions{display:flex;gap:8px;align-items:center;justify-content:flex-end}
+.checkboxRow{display:flex;gap:8px;align-items:center}
+.note{font-size:12px;color:#ffdd99;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="panel" style="display:flex;align-items:center;gap:12px">
+      <div style="font-weight:800">SAM</div>
+      <div>
+        <h1>Blockchain Security — Real-time</h1>
+        <div class="small">Gerçek zamanlı blok zinciri izleme & anomali tespiti</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <input id="wsUrl" type="text" placeholder="wss://your-provider.ws/PROJECT_ID" style="width:420px;padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--neon)">
+      <button id="connectBtn" class="btn primary" disabled>Bağlan</button>
+      <button id="disconnectBtn" class="btn">Kes</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- LEFT -->
+    <div>
+      <div class="panel">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="font-weight:800">Kontroller</div>
+        </div>
+        <hr style="border-color:rgba(0,255,200,0.03);margin:8px 0">
+        <div class="small">Bağlantı: <span id="connState">Kapalı</span></div>
+        <div class="statRow">
+          <div class="stat" id="blocksCount">Bloklar: 0</div>
+          <div class="stat" id="pendingCount">Pending: 0</div>
+        </div>
+        <div style="margin-top:8px">
+          <label class="small">Tehdit Eşiği (ETH)</label>
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <input id="bigTransferThreshold" type="number" value="50" style="width:100%;padding:6px;border-radius:6px;background:transparent;border:1px solid rgba(255,255,255,0.05);color:var(--neon)">
+            <span class="small">ETH üstü işlem şüpheli kabul edilsin</span>
+          </div>
+        </div>
+        <hr style="border-color:rgba(0,255,200,0.03);margin:8px 0">
+        <div class="small">Filtreler</div>
+        <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+          <input id="watchNewContracts" type="checkbox" checked> <label class="small">Yeni kontratları izle</label>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:12px">
+        <div style="font-weight:800">Sistem Bilgileri</div>
+        <hr style="border-color:rgba(0,255,200,0.03);margin:8px 0">
+        <div id="systemInfo" class="small">—</div>
+      </div>
+
+      <div class="panel" style="margin-top:12px">
+        <div style="font-weight:800">Loglar (en son yukarıda)</div>
+        <div id="log" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div>
+      <div class="panel">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="font-weight:800">Durum Panosu</div>
+          <div style="margin-left:auto" class="small">Tehdit Skoru: <strong id="threatScore">0</strong></div>
+        </div>
+        <hr style="border-color:rgba(0,255,200,0.03);margin:8px 0">
+        <div class="statRow">
+          <div class="stat" id="largeTxCnt">Büyük İşlem: 0</div>
+          <div class="stat" id="contractCnt">Yeni Kontrat: 0</div>
+          <div class="stat" id="highGasCnt">Yüksek Gas: 0</div>
+        </div>
+        <div class="canvasWrap">
+          <canvas id="threatChart" width="800" height="200"></canvas>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:12px">
+        <div style="font-weight:800">Ayrıntılar / Son Olay</div>
+        <hr style="border-color:rgba(0,255,200,0.03);margin:8px 0">
+        <pre id="lastDetail" style="white-space:pre-wrap;color:#9ff;font-size:13px"></pre>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div>Not: Bağlanmak için geçerli bir WebSocket RPC URL'si girin (Alchemy/Infura/QuickNode veya kendi node'unuz). Tarayıcıdan doğrudan bağlantı sağlayıcı kotanıza bağlıdır.</div>
+  </footer>
+</div>
+
+<!-- Consent modal -->
+<div id="consentModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="consentTitle">
+  <div class="consentCard">
+    <h2 id="consentTitle" style="margin:0;color:var(--accent)">ÖNEMLİ — Kullanım ve Gizlilik Onayı</h2>
+    <div class="consentText">
+      <p><strong>ÖNEMLİ:</strong> Bu panel <strong>gerçek zamanlı blok zinciri verilerini</strong> kullanır. Tarayıcıdan doğrudan bir WebSocket RPC sağlayıcısına bağlanacaksınız.</p>
+      <ul>
+        <li>Çalışması için <code>wss://...</code> biçiminde bir WebSocket RPC URL gereklidir.</li>
+        <li>Tarayıcıdan doğrudan büyük trafik yapılması durumunda sağlayıcınız kota ve ücret uygulayabilir.</li>
+        <li>Kod yalnızca olayları tespit ve raporlar; kötü amaçlı eylemleri kolaylaştırmak amacıyla kullanılmamalıdır. Yasalara ve sağlayıcı kullanım koşullarına uyun.</li>
+        <li>API anahtarlarınızı güvenli tutun; herkese açık bilgisayarlarda paylaşmayın.</li>
+      </ul>
+      <p class="note">Bu uyarıyı anladığımı ve riskleri kabul ettiğimi beyan ediyorum.</p>
+    </div>
+    <div class="consentActions">
+      <div class="checkboxRow">
+        <input id="consentCheckboxMain" type="checkbox" />
+        <label for="consentCheckboxMain" class="small">Okudum, anladım ve kabul ediyorum</label>
+      </div>
+      <button id="consentDeclineBtn" class="btn">Vazgeç</button>
+      <button id="consentAcceptBtn" class="btn primary" disabled>Tamam</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.10.0/dist/ethers.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// --- UI elemanları
+const connectBtn = document.getElementById('connectBtn');
+const disconnectBtn = document.getElementById('disconnectBtn');
+const wsInput = document.getElementById('wsUrl');
+const connStateEl = document.getElementById('connState');
+const logEl = document.getElementById('log');
+const consentModal = document.getElementById('consentModal');
+const consentCheckbox = document.getElementById('consentCheckboxMain');
+const consentAcceptBtn = document.getElementById('consentAcceptBtn');
+const consentDeclineBtn = document.getElementById('consentDeclineBtn');
+
+// --- onay mantığı (localStorage ile sakla, 24 saat)
+const CONSENT_KEY = 'sam_ws_consent_v1';
+const CONSENT_EXPIRE_KEY = 'sam_ws_consent_expire';
+
+function storeConsent(val){
+  if(val){
+    localStorage.setItem(CONSENT_KEY,'1');
+    const expire = Date.now() + 24*60*60*1000;
+    localStorage.setItem(CONSENT_EXPIRE_KEY, expire);
+  } else {
+    localStorage.removeItem(CONSENT_KEY);
+    localStorage.removeItem(CONSENT_EXPIRE_KEY);
+  }
+}
+
+function checkConsentStored(){
+  const expire = localStorage.getItem(CONSENT_EXPIRE_KEY);
+  if(!expire) return false;
+  if(Date.now() > Number(expire)){
+    storeConsent(false);
+    return false;
+  }
+  return localStorage.getItem(CONSENT_KEY) === '1';
+}
+
+// --- modal başlangıç durumu
+if(checkConsentStored()){
+  consentModal.style.display='none';
+  connectBtn.disabled = false;
+} else {
+  consentModal.style.display='flex';
+  connectBtn.disabled = true;
+}
+
+consentCheckbox.addEventListener('change', ()=> {
+  consentAcceptBtn.disabled = !consentCheckbox.checked;
+});
+
+consentAcceptBtn.addEventListener('click', ()=> {
+  if(!consentCheckbox.checked) return;
+  storeConsent(true);
+  consentModal.style.display='none';
+  connectBtn.disabled = false;
+  addLog('Kullanıcı onayı verildi. Bağlanabilirsiniz.', '#0f0');
+});
+
+consentDeclineBtn.addEventListener('click', ()=> {
+  storeConsent(false);
+  consentModal.style.display='flex';
+  connectBtn.disabled = true;
+  addLog('Kullanıcı onayı reddetti. İşlem iptal edildi.', '#ffcc66');
+});
+
+// --- log helper
+function addLog(msg, color='#9ff'){
+  const p = document.createElement('div');
+  p.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+  p.style.color = color;
+  logEl.prepend(p);
+  while(logEl.childElementCount > 300) logEl.removeChild(logEl.lastChild);
+}
+
+// --- sistem info
+function updateSystemInfo(){
+  const ua = navigator.userAgent;
+  const cores = navigator.hardwareConcurrency || 'Bilinmiyor';
+  document.getElementById('systemInfo').textContent =
+    `Tarayıcı: ${ua.split(') ')[0]} | CPU çekirdek: ${cores}`;
+  setTimeout(updateSystemInfo, 60000);
+}
+updateSystemInfo();
+
+// --- chart init
+const ctx = document.getElementById('threatChart').getContext('2d');
+const threatChart = new Chart(ctx, {
+  type:'line',
+  data:{labels:[], datasets:[{label:'Threat', data:[], borderColor:'#ff5555', tension:0.3, fill:false}]},
+  options:{scales:{y:{min:0,max:100}}}
+});
+function pushThreat(value){
+  const label = new Date().toLocaleTimeString();
+  threatChart.data.labels.push(label);
+  threatChart.data.datasets[0].data.push(Math.round(value));
+  if(threatChart.data.labels.length > 60){
+    threatChart.data.labels.shift();
+    threatChart.data.datasets[0].data.shift();
+  }
+  threatChart.update();
+  document.getElementById('threatScore').textContent = Math.round(value);
+}
+
+// --- gerçek zamanlı provider (ethers WebSocket)
+let provider = null;
+let stats = { largeTx:0, newContracts:0, highGas:0 };
+let lastPending = 0;
+
+function disconnectProvider(){
+  try{
+    if(provider && provider._websocket){
+      provider.removeAllListeners();
+      provider._websocket.close();
+    } else if(provider){
+      provider.removeAllListeners();
+    }
+  }catch(e){}
+  provider = null;
+  connStateEl.textContent = 'Kapalı';
+  addLog('Bağlantı kesildi.', '#ffcc66');
+  connectBtn.disabled = false;
+}
+
+// analyze heuristics
+async function analyzeTx(tx){
+  try{
+    const valueEth = Number(ethers.formatEther(tx.value || '0'));
+    const threshold = Number(document.getElementById('bigTransferThreshold').value || 50);
+    if(valueEth >= threshold){
+      addLog(`Büyük transfer: ${valueEth} ETH — from ${tx.from} to ${tx.to || '[contract creation]'}`, '#ff5555');
+      stats.largeTx++;
+      document.getElementById('lastDetail').textContent = JSON.stringify(tx, null, 2);
+    }
+    if(!tx.to && document.getElementById('watchNewContracts').checked){
+      addLog(`Yeni kontrat oluşturma: from ${tx.from} — hash ${tx.hash}`, '#ffcc66');
+      stats.newContracts++;
+      document.getElementById('lastDetail').textContent = JSON.stringify(tx, null, 2);
+    }
+    const gasPriceGwei = tx.gasPrice ? Number(ethers.formatUnits(tx.gasPrice, 'gwei')) : 0;
+    if(gasPriceGwei > 200){
+      addLog(`Yüksek gas: ${gasPriceGwei} gwei — tx ${tx.hash}`, '#ff8866');
+      stats.highGas++;
+    }
+  }catch(e){ console.warn(e); }
+}
+
+// connect logic
+async function connectProvider(wsUrl){
+  if(!checkConsentStored()){
+    addLog('Lütfen önce onay verin.', '#ffcc66');
+    consentModal.style.display='flex';
+    return;
+  }
+  if(!wsUrl){ addLog('WS URL girin.', '#ffcc66'); return; }
+  connectBtn.disabled = true;
+  try{
+    addLog('WebSocket bağlantısı kuruluyor...', '#9ff');
+    provider = new ethers.WebSocketProvider(wsUrl);
+
+    provider._websocket.addEventListener('open', () => {
+      addLog('WS bağlantısı açıldı.', '#0f0');
+      connStateEl.textContent = 'Açık';
+      connectBtn.disabled = true;
+    });
+    provider._websocket.addEventListener('close', () => {
+      addLog('WS bağlantısı kapandı.', '#ffcc66');
+      connStateEl.textContent = 'Kapalı';
+      connectBtn.disabled = false;
+    });
+
+    provider.on('block', async (blockNumber) => {
+      document.getElementById('blocksCount').textContent = `Bloklar: ${blockNumber}`;
+      try{
+        const block = await provider.getBlockWithTransactions(blockNumber);
+        let bigCount = 0;
+        for(const tx of block.transactions){
+          const val = Number(ethers.formatEther(tx.value || '0'));
+          if(val >= Number(document.getElementById('bigTransferThreshold').value)) bigCount++;
+        }
+        if(bigCount > 3){
+          addLog(`Blok ${blockNumber}: ${bigCount} adet büyük transfer tespit edildi.`, '#ff5555');
+          stats.largeTx += bigCount;
+        }
+      }catch(e){}
+    });
+
+    provider.on('pending', async (txHash) => {
+      lastPending++;
+      document.getElementById('pendingCount').textContent = `Pending: ${lastPending}`;
+      // rastgele çekme ile limitleri azalt
+      if(Math.random() > 0.6){
+        try{
+          const tx = await provider.getTransaction(txHash);
+          if(tx) analyzeTx(tx);
+        }catch(e){}
+      }
+    });
+
+    // Score hesaplama periyodik
+    setInterval(()=>{
+      const metrics = {
+        largeTx: Math.min(100, stats.largeTx * 5),
+        newContracts: Math.min(100, stats.newContracts * 8),
+        highGas: Math.min(100, stats.highGas * 4),
+        burst: Math.min(100, Math.random()*20)
+      };
+      const weights = {largeTx:0.4, newContracts:0.25, highGas:0.2, burst:0.15};
+      const raw = (metrics.largeTx*weights.largeTx + metrics.newContracts*weights.newContracts + metrics.highGas*weights.highGas + metrics.burst*weights.burst);
+      const score = Math.min(100, raw);
+      pushThreat(score);
+
+      // UI counters
+      document.getElementById('largeTxCnt').textContent = `Büyük İşlem: ${Math.round(metrics.largeTx/5)}`;
+      document.getElementById('contractCnt').textContent = `Yeni Kontrat: ${Math.round(metrics.newContracts/8)}`;
+      document.getElementById('highGasCnt').textContent = `Yüksek Gas: ${Math.round(metrics.highGas/4)}`;
+
+      // hafif azalma
+      stats.largeTx = Math.max(0, stats.largeTx - 1);
+      stats.newContracts = Math.max(0, stats.newContracts - 1);
+      stats.highGas = Math.max(0, stats.highGas - 1);
+    }, 3000);
+
+  }catch(err){
+    addLog('Bağlantı hatası: ' + (err.message||err), '#ff5555');
+    connectBtn.disabled = false;
+  }
+}
+
+// UI butonları
+connectBtn.addEventListener('click', ()=> connectProvider(wsInput.value.trim()));
+disconnectBtn.addEventListener('click', ()=> disconnectProvider());
+
+// placeholder yardım
+wsInput.placeholder = 'wss://eth-mainnet.ws.alchemyapi.io/v2/YOUR_KEY veya wss://mainnet.infura.io/ws/v3/YOUR_KEY';
+
+</script>
+</body>
+</html>

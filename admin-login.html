@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SAM Admin Login</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: url('static/sam_admin_bg.png') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: #ffffff;
+        }
+
+        .title {
+            font-size: 26px;
+            color: #00e0ff;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-shadow: 0 0 8px rgba(0,224,255,0.3);
+            text-align: center;
+        }
+
+        .login-box {
+            background: rgba(0, 0, 0, 0.35);
+            padding: 40px;
+            border-radius: 12px;
+            width: 350px;
+            backdrop-filter: none;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(100, 255, 255, 0.1);
+        }
+
+        .login-box h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #00e0ff;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .login-box input[type="text"],
+        .login-box input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .login-box input:focus {
+            border-color: #00e0ff;
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            color: #ffffff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .login-box button:hover {
+            transform: scale(1.03);
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ORTALANMIŞ ÜST BAŞLIK -->
+    <div class="title">SAM Neural Operations Interface</div>
+
+    <!-- GİRİŞ FORMU -->
+    <div class="login-box">
+        <h2>Sam Control</h2>
+        <form action="/admin-login" method="POST">
+            <input type="text" name="identifier" placeholder="Secret Protocol" required>
+            <input type="password" name="password" placeholder="ID" required>
+            <button type="submit">Giriş Yap</button>
+        </form>
+    </div>
+
+</body>
+</html>

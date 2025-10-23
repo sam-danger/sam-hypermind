@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1 id="durum">🎙️ Dinleme bekleniyor...</h1>
+<script>
+const durum = document.getElementById("durum");
+const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+rec.lang = "tr-TR";
+rec.continuous = true;
+
+rec.onresult = e => {
+  const text = e.results[e.results.length - 1][0].transcript;
+  durum.textContent = "✅ Algılandı: " + text;
+};
+
+rec.onerror = e => durum.textContent = "❌ Hata: " + e.error;
+
+rec.onstart = () => durum.textContent = "🎙️ Dinleniyor...";
+rec.start();
+</script>
+</body>
+</html>

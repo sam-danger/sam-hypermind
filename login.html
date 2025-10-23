@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAM Giriş Paneli</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; font-family: 'Poppins', sans-serif; box-sizing: border-box; }
+    body {
+      height: 100vh;
+      background: url('/static/sam_login_bg.jpg') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(5px);
+      padding: 20px;
+    }
+    .login-container {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      padding: 40px 30px;
+      width: 100%;
+      max-width: 400px;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+    }
+    .login-container h2 {
+      font-size: 26px;
+      text-align: center;
+      background: linear-gradient(90deg, #111111, #000000);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .login-container h2 i { color: #b8860b; font-size: 22px; margin-right: 10px; }
+    .login-container input {
+      width: 100%; padding: 12px; margin-bottom: 20px;
+      border: none; border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff; font-size: 14px;
+    }
+    .login-container input::placeholder { color: #ccc; }
+    .login-container button {
+      width: 100%; padding: 12px;
+      background-color: #00ffff; color: #000;
+      font-weight: bold; border: none;
+      border-radius: 8px; cursor: pointer;
+      font-size: 16px; transition: 0.3s;
+    }
+    .login-container button:hover { background-color: #00dddd; }
+    .login-container .links {
+      text-align: center; margin-top: 20px;
+    }
+    .login-container .links a {
+      font-size: 13px; text-decoration: none; margin: 0 10px;
+      color: #111111; font-weight: 500;
+      text-shadow: 0 0 1px rgba(0, 0, 0, 0.4);
+    }
+    .login-container .links a:hover { text-decoration: underline; }
+    .error-message {
+      background-color: rgba(255, 0, 0, 0.2);
+      padding: 10px; margin-bottom: 15px;
+      border-radius: 8px; color: #ffaaaa;
+      font-size: 13px; display: none;
+    }
+    .remember-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #ccc;
+  margin-bottom: 20px;
+  user-select: none;
+}
+
+.remember-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #00ffff;
+  margin: 0;
+  cursor: pointer;
+}
+    @media screen and (max-width: 480px) {
+      .login-container { padding: 30px 20px; font-size: 14px; }
+      .login-container h2 { font-size: 20px; }
+      .login-container input, .login-container button { padding: 10px; font-size: 13px; }
+    }
+  </style>
+
+<style>
+.flash-messages {
+  position: fixed;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  width: auto;
+  max-width: 400px;
+}
+
+.flash-messages .alert {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 10px 15px;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.15);
+  margin-bottom: 10px;
+  animation: fadeInOut 4s ease-in-out forwards;
+}
+
+.alert-success { border-left: 4px solid #4CAF50; }
+.alert-danger { border-left: 4px solid #F44336; }
+.alert-warning { border-left: 4px solid #FFC107; }
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translate(-50%, -10px); }
+  10% { opacity: 1; transform: translate(-50%, 0); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -10px); }
+}
+</style>
+
+</head>
+<body>
+  <form class="login-container" method="POST" action="/login">
+    <h2><i class="fas fa-lock"></i> SAM.. </h2>
+
+    <div id="flash-message" class="error-message"></div>
+
+    <input type="text" name="identifier" placeholder="Kullanıcı adı veya e-posta" required autofocus>
+    <input type="password" name="password" placeholder="Şifre" required>
+
+    <label class="remember-checkbox">
+  <input type="checkbox" name="remember" id="remember">
+  <span>Oturumumu hatırla</span>
+</label>
+
+    <button type="submit">Giriş Yap</button>
+
+    <div class="links">
+      <a href="/reset-password">Şifremi unuttum</a>
+      <a href="/register">Kayıt Ol</a>
+    </div>
+
+<div style="text-align: center; margin-top: 30px; font-size: 14px; color: #00ffff; font-weight: bold;">
+  SAM {{ app_version }}
+</div>
+
+
+  </form>
+
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const msg = params.get("msg");
+    if (msg) {
+      const box = document.getElementById("flash-message");
+      box.textContent = decodeURIComponent(msg);
+      box.style.display = "block";
+      setTimeout(() => {
+        box.style.transition = "opacity 0.5s ease";
+        box.style.opacity = 0;
+        setTimeout(() => box.remove(), 500);
+      }, 3000);
+    }
+  </script>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+</body>
+</html>

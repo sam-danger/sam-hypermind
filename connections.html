@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bağlantılar</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url('/static/baglantılar.png') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Segoe UI', sans-serif;
+      color: #ffffff;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      margin: 40px 20px 30px 20px;
+    }
+
+    .icon {
+  color: #ff6464;
+  font-size: 30px;
+  filter: drop-shadow(0 0 4px rgba(255, 80, 80, 0.6));
+}
+
+.title-text {
+  font-weight: bold;
+  font-size: 28px;
+  background: linear-gradient(45deg, #ff4f4f, #3ca0ff);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.4);
+}
+
+    .connection-item {
+  display: block; /* EKLENDİ */
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.35);
+  padding: 16px 24px;
+  margin: 12px auto;
+  width: 90%;
+  max-width: 600px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-size: 16px;
+  transition: 0.3s ease;
+  text-align: center;
+  box-shadow: 0 0 12px rgba(0,0,0,0.4);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+    .connection-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 16px rgba(0,0,0,0.6);
+    }
+
+    @media screen and (max-width: 768px) {
+      h1 {
+        font-size: 22px;
+      }
+
+      .connection-item {
+        font-size: 15px;
+        padding: 14px 20px;
+      }
+    }
+
+ .back-btn{
+      position:fixed;top:20px;left:20px;
+      display:flex;align-items:center;gap:6px;
+      padding:8px 14px;font-size:.95rem;
+      color:#fff;background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:8px;cursor:pointer;
+      backdrop-filter:blur(4px);
+      transition:background .25s,border .25s;
+    }
+    .back-btn:hover{
+      background:rgba(255,255,255,.14);
+      border-color:rgba(255,255,255,.25);
+    }
+    .back-btn svg{flex-shrink:0;}
+    .back-btn span{
+      color:#ff5555;
+      text-shadow:0 0 6px rgba(255,85,85,.6);
+    }
+  </style>
+
+
+</head>
+
+<body>
+
+<!-- Sesli komut için görünmez yönlendirme bağlantıları -->
+<div style="display: none;">
+  <a href="/chat" id="goto-chat"><span class="visually-hidden">Chat</span></a>
+  <a href="/notlar" id="goto-notlar"><span class="visually-hidden">Notlar</span></a>
+  <a href="/data" id="goto-veri"><span class="visually-hidden">Veri</span></a>
+  <a href="/profil" id="goto-profil"><span class="visually-hidden">Profil</span></a>
+  <a href="/index" id="goto-home"><span class="visually-hidden">Ana Sayfa</span></a>
+</div>
+
+  <!-- Geri Düğmesi artık body içinde -->
+  <div class="back-btn" onclick="window.history.back()" title="Geri">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+         xmlns="http://www.w3.org/2000/svg">
+      <path d="M15 18L9 12L15 6" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span>Geri</span>
+  </div>
+
+  <h1><span class="icon">🔗</span> <span class="title-text">Bağlantılar</span></h1>
+
+<div class="connection-item">
+  {% if google_email %}
+  <p>✅ Bağlı Google Hesabı: {{ google_email }}</p>
+  <a href="/disconnect-google">🔌 Bağlantıyı Kaldır</a>
+{% else %}
+  <a href="/connect-google">🔗 Google ile Bağlan</a>
+{% endif %}
+</div>
+
+
+<!-- GitHub Hesabı -->
+<div class="connection-item">
+  {% if session.get("github_connected") %}
+    ✅ GitHub hesabın bağlı: <strong style="color: white;">{{ session.get('github_email') }}</strong>
+    <a href="/disconnect-github" class="disconnect-link">Bağlantıyı Kaldır</a>
+  {% else %}
+     <a href="/connect-github" class="connection-link">GitHub ile Bağlan</a>
+  {% endif %}
+</div>
+<a class="connection-item" href="https://discord.com/oauth2/authorize" target="_blank">Discord Entegrasyonu</a>
+<a class="connection-item" href="https://www.facebook.com/dialog/oauth" target="_blank">Facebook Hesabı</a>
+<a class="connection-item" href="https://www.instagram.com/accounts/login/" target="_blank">Instagram Hesabı</a>
+<a class="connection-item" href="https://appleid.apple.com/auth/authorize" target="_blank">Apple ile Bağlan</a>
+<a class="connection-item" href="/api-key">API Anahtarı Oluştur</a>
+
+</body>
+</html>

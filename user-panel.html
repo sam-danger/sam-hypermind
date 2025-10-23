@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>SAM Kullanıcı Paneli</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0f0f0f;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 80px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0,255,255,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #00ffff;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h3 {
+            color: #00cfff;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        ul li {
+            margin-bottom: 5px;
+            color: #ccc;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .button-container a {
+            display: inline-block;
+            margin: 10px;
+            padding: 12px 24px;
+            background: #00c6ff;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .button-container a:hover {
+            background: #007acc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Hoş geldin, {{ username }}</h2>
+
+        <div class="section">
+            <h3>🗂️ Son 3 Sohbet</h3>
+            <ul>
+                {% for item in chat_history %}
+                    <li>{{ item.content }}</li>
+                {% else %}
+                    <li>Henüz sohbet yok.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="section">
+            <h3>🧠 Bellek Özeti</h3>
+            <ul>
+                {% for entry in memory %}
+                    <li>{{ entry.user_input }} → {{ entry.bot_reply }}</li>
+                {% else %}
+                    <li>Henüz hafıza kaydı yok.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="button-container">
+            <a href="/chat">💬 Sohbete Başla</a>
+            <a href="/logout">🚪 Çıkış Yap</a>
+        </div>
+    </div>
+</body>
+</html>

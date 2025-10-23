@@ -1,0 +1,297 @@
+<!-- 🛠 SAM YÖNETİCİ PANELİ (GELİŞTİRİLMİŞ TAM SÜRÜM) -->
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"/>
+<title>SAM Yönetici Paneli</title>
+<style>
+    html, body { margin: 0; padding: 0; height: 100%; overflow-y: auto; }
+    body {
+        background: url('/static/sam_admin_bg.png') no-repeat center center fixed;
+        background-size: cover;
+        font-family: 'Segoe UI', sans-serif;
+        color: #e0e0e0;
+    }
+    .container {
+        max-width: 1200px;
+        margin: 60px auto;
+        padding: 20px;
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+    }
+    h2 {
+        text-align: center;
+        font-weight: 600;
+        font-size: 30px;
+        letter-spacing: 1px;
+        margin-bottom: 40px;
+        background: linear-gradient(90deg, #e6e6e6, #ffffff, #c0c0c0);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 6px rgba(255, 255, 255, 0.1);
+    }
+    .panel-section {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: space-between;
+    }
+    .panel-box {
+        flex: 1 1 calc(48% - 10px);
+        background-color: rgba(10, 10, 10, 0.5);
+        padding: 20px;
+        border-radius: 8px;
+        min-width: 300px;
+    }
+    .panel-box.full { flex: 1 1 100%; }
+    .panel-box h3 { color: #dddddd; margin-bottom: 10px; }
+    textarea, input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        background-color: rgba(20, 20, 20, 0.6);
+        color: #f2f2f2;
+        border: 1px solid rgba(100, 100, 100, 0.3);
+        border-radius: 4px;
+        resize: none !important;
+    }
+    .button {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 10px 20px;
+        background-color: rgba(30, 30, 30, 0.6);
+        border: 1px solid rgba(100, 100, 100, 0.3);
+        border-radius: 5px;
+        color: #e0e0e0;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    .button:hover { background-color: rgba(60, 60, 60, 0.8); color: #ffffff; }
+    .btn-destek { display: inline-block; background-color: #1f8ef1; color: #fff; padding: 10px 18px; text-decoration: none; border-radius: 8px; margin-top: 10px; font-weight: bold; transition: 0.3s ease; }
+    .btn-destek:hover { background-color: #0c6cd4; }
+    .danger { background-color: #5c1c1c !important; border-color: #a33; }
+    .log-box {
+        max-height: 250px;
+        overflow-y: auto;
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255,255,255,0.1);
+        padding: 10px;
+        border-radius: 6px;
+        font-size: 13px;
+        color: #b5b5b5;
+        white-space: pre-wrap;
+    }
+    @media (max-width: 768px) { .panel-box { flex: 1 1 100%; } }
+</style>
+</head>
+<body style="overflow-y: auto;">
+<div class="container">
+    <h2>🛠 SAM YÖNETİCİ PANELİ</h2>
+
+    <div class="panel-section">
+        <div class="panel-box">
+            <h3>📨 Canlı Destek & Geri Bildirimler</h3>
+            <p>Kullanıcılardan gelen destek mesajlarını yönet.</p>
+            <a href="/admin/destek" target="_blank" class="btn-destek">Yönetim Sayfasına Git</a>
+        </div>
+
+        <div class="panel-box">
+            <h3>📄 Temizlik Logları</h3>
+            <p>Temizlik işlemlerinin geçmişini görüntüle.</p>
+            <a href="/temizlik_loglari" target="_blank" class="btn-destek">Log Sayfası</a>
+        </div>
+
+        <div class="panel-box">
+            <h3>🧠 Bellek Yönetimi</h3>
+            <p>Bellek kontrol, silme veya optimizasyon işlemleri burada yapılır.</p>
+            <button class="button">Belleği Optimize Et</button>
+        </div>
+
+        <div class="panel-box">
+            <h3>🎨 Tema / Görsel Ayar Kontrolü</h3>
+            <p>Gerçek zamanlı arayüz teması değiştir.</p>
+            <button class="button" onclick="toggleTheme()">Tema Değiştir</button>
+        </div>
+
+        <div class="panel-box">
+            <h3>📂 Dosya Yöneticisi</h3>
+            <p>/static/uploads klasöründeki dosyaları görüntüle ve sil.</p>
+            <button class="button" onclick="manageFiles()">Dosyaları Yönet</button>
+        </div>
+
+        <div class="panel-box">
+            <h3>🔍 AI Arama Günlüğü</h3>
+            <p>Kullanıcıların "ara:" komutlarını listele.</p>
+            <button class="button" onclick="loadAILog()">Günlüğü Görüntüle</button>
+        </div>
+
+        <div class="panel-box">
+            <h3>💾 Veritabanı Yönetimi</h3>
+            <p>SQLite tablo boyutları ve otomatik backup işlemleri.</p>
+            <button class="button" onclick="manageDatabase()">Veritabanını Yönet</button>
+        </div>
+
+        <div class="panel-box">
+            <h3>🧬 Ruh Hali Analizi Raporu</h3>
+            <p>Son 24 saatteki kullanıcı duygu durum grafiği.</p>
+            <button class="button" onclick="loadMoodReport()">Raporu Görüntüle</button>
+        </div>
+
+        <div class="panel-box">
+            <h3>🕓 Zamanlanmış Görevler</h3>
+            <p>Günlük temizlik, e-posta bildirimleri ve sistem bakımı.</p>
+            <button class="button" onclick="manageScheduledTasks()">Görevleri Yönet</button>
+        </div>
+
+        <div class="panel-box full">
+            <h3>📢 Sistem Mesaj Konsolu</h3>
+            <form method="POST" action="/admin/sistem-mesaji" id="sistemMesajiForm">
+                <textarea name="sistem_mesaji" placeholder="Yeni sistem mesajı yaz..." required></textarea>
+                <button type="submit" class="button">Gönder</button>
+            </form>
+        </div>
+
+        <div class="panel-box full">
+            <h3>🧾 Gerçek Zamanlı Günlük (Live Log Viewer)</h3>
+            <div id="liveLogs" class="log-box">Loglar bekleniyor...</div>
+            <button class="button" onclick="loadLiveLogs()">Yenile</button>
+        </div>
+
+        <div class="panel-box">
+            <h3>⚙️ Sunucu Yeniden Başlat / Durdur</h3>
+            <button class="button" onclick="serverControl('restart')">🔄 Yeniden Başlat</button>
+            <button class="button danger" onclick="serverControl('stop')">🛑 Durdur</button>
+        </div>
+
+        <div class="panel-box">
+            <h3>🧰 Güvenlik Logları</h3>
+            <p>Giriş denemeleri, IP adresleri, ve hatalar burada listelenir.</p>
+            <button class="button" onclick="loadSecurityLogs()">Logları Gör</button>
+        </div>
+
+        <div class="panel-box full">
+            <h3>🔌 Canlı Socket İzleme</h3>
+            <div id="socketLog" class="log-box">Socket bağlantı bilgisi bekleniyor...</div>
+            <button class="button" onclick="loadSocketStatus()">Bağlantıları Yenile</button>
+        </div>
+
+        <div class="panel-box">
+            <h3>🤖 Yapay Zekâ Güncelleme & Model Sürümü</h3>
+            <p>Güncel model sürümünü kontrol et.</p>
+            <button class="button" onclick="checkModelVersion()">Model Bilgisi</button>
+        </div>
+
+        <div class="panel-box">
+            <h3>🔊 Sistem Duyuru Sesli Okuma</h3>
+            <input type="text" id="ttsMessage" placeholder="Okunacak duyuru mesajı yaz...">
+            <button class="button" onclick="speakTTS()">Sesli Oku</button>
+        </div>
+
+        <div class="panel-box">
+            <h3>👥 Kullanıcı Yönetim Paneli</h3>
+            <p>Kullanıcı bilgilerini düzenle, kaldır veya yetkilendir.</p>
+            <a href="/admin/users" target="_blank" class="btn-destek">Kullanıcı Paneline Git</a>
+        </div>
+
+        <div class="panel-box full">
+            <h3>💻 Gerçek Zamanlı Sistem Durumu</h3>
+            <div id="systemStatus" class="log-box">Durum bekleniyor...</div>
+            <button class="button" onclick="loadSystemStatus()">Güncelle</button>
+        </div>
+
+        <div class="panel-box full">
+            <h3>📂 Yedekleme & Dışa Aktarım</h3>
+            <div class="backup-buttons">
+                <form action="/backup" method="POST"><button class="button" type="submit">Backup</button></form>
+                <form action="/restore" method="POST"><button class="button" type="submit">Restore</button></form>
+                <form action="/export-memory" method="GET"><button class="button" type="submit">Export Memory</button></form>
+                <form action="/export-logs" method="GET"><button class="button" type="submit">Export Logs</button></form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+// Tema Değiştirici
+function toggleTheme() {
+  document.body.style.background = document.body.style.background.includes('linear-gradient')
+    ? "url('/static/sam_admin_bg.png') no-repeat center center fixed"
+    : "linear-gradient(135deg, #0a0014 0%, #160030 100%)";
+  document.body.style.backgroundSize = "cover";
+}
+
+// Sistem Mesaj Gönderimi
+document.getElementById("sistemMesajiForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const data = new FormData(e.target);
+  const res = await fetch(e.target.action, { method: "POST", body: data });
+  if (res.redirected) Swal.fire("✅ Başarılı", "Sistem mesajı gönderildi.", "success");
+  else Swal.fire("❌ Hata", "Mesaj gönderilemedi.", "error");
+});
+
+// Gerçek Zamanlı Log
+async function loadLiveLogs() {
+  const el = document.getElementById("liveLogs");
+  el.textContent = "⏳ Loglar yükleniyor...";
+  try {
+    const res = await fetch("/admin/live-logs");
+    const data = await res.text();
+    el.textContent = data || "📭 Log bulunamadı.";
+  } catch { el.textContent = "❌ Hata oluştu."; }
+}
+
+// Güvenlik Logları
+async function loadSecurityLogs() {
+  const res = await fetch("/admin/security-logs");
+  const data = await res.text();
+  Swal.fire({ title: "Güvenlik Logları", html: `<pre>${data}</pre>`, width: 600 });
+}
+
+// Socket İzleme
+async function loadSocketStatus() {
+  const res = await fetch("/admin/socket-status");
+  const data = await res.text();
+  document.getElementById("socketLog").textContent = data;
+}
+
+// Model Sürümü
+async function checkModelVersion() {
+  const res = await fetch("/admin/model-info");
+  const data = await res.json();
+  Swal.fire("🧠 Model Bilgisi", `Model: ${data.model}\nSürüm: ${data.version}`, "info");
+}
+
+// Text-to-Speech
+function speakTTS() {
+  const msg = document.getElementById("ttsMessage").value.trim();
+  if (!msg) return Swal.fire("⚠️", "Bir metin gir!", "warning");
+  const utter = new SpeechSynthesisUtterance(msg);
+  utter.lang = "tr-TR";
+  speechSynthesis.speak(utter);
+}
+
+// Sunucu Kontrol
+async function serverControl(cmd) {
+  if (!confirm(`Sunucuyu ${cmd === "restart" ? "yeniden başlatmak" : "durdurmak"} istediğine emin misin?`)) return;
+  await fetch(`/admin/server/${cmd}`, { method: "POST" });
+  Swal.fire("🛠", `Sunucu ${cmd} işlemi gönderildi.`, "info");
+}
+
+// Sistem Durumu
+async function loadSystemStatus() {
+  const res = await fetch("/admin/system-status");
+  const data = await res.text();
+  document.getElementById("systemStatus").textContent = data;
+}
+
+// Ek Fonksiyonlar
+function manageFiles() { Swal.fire("📂 Dosya Yöneticisi", "Dosya yönetim ekranı açılacak.", "info"); }
+function loadAILog() { Swal.fire("🔍 AI Arama Günlüğü", "Kullanıcı arama komutları listelenecek.", "info"); }
+function manageDatabase() { Swal.fire("💾 Veritabanı Yönetimi", "SQLite tablo boyutları ve backup yönetimi.", "info"); }
+function loadMoodReport() { Swal.fire("🧬 Ruh Hali Analizi", "Son 24 saat kullanıcı duygu durum grafiği.", "info"); }
+function manageScheduledTasks() { Swal.fire("🕓 Zamanlanmış Görevler", "Görevler ve planlamalar burada yönetilecek.", "info"); }
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "current_version": "1.0.0",
+  "latest_version": "1.1.0",
+  "update_logs": {
+    "2025-07-15 22:30": "Sistem güncellemesi başlatıldı.",
+    "2025-07-15 22:33": "Veritabanı yapısı güncellendi.",
+    "2025-07-15 22:36": "Yeni özellikler eklendi."
+  },
+  "update_in_progress": false,
+  "update_completed": true
+}

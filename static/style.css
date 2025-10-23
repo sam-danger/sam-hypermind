@@ -1,0 +1,679 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-image: url('sam_login_ui.png');
+  background-size: cover;
+  background-position: center;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Genel olarak tıklamayı devre dışı bırakır */
+  z-index: 2;
+}
+
+.clickable-area {
+  position: absolute;
+  top: 65.5%;       /* dikey konum */
+  left: 33.2%;      /* yatay konum */
+  width: 32.5%;     /* kutunun yatay genişliği */
+  height: 11.8%;    /* kutunun dikey yüksekliği */
+  cursor: pointer;
+  background-color: transparent !important;
+  border: none !important;
+  pointer-events: auto;
+  z-index: 9999;
+}
+
+
+
+.admin-link {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 18px;
+  color: #00ffff;
+  text-decoration: none;
+  opacity: 0.75;
+  font-family: 'Orbitron', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 1000;
+}
+
+.admin-icon {
+  width: 20px;
+  height: auto;
+  opacity: 0.85;
+  filter: drop-shadow(0 0 2px #00ffff);
+}
+#settings-menu {
+    display: none;
+    position: absolute;
+    top: 50px;
+    right: 30px;
+    background: rgba(0,0,0,0.65);
+    padding: 15px;
+    border-radius: 8px;
+    z-index: 1000;
+    box-shadow: 0 0 10px #00ffff66;
+}
+
+#settings-menu.visible {
+    display: block;
+}
+
+#settings-menu a {
+    display: block;
+    color: #00ffff;
+    text-decoration: none;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+#settings-menu a:hover {
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 4px;
+}
+.card {
+    background: #1b1b1b;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 25px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.6);
+}
+
+.card h3 {
+    margin-top: 0;
+    color: #00e0ff;
+    font-size: 18px;
+    margin-bottom: 12px;
+}
+
+.card p {
+    margin: 8px 0;
+    font-size: 14px;
+    color: #ccc;
+}
+
+/* 2FA Stili */
+.switch-container {
+    display: flex;
+    align-items: center;
+    background: #262626;
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-top: 12px;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.switch-container:hover {
+    background: #333;
+}
+
+.switch-container input[type="checkbox"] {
+    margin-right: 12px;
+    transform: scale(1.2);
+    accent-color: #00cfff;
+}
+.twofa-section {
+    margin-top: 30px;
+}
+
+.twofa-option {
+    background: #181818;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+.icon-area {
+    font-size: 26px;
+    color: #00e0ff;
+    padding-top: 6px;
+}
+
+.info-area {
+    flex: 1;
+    color: #fff;
+}
+
+.info-area .desc {
+    font-size: 13px;
+    color: #aaa;
+    margin: 5px 0 10px 0;
+}
+
+.twofa-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    background-color: #292929;
+    color: #fff;
+    font-size: 14px;
+    transition: border 0.3s;
+}
+
+.twofa-input:focus {
+    outline: none;
+    border: 1px solid #00cfff;
+    background-color: #222;
+}
+
+.twofa-save-button {
+    width: 100%;
+    background-color: #00cfff;
+    color: #000;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 15px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.twofa-save-button:hover {
+    background-color: #00aacc;
+}
+.twofa-option {
+    background: #181818;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.twofa-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    background-color: #292929;
+    color: #fff;
+    font-size: 14px;
+}
+.scroll-wrapper {
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden; /* 🔒 Yatay scroll'u engelle */
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+.container {
+    max-width: 700px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #1e1e1e;
+    border-radius: 10px;
+}
+<style>
+.flash-messages {
+  margin-top: 15px;
+  margin-bottom: 20px;
+}
+.flash {
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.flash.success {
+  background-color: #28a745;
+  color: white;
+}
+.flash.error {
+  background-color: #dc3545;
+  color: white;
+}
+</style>
+.flash {
+  animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.security-card {
+  background: rgba(0, 0, 0, 0.3); /* daha az belirgin */
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px auto;
+  width: 100%;
+  max-width: 600px;
+  color: #ffffffcc;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.05);
+}
+
+.security-card h3 {
+  color: #00e5ff;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.security-card input[type="password"],
+.security-card input[type="text"] {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: white;
+  border-radius: 8px;
+  padding: 10px;
+  width: 100%;
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
+.security-card button {
+  background-color: #00e5ff;
+  color: black;
+  padding: 10px 20px;
+  width: 100%;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  transition: 0.3s ease;
+}
+
+.security-card button:hover {
+  background-color: #00c6e0;
+}
+
+.security-card .icon {
+  font-size: 22px;
+  margin-right: 8px;
+}
+.security-card {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px 0;
+  color: #ffffffcc;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.05);
+}
+
+.security-card h3 {
+  color: #00e5ff;
+  margin-bottom: 10px;
+}
+
+.security-card input {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: white;
+  border-radius: 8px;
+  padding: 10px;
+  width: 100%;
+  margin: 5px 0 15px;
+}
+
+.security-card button {
+  background-color: #00e5ff;
+  color: black;
+  padding: 10px;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.security-card button:hover {
+  background-color: #00c6e0;
+}
+
+.twofa-box {
+  margin-top: 30px;
+}
+
+.twofa-save-button {
+  background-color: #00e5ff;
+  color: black;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 10px;
+  width: 100%;
+  cursor: pointer;
+}
+<style>
+.disconnect-link {
+  display: inline-block;
+  margin-left: 15px;
+  color: #ff6b6b;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+.disconnect-link:hover {
+  text-decoration: underline;
+}
+</style>
+<style>
+.disconnect-link {
+  color: white;
+  font-size: 0.9rem;
+  margin-left: 10px;
+  text-decoration: none;
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.disconnect-link:hover {
+  text-decoration: underline;
+  opacity: 1;
+}
+</style>
+<style>
+.connection-item {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+  color: white;
+  text-align: center;
+}
+
+.disconnect-link {
+  color: white;
+  font-size: 0.85rem;
+  margin-left: 10px;
+  text-decoration: none;
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.disconnect-link:hover {
+  text-decoration: underline;
+  opacity: 1;
+}
+</style>
+<style>
+.connection-link {
+  display: block;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 10px 15px;
+  border-radius: 8px;
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+  transition: 0.2s;
+}
+
+.connection-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  text-decoration: underline;
+}
+
+.veri-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.35); /* sadece veri alanını karartır */
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 12px;
+}
+
+.settings-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 255, 255, 0.07);
+  padding: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10000;
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.settings-button i {
+  color: #00f0ff;
+  font-size: 20px;
+  animation: spin 10s linear infinite;
+}
+
+.settings-button:hover {
+  background: rgba(0, 255, 255, 0.15);
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.4);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.settings-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 255, 255, 0.07);
+  padding: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10000;
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.settings-button i {
+  color: #00f0ff;
+  font-size: 22px;
+  animation: spin 6s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.settings-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: transparent !important;  /* ❗ Arka planı tamamen kaldırır */
+  padding: 10px;
+  border: none;
+  box-shadow: none !important;         /* Parıltıyı da kaldırır */
+  backdrop-filter: none !important;    /* Cam efekti varsa iptal */
+  -webkit-backdrop-filter: none !important;
+  cursor: pointer;
+  z-index: 10000;
+}
+
+.settings-button i {
+  font-size: 22px;
+  color: #cccccc;                   /* 🔴 Dişli çarkın rengi (örnek: kırmızı) */
+  transition: transform 0.3s ease;
+}
+
+.settings-button:hover i {
+  transform: rotate(20deg);         /* Hafif hareket efekti */
+}
+
+
+.module-box {
+  background: rgba(0, 0, 0, 0.6);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.05);
+}
+
+.module-box h3 {
+  margin-top: 0;
+  font-size: 18px;
+  color: #0ff;
+}
+
+.output-box {
+  margin-top: 10px;
+  color: #aaa;
+  font-style: italic;
+}
+
+.action-btn {
+  background-color: #111;
+  color: #fff;
+  border: 1px solid #0ff;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.action-btn:hover {
+  background-color: #0ff;
+  color: #000;
+}
+
+.wave div.paused {
+  animation-play-state: paused !important;
+}
+
+.wave div {
+  animation-play-state: paused;
+}
+
+.wave {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  gap: 5px;
+  margin-top: 20px;
+}
+.wave div {
+  width: 5px;
+  height: 25px;
+  background: #0ff;
+  animation: waveAnim 1s infinite ease-in-out;
+  animation-play-state: paused;
+}
+.wave div:nth-child(1) { animation-delay: 0s; }
+.wave div:nth-child(2) { animation-delay: 0.1s; }
+.wave div:nth-child(3) { animation-delay: 0.2s; }
+.wave div:nth-child(4) { animation-delay: 0.3s; }
+.wave div:nth-child(5) { animation-delay: 0.4s; }
+
+@keyframes waveAnim {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(2); }
+}
+
+.paused {
+  animation-play-state: paused !important;
+}
+
+body.flash {
+  animation: flashEffect 0.4s ease;
+}
+
+@keyframes flashEffect {
+  0%   { background-color: #111; }
+  50%  { background-color: #004b4b; }
+  100% { background-color: #111; }
+}
+
+body.flash {
+  animation: flashAnim 0.3s;
+}
+
+@keyframes flashAnim {
+  0%   { background-color: #111; }
+  50%  { background-color: #333; }
+  100% { background-color: #111; }
+}
+
+#microphone-overlay {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background-color: rgba(0, 255, 255, 0.08); /* opsiyonel */
+  z-index: 9999;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.overlay-mic {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(0, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  border: 1px solid #00ffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 999;
+  transition: background 0.3s ease;
+}
+
+.overlay-mic:hover {
+  background: rgba(0, 255, 255, 0.25);
+}
+
+.microphone-image {
+  width: 32px;
+  height: 32px;
+}
+
+
+.microphone-click {
+  position: absolute;
+  top: 120px;     /* Bu değeri yazının tam üstüne denk gelecek şekilde ayarlayacağız */
+  left: 100px;    /* Yazının bulunduğu koordinata göre ayarla */
+  width: 150px;   /* Yazının genişliği kadar */
+  height: 40px;   /* Yeterli tıklama alanı */
+  cursor: pointer;
+  z-index: 10;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}

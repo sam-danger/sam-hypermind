@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>🔧 Modüller | SAM HyperMind</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      text-align: center;
+      padding: 20px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      background: #1a1a1a;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      text-align: center;
+      transition: 0.3s ease-in-out;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.7);
+    }
+    .card i {
+      font-size: 40px;
+      color: #00d4ff;
+      margin-bottom: 10px;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      background: #00d4ff;
+      color: #000;
+      font-weight: bold;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+    .btn:hover {
+      background: #00aacc;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <h1>🛠️ SAM Modülleri</h1>
+  <div class="grid">
+    <div class="card">
+      <i class="fas fa-image"></i>
+      <h3>Görsel Üretici</h3>
+      <p>Metinden görsel oluşturun</p>
+      <a href="/modul/gorsel" class="btn">Başlat</a>
+    </div>
+
+    <div class="card">
+      <i class="fas fa-pen-nib"></i>
+      <h3>Canva Editör</h3>
+      <p>Online tasarım ve düzenleme</p>
+      <a href="/modul/canva" class="btn">Başlat</a>
+    </div>
+
+    <div class="card">
+      <i class="fas fa-video"></i>
+      <h3>Video Üretici</h3>
+      <p>AI ile video üretimi</p>
+      <a href="/modul/video" class="btn">Başlat</a>
+    </div>
+
+    <div class="card">
+      <i class="fas fa-microphone"></i>
+      <h3>Ses Klonlama</h3>
+      <p>Kendi sesinizle konuşun</p>
+      <a href="/modul/ses" class="btn">Başlat</a>
+    </div>
+
+    <div class="card">
+      <i class="fas fa-robot"></i>
+      <h3>Blog & İçerik</h3>
+      <p>Otomatik yazı ve metin üretimi</p>
+      <a href="/modul/blog" class="btn">Başlat</a>
+    </div>
+
+    <div class="card">
+      <i class="fas fa-chart-bar"></i>
+      <h3>Veri Analiz</h3>
+      <p>Excel / CSV yükle, analiz et</p>
+      <a href="/modul/analiz" class="btn">Başlat</a>
+    </div>
+  </div>
+</body>
+</html>

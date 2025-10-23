@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>SAM Admin Panel</title>
+  <link rel="stylesheet" href="/static/admin-style.css">
+</head>
+<body>
+  <script>
+    // Giriş yapılmamışsa login sayfasına yönlendir
+    const kullanici_id = localStorage.getItem("kullanici_id");
+    if (!kullanici_id) {
+      window.location.href = "/login";
+    }
+  </script>
+
+  <h1>SAM YÖNETİCİ PANELİ</h1>
+
+  <div class="panel-container">
+
+    <div class="panel">
+  <h2>🧠 Bellek Yönetimi</h2>
+  <div class="memory-scroll-container">
+    <ul id="memory-list"></ul>
+  </div>
+  <div>
+    <button id="filter-memory">Filter</button>
+    <button id="clear-memory">Clear</button>
+    <button id="delete-all-memory">Delete All</button>
+  </div>
+</div>
+
+    <div class="panel" id="profile-editor">
+      <h2>👤 Profil Editörü</h2>
+      <form id="profile-form">
+        <label for="isim">İsim:</label>
+        <input type="text" id="isim" value="" />
+
+        <label for="rol">Rol:</label>
+        <input type="text" id="rol" value="" />
+
+        <label for="kisilik">Kişilik:</label>
+        <input type="text" id="kisilik" value="" />
+
+        <label for="duygu_rengi">Duygu Rengi:</label>
+        <input type="text" id="duygu_rengi" value="" />
+
+        <label for="iletisim_tarzi">İletişim Tarzı:</label>
+        <input type="text" id="iletisim_tarzi" value="" />
+
+        <button type="submit">Güncelle</button>
+      </form>
+    </div>
+
+   
+    <div class="panel">
+  <h2>🗂️ Kayıt Arşivi</h2>
+  <div id="kayit-arsivi-liste"></div>
+</div>
+
+
+    <div class="panel">
+      <h2>🛡️ Yetkilendirme</h2>
+      <p>Profile: <button>ON</button> <button>OFF</button></p>
+      <p>History: <button>ON</button> <button>OFF</button></p>
+    </div>
+
+    <div class="panel">
+      <h2>💾 Yedekleme Sistemi</h2>
+      <button>Backup</button>
+      <button>Restore</button>
+    </div>
+
+    <div class="panel">
+      <h2>📤 Veri Dışa Aktar</h2>
+      <button>Export Memory</button>
+      <button>Export Logs</button>
+    </div>
+
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+  // Bellek verilerini getir
+  function loadMemoryList() {
+      fetch("/memory/list", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kullanici_id })
+      })
+      .then(res => res.json())
+      .then(data => {
+          const memoryList = document.getElementById("memory-list");
+          memoryList.innerHTML = "";
+
+          if (data.length === 0) {
+              memoryList.innerHTML = "<li><em>Hiç kayıt yok</em></li>";
+              return;
+          }
+
+          data.forEach(item => {
+              const li = document.createElement("li");
+              li.textContent = item.icerik;
+              memoryList.appendChild(li);
+          });
+      })
+      .catch(err => {
+          console.error("Bellek verisi alınamadı:", err);
+      });
+  }
+
+  // Bellek butonları
+  function sendMemoryCommand(endpoint) {
+  fetch(endpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ kullanici_id })
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert("✅ " + (data.message || data.durum || "İşlem tamamlandı."));
+    loadMemoryList(); // Listeyi hemen yenile
+  })
+  .catch(err => {
+    alert("❌ Hata oluştu: " + err.message);
+  });
+}
+
+
+  // Profil güncelle
+  document.getElementById("profile-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const data = {
+          kullanici_id,
+          isim: document.getElementById("isim").value,
+          rol: document.getElementById("rol").value,
+          kisilik: document.getElementById("kisilik").value,
+          duygu_rengi: document.getElementById("duygu_rengi").value,
+          iletisim_tarzi: document.getElementById("iletisim_tarzi").value
+      };
+
+      fetch("/update_profile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(res => alert("✅ " + res.message))
+      .catch(err => alert("❌ Hata: " + err.message));
+  });
+
+  // Profil verisini otomatik doldur
+  function loadProfile() {
+      fetch("/get_profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kullanici_id })
+      })
+      .then(res => res.json())
+      .then(data => {
+          document.getElementById("isim").value = data.isim || "";
+          document.getElementById("rol").value = data.rol || "";
+          document.getElementById("kisilik").value = data.kisilik || "";
+          document.getElementById("duygu_rengi").value = data.duygu_rengi || "";
+          document.getElementById("iletisim_tarzi").value = data.iletisim_tarzi || "";
+      })
+      .catch(err => {
+          console.error("Profil verisi alınamadı:", err);
+      });
+  }
+
+  // Sayfa yüklendiğinde çalışacaklar
+  document.addEventListener("DOMContentLoaded", () => {
+      loadMemoryList();
+      loadProfile();
+
+      document.querySelectorAll(".panel button").forEach(button => {
+          const label = button.innerText.toLowerCase();
+          if (label.includes("filter")) {
+              button.onclick = () => sendMemoryCommand("/memory/filter");
+          } else if (label.includes("clear")) {
+              button.onclick = () => sendMemoryCommand("/memory/clear");
+          } else if (label.includes("delete all")) {
+              button.onclick = () => sendMemoryCommand("/memory/delete_all");
+          }
+      });
+  });
+  </script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const messageList = document.getElementById("message-list");
+    const messageEditor = document.getElementById("message-editor");
+    const editButton = document.getElementById("edit-messages");
+
+    // Başlangıçta sistem mesajlarını yükle
+    fetch("/get_system_messages")
+        .then(res => res.json())
+        .then(data => {
+            messageList.innerHTML = data.messages.map(msg => `<li>${msg}</li>`).join('');
+            messageEditor.value = data.messages.join('\n');
+        });
+
+    // Edit / Save butonu
+    editButton.addEventListener("click", () => {
+        if (messageEditor.style.display === "none") {
+            messageList.style.display = "none";
+            messageEditor.style.display = "block";
+            editButton.textContent = "Save";
+        } else {
+            const newMessages = messageEditor.value.split('\n').filter(line => line.trim() !== "");
+            fetch("/update_system_messages", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ messages: newMessages })
+            })
+            .then(res => res.json())
+            .then(data => {
+                messageList.innerHTML = newMessages.map(msg => `<li>${msg}</li>`).join('');
+                messageList.style.display = "block";
+                messageEditor.style.display = "none";
+                editButton.textContent = "Edit";
+            });
+        }
+    });
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    fetch("/get_chat_history")
+        .then(res => res.json())
+        .then(data => {
+            const container = document.getElementById("kayit-arsivi-liste");
+            if (!container) return;
+
+            if (!Array.isArray(data) || data.length === 0) {
+                container.innerHTML = "<p>Henüz kayıt yok.</p>";
+                return;
+            }
+
+            container.innerHTML = "";
+
+            data.forEach((entry, index) => {
+                const div = document.createElement("div");
+                div.innerHTML = `
+                    <strong>${index + 1}. Soru:</strong> ${entry.user}<br>
+                    <strong>Yanıt:</strong> ${entry.assistant}
+                    <hr style="border-color:#444;">
+                `;
+                div.style.marginBottom = "10px";
+                div.style.color = "#ccc";
+                container.appendChild(div);
+            });
+        })
+        .catch(err => {
+            console.error("Arşiv yüklenemedi:", err);
+        });
+});
+</script>
+
+<style>
+#kayit-arsivi-liste {
+  max-height: 220px; /* istediğin yüksekliğe göre ayarlayabilirsin */
+  overflow-y: auto;
+  padding-right: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: #00ffe5 #0a0a0a;
+}
+</style>
+
+
+
+</body>
+</html>
