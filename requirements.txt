@@ -7,3 +7,5 @@ gunicorn
 eventlet
 python-dotenv
 requests
+flask-cors
+
