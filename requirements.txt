@@ -15,7 +15,7 @@ beautifulsoup4==4.12.3
 
 # Veri ve yapay zekâ
 numpy==2.1.3                # ✅ Python 3.13 destekli
-scikit-learn==1.5.2         # ✅ Python 3.13 destekli
+scikit-learn==1.5.2         # ✅ NumPy 2.x uyumlu
 pytesseract==0.3.10
 Pillow==10.4.0
 
@@ -25,10 +25,10 @@ psutil==6.0.0
 
 # Ses ve sıkıştırma
 sounddevice==0.4.7          # ✅ PyAudio alternatifi
-pyzipper==0.3.8
+pyzipper==0.3.6             # ✅ Python 3.13 uyumlu sürüm
 
 # OpenAI API
-openai==1.43.0              # ✅ Yeni API sürümü
+openai==1.43.0              # ✅ Güncel ve kararlı sürüm
 
 # Derleme desteği
 Cython==3.0.11
