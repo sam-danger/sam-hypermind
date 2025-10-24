@@ -49,23 +49,16 @@ import psutil
 import platform
 import numpy as np
 import hashlib
-try:
-    import pyaudio
-except ImportError:
-    pyaudio = None
-    print("🔇 PyAudio modülü bulunamadı (sunucu ortamı). Sesli giriş devre dışı.")
 import struct
 import threading
 import time
 import sys
 import subprocess
 
-try:
-    import sounddevice as sd
-    sound_enabled = True
-except ImportError:
-    print("🔇 Sounddevice bulunamadı. Sesli giriş devre dışı.")
-    sound_enabled = False
+# ── SES MODÜLLERİ SUNUCU ORTAMINDA DEVRE DIŞI ───────────────────────
+sound_enabled = False
+pyaudio = None
+print("🔇 Sunucuda sesli giriş devre dışı. sounddevice ve PyAudio kullanılmayacak.")
 
 
 # ── Tesseract ayarları ──────────────────────────────────────
