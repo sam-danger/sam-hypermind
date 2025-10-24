@@ -32,3 +32,4 @@ openai==1.43.0              # ✅ Güncel ve kararlı sürüm
 
 # Derleme desteği
 Cython==3.0.11
+gunicorn==23.0.0
