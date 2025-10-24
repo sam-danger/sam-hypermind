@@ -60,6 +60,14 @@ import time
 import sys
 import subprocess
 
+try:
+    import sounddevice as sd
+    sound_enabled = True
+except ImportError:
+    print("🔇 Sounddevice bulunamadı. Sesli giriş devre dışı.")
+    sound_enabled = False
+
+
 # ── Tesseract ayarları ──────────────────────────────────────
 # Tesseract exe yolu
 pytesseract.pytesseract.tesseract_cmd = r"O:\tesseract\tesseract.exe"
@@ -194,27 +202,30 @@ scheduled_tasks = [
 ]
 
 # ── VERİTABANI AYARLARI ──────────────────────────────────────────
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL") or "sqlite:///sam_database.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-app.config['MAIL_SERVER'] = os.getenv("SMTP_HOST")
-app.config['MAIL_PORT'] = int(os.getenv("SMTP_PORT"))
-app.config['MAIL_USERNAME'] = os.getenv("SMTP_USER")
-app.config['MAIL_PASSWORD'] = os.getenv("SMTP_PASS")
+
+
+
+# ── VERİTABANI AYARLARI ──────────────────────────────────────────
+app.config['MAIL_SERVER'] = os.getenv("SMTP_HOST", "localhost")
+app.config['MAIL_PORT'] = int(os.getenv("SMTP_PORT", 25))
+app.config['MAIL_USERNAME'] = os.getenv("SMTP_USER", "")
+app.config['MAIL_PASSWORD'] = os.getenv("SMTP_PASS", "")
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_ASCII_ATTACHMENTS'] = False
-
 mail = Mail(app)
 
-# ── VERİTABANI MODELLERİ ─────────────────────────────────────────
+
+# ── MODEL TANIMI ────────────────────────────────────
 class MemoryItem(db.Model):
     __tablename__ = "memory"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, nullable=False)
     content = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-
 
 class ChatMessage(db.Model):
     __tablename__ = "chat_messages"
@@ -3537,7 +3548,8 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
     print("🔧 SAM Shadow Mode başlatılıyor...")
-    socketio.run(app, host="0.0.0.0", port=5000, debug=True)
+    port = int(os.getenv("PORT", 5000))
+    socketio.run(app, host="0.0.0.0", port=port)
 
 
 
