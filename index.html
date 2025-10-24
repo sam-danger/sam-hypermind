@@ -2,150 +2,33 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SAM HyperMind - Gelişmiş Yapay Zekâ Asistanı">
+  <meta name="keywords" content="yapay zeka, SAM, HyperMind, asistan, chat, AI">
+  <meta name="robots" content="index, follow">
+  <meta name="google-site-verification" content="GOOGLE_VERIFICATION_CODE_HERE">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <title>SAM System Interface</title>
   <link rel="stylesheet" href="/static/style.css">
   <script src="/static/script.js" defer></script>
+  <title>SAM HyperMind | Yapay Zekâ Asistanı</title>
+
   <style>
-    body {
-      background-color: #111;
-      color: #fff;
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-
-    /* ⚙️ Ayarlar Butonu */
-    .settings-button {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background-color: #111;
-      color: cyan;
-      padding: 10px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      z-index: 10000;
-      font-weight: bold;
-      transition: background-color 0.3s;
-    }
-
-    .settings-button:hover {
-      background-color: #222;
-    }
-
-    .settings-panel {
-      position: fixed;
-      top: 0;
-      right: -320px;
-      width: 300px;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      color: white;
-      padding: 20px;
-      box-shadow: -2px 0 6px rgba(0, 255, 255, 0.2);
-      border-left: 1px solid rgba(0, 255, 255, 0.08);
-      transition: right 0.4s ease-in-out;
-      z-index: 9999;
-    }
-
-    .settings-panel.open {
-      right: 0;
-    }
-
-    .settings-panel h2 {
-      margin-top: 0;
-      font-size: 20px;
-      border-bottom: 1px solid #444;
-      padding-bottom: 10px;
-    }
-
-    .settings-panel ul {
-      list-style: none;
-      padding: 0;
-      margin-top: 20px;
-    }
-
-    .settings-panel li {
-      margin: 14px 0;
-    }
-
-    .settings-panel a {
-      color: #00e0ff;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .settings-panel a:hover {
-      text-decoration: underline;
-    }
-
-    .close-btn {
-      background: none;
-      border: none;
-      color: red;
-      font-size: 18px;
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      cursor: pointer;
-    }
-
-    /* Admin Giriş Linki */
-    .admin-link {
-      position: absolute;
-      top: 9px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 13px;
-      color: rgba(0, 224, 255, 0.6);
-      text-shadow: 0 0 4px rgba(0, 217, 255, 0.3);
-      text-decoration: none;
-      font-weight: 500;
-      letter-spacing: 0.5px;
-      z-index: 1000;
-      transition: 0.3s ease;
-    }
-
-    .admin-link:hover {
-      text-shadow: 0 0 6px rgba(0, 255, 229, 0.5);
-      color: rgba(0, 255, 255, 0.8);
-    }
-
-    /* Giriş Alanı (Tıklanabilir alan) */
-    .overlay {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    /* 🎤 Mikrofon Overlay */
-    #microphone-overlay {
-      position: absolute;
-      bottom: 50px;
-      right: 50px;
-      width: 100px;
-      height: 100px;
-      cursor: pointer;
-      z-index: 9999;
-    }
-
-    /* 📸 Kamera için görünmez tıklama alanı */
-    .camera-click {
-      position: absolute;
-      top: 43%;
-      left: 11%;
-      transform: translateX(-50%);
-      width: 140px;
-      height: 25px;
-      cursor: pointer;
-      z-index: 9999;
-      background-color: rgba(255, 0, 0, 0);
-      pointer-events: auto;
-    }
+    body { background-color:#111; color:#fff; font-family:'Segoe UI', sans-serif; margin:0; padding:0; }
+    .settings-button { position:fixed; top:20px; right:20px; background-color:#111; color:cyan; padding:10px 14px; border-radius:6px; cursor:pointer; z-index:10000; font-weight:bold; transition:0.3s; }
+    .settings-button:hover { background-color:#222; }
+    .settings-panel { position:fixed; top:0; right:-320px; width:300px; height:100%; background:rgba(0,0,0,0.5); backdrop-filter:blur(10px); color:white; padding:20px; box-shadow:-2px 0 6px rgba(0,255,255,0.2); border-left:1px solid rgba(0,255,255,0.08); transition:right 0.4s ease-in-out; z-index:9999; }
+    .settings-panel.open { right:0; }
+    .settings-panel h2 { margin-top:0; font-size:20px; border-bottom:1px solid #444; padding-bottom:10px; }
+    .settings-panel ul { list-style:none; padding:0; margin-top:20px; }
+    .settings-panel li { margin:14px 0; }
+    .settings-panel a { color:#00e0ff; text-decoration:none; font-weight:bold; }
+    .settings-panel a:hover { text-decoration:underline; }
+    .admin-link { position:absolute; top:9px; left:50%; transform:translateX(-50%); font-size:13px; color:rgba(0,224,255,0.6); text-shadow:0 0 4px rgba(0,217,255,0.3); text-decoration:none; font-weight:500; letter-spacing:0.5px; z-index:1000; transition:0.3s; }
+    .admin-link:hover { text-shadow:0 0 6px rgba(0,255,229,0.5); color:rgba(0,255,255,0.8); }
+    .overlay { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); }
+    .camera-click { position:absolute; top:43%; left:11%; transform:translateX(-50%); width:140px; height:25px; cursor:pointer; z-index:9999; background-color:rgba(255,0,0,0); pointer-events:auto; }
+    .microphone-click { position:absolute; bottom:50px; right:50px; width:100px; height:100px; cursor:pointer; z-index:9999; }
   </style>
 </head>
 <body>
