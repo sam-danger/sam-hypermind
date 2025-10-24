@@ -49,7 +49,11 @@ import psutil
 import platform
 import numpy as np
 import hashlib
-import pyaudio
+try:
+    import pyaudio
+except ImportError:
+    pyaudio = None
+    print("🔇 PyAudio modülü bulunamadı (sunucu ortamı). Sesli giriş devre dışı.")
 import struct
 import threading
 import time
