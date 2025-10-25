@@ -2730,22 +2730,13 @@ def search_web():
     except Exception as e:
         return jsonify({"error": f"Arama sırasında hata oluştu: {str(e)}"}), 500
 
-
 @app.route("/microphone")
 def microphone_page():
     if "username" not in session:
         return redirect("/login")
     
-    seo = {
-        "title": "SAM HyperMind | Yapay Zekâ Asistanı",
-        "description": "SAM HyperMind, gelişmiş yapay zekâ destekli dijital asistan. Sohbet, notlar, veri yönetimi ve daha fazlası.",
-        "keywords": "SAM, HyperMind, yapay zeka, dijital asistan, chat, AI, notlar, veri yönetimi",
-        "url": "https://www.samyourwebsite.com/microphone",  # Burayı kendi URL’inle değiştir
-        "logo": "https://www.samyourwebsite.com/static/logo.png"  # Burayı logo yolunla değiştir
-    }
-    
-    return render_template("microphone.html", username=session["username"], seo=seo)
-
+    # Kök dizindeki HTML dosyasını direkt gönder
+    return send_from_directory('.', "microphone.html")
 
 
 @app.route("/sam-voice-command", methods=["POST"])
