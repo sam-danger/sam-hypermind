@@ -2,7 +2,40 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>📩 Admin Destek Paneli</title>
+    <title>📩 Admin Destek Paneli | SAM HyperMind</title>
+
+    <!-- SEO / Open Graph / Twitter Card / JSON-LD -->
+    <meta name="description" content="SAM HyperMind admin paneli. Canlı destek mesajlarını görüntüleyin ve yanıtlayın.">
+    <meta name="keywords" content="SAM, HyperMind, admin, destek, mesaj, canlı destek">
+    <meta property="og:title" content="📩 Admin Destek Paneli | SAM HyperMind">
+    <meta property="og:description" content="SAM HyperMind admin paneli. Canlı destek mesajlarını görüntüleyin ve yanıtlayın.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sam-hypermind.onrender.com/admin/destek">
+    <meta property="og:image" content="https://sam-hypermind.onrender.com/static/logo.png">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="📩 Admin Destek Paneli | SAM HyperMind">
+    <meta name="twitter:description" content="SAM HyperMind admin paneli. Canlı destek mesajlarını görüntüleyin ve yanıtlayın.">
+    <meta name="twitter:image" content="https://sam-hypermind.onrender.com/static/logo.png">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "📩 Admin Destek Paneli | SAM HyperMind",
+      "url": "https://sam-hypermind.onrender.com/admin/destek",
+      "description": "SAM HyperMind admin paneli. Canlı destek mesajlarını görüntüleyin ve yanıtlayın.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "SAM HyperMind",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://sam-hypermind.onrender.com/static/logo.png"
+        }
+      }
+    }
+    </script>
+
     <link rel="stylesheet" href="/static/style.css">
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <style>
@@ -100,33 +133,32 @@
             background-color: #b71c1c;
         }
 
-.sil-buton-ozel {
-    position: fixed;
-    bottom: 180px;  /* aşağıdan uzaklık */
-    left: 50%;     /* sayfanın ortası */
-    transform: translateX(-50%);
-    z-index: 9999;
-}
+        .sil-buton-ozel {
+            position: fixed;
+            bottom: 180px;  /* aşağıdan uzaklık */
+            left: 50%;     /* sayfanın ortası */
+            transform: translateX(-50%);
+            z-index: 9999;
+        }
 
-.sil-buton-ozel button {
-    background-color: #b53c3c;  /* mat kırmızı */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-weight: bold;
-    box-shadow: none;
-    transition: background-color 0.3s ease;
-}
+        .sil-buton-ozel button {
+            background-color: #b53c3c;  /* mat kırmızı */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            box-shadow: none;
+            transition: background-color 0.3s ease;
+        }
 
-.sil-buton-ozel button:hover {
-    background-color: #932d2d;  /* hover için daha koyu mat */
-}
-
-
+        .sil-buton-ozel button:hover {
+            background-color: #932d2d;  /* hover için daha koyu mat */
+        }
     </style>
 </head>
 <body>
+
     <div class="container">
         <h1>📨 Canlı Destek Mesajları</h1>
 

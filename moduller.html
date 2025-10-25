@@ -2,8 +2,47 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>🔧 Modüller | SAM HyperMind</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ seo.title }}</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" href="data:;base64,=">
+  <!-- SEO -->
+  <meta name="description" content="{{ seo.description }}">
+  <meta name="keywords" content="{{ seo.keywords }}">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:title" content="{{ seo.title }}">
+  <meta property="og:description" content="{{ seo.description }}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ seo.url }}">
+  <meta property="og:image" content="{{ seo.logo }}">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ seo.title }}">
+  <meta name="twitter:description" content="{{ seo.description }}">
+  <meta name="twitter:image" content="{{ seo.logo }}">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "{{ seo.title }}",
+    "url": "{{ seo.url }}",
+    "description": "{{ seo.description }}",
+    "publisher": {
+      "@type": "Organization",
+      "name": "SAM HyperMind",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "{{ seo.logo }}"
+      }
+    }
+  }
+  </script>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -58,50 +97,3 @@
     }
   </style>
 </head>
-<body>
-  <h1>🛠️ SAM Modülleri</h1>
-  <div class="grid">
-    <div class="card">
-      <i class="fas fa-image"></i>
-      <h3>Görsel Üretici</h3>
-      <p>Metinden görsel oluşturun</p>
-      <a href="/modul/gorsel" class="btn">Başlat</a>
-    </div>
-
-    <div class="card">
-      <i class="fas fa-pen-nib"></i>
-      <h3>Canva Editör</h3>
-      <p>Online tasarım ve düzenleme</p>
-      <a href="/modul/canva" class="btn">Başlat</a>
-    </div>
-
-    <div class="card">
-      <i class="fas fa-video"></i>
-      <h3>Video Üretici</h3>
-      <p>AI ile video üretimi</p>
-      <a href="/modul/video" class="btn">Başlat</a>
-    </div>
-
-    <div class="card">
-      <i class="fas fa-microphone"></i>
-      <h3>Ses Klonlama</h3>
-      <p>Kendi sesinizle konuşun</p>
-      <a href="/modul/ses" class="btn">Başlat</a>
-    </div>
-
-    <div class="card">
-      <i class="fas fa-robot"></i>
-      <h3>Blog & İçerik</h3>
-      <p>Otomatik yazı ve metin üretimi</p>
-      <a href="/modul/blog" class="btn">Başlat</a>
-    </div>
-
-    <div class="card">
-      <i class="fas fa-chart-bar"></i>
-      <h3>Veri Analiz</h3>
-      <p>Excel / CSV yükle, analiz et</p>
-      <a href="/modul/analiz" class="btn">Başlat</a>
-    </div>
-  </div>
-</body>
-</html>

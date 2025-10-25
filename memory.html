@@ -2,52 +2,48 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Bellek Yönetimi</title>
-    <style>
-        body {
-            background: #0f0f0f;
-            color: white;
-            font-family: 'Segoe UI', sans-serif;
-            padding: 40px;
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Dinamik SEO Ayarları -->
+    <title>{{ seo.title }}</title>
+    <meta name="description" content="{{ seo.description }}">
+    <meta name="keywords" content="{{ seo.keywords }}">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="{{ seo.title }}">
+    <meta property="og:description" content="{{ seo.description }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ seo.url }}">
+    <meta property="og:image" content="{{ seo.logo }}">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ seo.title }}">
+    <meta name="twitter:description" content="{{ seo.description }}">
+    <meta name="twitter:image" content="{{ seo.logo }}">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "{{ seo.title }}",
+      "url": "{{ seo.url }}",
+      "description": "{{ seo.description }}",
+      "publisher": {
+        "@type": "Organization",
+        "name": "SAM HyperMind",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "{{ seo.logo }}"
         }
-        .container {
-            max-width: 900px;
-            margin: auto;
-            background: #1a1a1a;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
-        }
-        h1 {
-            text-align: center;
-            color: #00e0ff;
-        }
-        .memory-entry {
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: #222;
-            border-left: 4px solid #00e0ff;
-        }
-        .timestamp {
-            color: #999;
-            font-size: 13px;
-        }
-    </style>
+      }
+    }
+    </script>
+
+    <!-- Genel Font & Stil -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-<body>
-    <div class="container">
-        <h1>Bellek Kayıtları</h1>
-        {% if memory %}
-            {% for item in memory %}
-                <div class="memory-entry">
-                    <div class="timestamp">{{ item.timestamp }}</div>
-                    <p><strong>Siz:</strong> {{ item.user_input }}</p>
-                    <p><strong>SAM:</strong> {{ item.bot_reply }}</p>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>Henüz kayıtlı bir bellek bulunamadı.</p>
-        {% endif %}
-    </div>
-</body>
-</html>
+

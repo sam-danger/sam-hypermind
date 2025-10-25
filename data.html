@@ -5,6 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Veri İşlemleri</title>
 
+  <!-- 🌈 SEO / Open Graph / Twitter Card / JSON-LD -->
+  <!-- SEO -->
+  <meta name="description" content="SAM platformunda veri işlemlerini gerçekleştirin. Sohbet geçmişinizi görüntüleyin, filtreleyin ve yönetin.">
+  <meta name="keywords" content="SAM, veri işlemleri, chat geçmişi, filtre, yönetim">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="📊 SAM | Veri İşlemleri">
+  <meta property="og:description" content="SAM platformunda veri işlemlerini gerçekleştirin. Sohbet geçmişinizi görüntüleyin, filtreleyin ve yönetin.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sam-hypermind.onrender.com/data">
+  <meta property="og:image" content="https://sam-hypermind.onrender.com/static/veri.png">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="📊 SAM | Veri İşlemleri">
+  <meta name="twitter:description" content="SAM platformunda veri işlemlerini gerçekleştirin. Sohbet geçmişinizi görüntüleyin, filtreleyin ve yönetin.">
+  <meta name="twitter:image" content="https://sam-hypermind.onrender.com/static/veri.png">
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "📊 SAM | Veri İşlemleri",
+    "url": "https://sam-hypermind.onrender.com/data",
+    "description": "SAM platformunda veri işlemlerini gerçekleştirin. Sohbet geçmişinizi görüntüleyin, filtreleyin ve yönetin.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "SAM HyperMind",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://sam-hypermind.onrender.com/static/veri.png"
+      }
+    }
+  }
+  </script>
+
   <!-- 🌈 TEMEL STİL -->
   <style>
 /* ── Modal zemin ── */
@@ -40,7 +77,6 @@
   text-align: center;
   backdrop-filter: blur(8px);
 }
-
 
 /* ── Modal kutu ── */
 #memoryBox {
@@ -87,47 +123,45 @@
     flex-shrink: 0;
 }
 
-
-
-
 #memoryBox button { margin: 4px 2px; }
 
-    body{
-      margin:0;padding:0;
-      font-family:"Segoe UI",sans-serif;
-      background:url("/static/veri.png") no-repeat center/cover fixed;
-      color:#fff
-    }
-    .data-header-container{
-      position:absolute;top:40px;left:50%;transform:translateX(-50%);
-      display:flex;align-items:center;z-index:10
-    }
-    .data-header{
-      font-size:32px;font-weight:bold;margin-right:10px;
-      text-shadow:2px 2px 4px rgba(0,0,0,.5)
-    }
-    .data-icon{height:38px;filter:brightness(0) saturate(100%) invert(17%) sepia(91%) saturate(5587%) hue-rotate(356deg) brightness(104%) contrast(119%)}
+body{
+  margin:0;padding:0;
+  font-family:"Segoe UI",sans-serif;
+  background:url("/static/veri.png") no-repeat center/cover fixed;
+  color:#fff
+}
 
-    /* ----- Kartlar, butonlar ----- */
-    .data-wrapper{max-width:960px;margin:80px auto 60px;padding:0 20px;display:flex;flex-direction:column;gap:48px;position:relative;z-index:2}
-    .search-container,.filter-container{
-      width:100%;max-width:800px;margin:0 auto;background:rgba(30,30,30,.85);
-      padding:24px 32px;border-radius:12px;color:#fff
-    }
-    h3{margin:0 0 16px;font-size:20px;color:#ff5a5f}
-    .search-container input,.filter-container input,.filter-container select{
-      width:100%;padding:10px 12px;margin-bottom:16px;border:none;border-radius:8px;background:rgba(0,0,0,.35);color:#fff
-    }
-    .search-container button,.filter-container button{
-      width:100%;padding:12px;font-size:15px;font-weight:bold;border:none;border-radius:8px;
-      background:linear-gradient(135deg,#2196f3,#4dd0e1);color:#fff;cursor:pointer;transition:.3s
-    }
-    .search-container button:hover,.filter-container button:hover{
-      background:linear-gradient(135deg,#1976d2,#26c6da)
-    }
-    #searchResults,#filterResults{background:rgba(20,20,20,.7);padding:10px;border-radius:10px;margin-top:10px}
+.data-header-container{
+  position:absolute;top:40px;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;z-index:10
+}
+.data-header{
+  font-size:32px;font-weight:bold;margin-right:10px;
+  text-shadow:2px 2px 4px rgba(0,0,0,.5)
+}
+.data-icon{height:38px;filter:brightness(0) saturate(100%) invert(17%) sepia(91%) saturate(5587%) hue-rotate(356deg) brightness(104%) contrast(119%)}
 
-    /* Profesyonel “kart” ızgarası */
+/* ----- Kartlar, butonlar ----- */
+.data-wrapper{max-width:960px;margin:80px auto 60px;padding:0 20px;display:flex;flex-direction:column;gap:48px;position:relative;z-index:2}
+.search-container,.filter-container{
+  width:100%;max-width:800px;margin:0 auto;background:rgba(30,30,30,.85);
+  padding:24px 32px;border-radius:12px;color:#fff
+}
+h3{margin:0 0 16px;font-size:20px;color:#ff5a5f}
+.search-container input,.filter-container input,.filter-container select{
+  width:100%;padding:10px 12px;margin-bottom:16px;border:none;border-radius:8px;background:rgba(0,0,0,.35);color:#fff
+}
+.search-container button,.filter-container button{
+  width:100%;padding:12px;font-size:15px;font-weight:bold;border:none;border-radius:8px;
+  background:linear-gradient(135deg,#2196f3,#4dd0e1);color:#fff;cursor:pointer;transition:.3s
+}
+.search-container button:hover,.filter-container button:hover{
+  background:linear-gradient(135deg,#1976d2,#26c6da)
+}
+#searchResults,#filterResults{background:rgba(20,20,20,.7);padding:10px;border-radius:10px;margin-top:10px}
+
+/* Profesyonel “kart” ızgarası */
 .overlay-container{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
@@ -162,7 +196,6 @@
 .back-btn:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
-
 
 .data-button{
   all:unset;                       /* önceki border/pos temizle */
@@ -207,8 +240,8 @@ button.mini:hover{background:#1976d2}
   </style>
 </head>
 
-
 <body>
+
 
 <!-- Sesli komut için görünmez yönlendirme bağlantıları -->
 <div style="display: none;">

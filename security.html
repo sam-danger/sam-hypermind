@@ -2,8 +2,47 @@
 <html lang="{{ dil }}">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ 'Güvenlik Ayarları' if dil == 'tr' else 'Security Settings' }}</title>
   <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" href="data:;base64,=">
+
+  <!-- SEO -->
+  <meta name="description" content="{{ 'SAM HyperMind güvenlik ayarları ve kontrol paneli.' if dil == 'tr' else 'SAM HyperMind security settings and control panel.' }}">
+  <meta name="keywords" content="SAM, güvenlik, ayarlar, security, HyperMind, kontrol paneli">
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:title" content="{{ 'Güvenlik Ayarları' if dil == 'tr' else 'Security Settings' }}">
+  <meta property="og:description" content="{{ 'SAM HyperMind güvenlik ayarları ve kontrol paneli.' if dil == 'tr' else 'SAM HyperMind security settings and control panel.' }}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sam-hypermind.onrender.com/security-settings">
+  <meta property="og:image" content="https://sam-hypermind.onrender.com/static/logo.png">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ 'Güvenlik Ayarları' if dil == 'tr' else 'Security Settings' }}">
+  <meta name="twitter:description" content="{{ 'SAM HyperMind güvenlik ayarları ve kontrol paneli.' if dil == 'tr' else 'SAM HyperMind security settings and control panel.' }}">
+  <meta name="twitter:image" content="https://sam-hypermind.onrender.com/static/logo.png">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "{{ 'Güvenlik Ayarları' if dil == 'tr' else 'Security Settings' }}",
+    "url": "https://sam-hypermind.onrender.com/security-settings",
+    "description": "{{ 'SAM HyperMind güvenlik ayarları ve kontrol paneli.' if dil == 'tr' else 'SAM HyperMind security settings and control panel.' }}",
+    "publisher": {
+      "@type": "Organization",
+      "name": "SAM HyperMind",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://sam-hypermind.onrender.com/static/logo.png"
+      }
+    }
+  }
+  </script>
   <style>
     body {
       background-image: url("/static/security-bg.jpg");

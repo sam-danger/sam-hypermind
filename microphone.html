@@ -2,10 +2,49 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>🎤 SAM Voice Assistant</title>
-<link rel="icon" href="data:;base64,=">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ seo.title }}</title>
+  <link rel="icon" href="data:;base64,=">
+
   <script>
     const sessionUsername = "{{ session['username'] | safe }}";
+  </script>
+
+  <!-- SEO Ayarları -->
+  <meta name="description" content="{{ seo.description }}">
+  <meta name="keywords" content="{{ seo.keywords }}">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:title" content="{{ seo.title }}">
+  <meta property="og:description" content="{{ seo.description }}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ seo.url }}">
+  <meta property="og:image" content="{{ seo.logo }}">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ seo.title }}">
+  <meta name="twitter:description" content="{{ seo.description }}">
+  <meta name="twitter:image" content="{{ seo.logo }}">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "{{ seo.title }}",
+    "url": "{{ seo.url }}",
+    "description": "{{ seo.description }}",
+    "publisher": {
+      "@type": "Organization",
+      "name": "SAM HyperMind",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "{{ seo.logo }}"
+      }
+    }
+  }
   </script>
   <style>
     body {

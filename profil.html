@@ -2,8 +2,47 @@
 <html lang="{{ dil }}">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ '👤 Profilim' if dil == 'tr' else '👤 My Profile' }}</title>
   <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" href="data:;base64,=">
+
+  <!-- SEO -->
+  <meta name="description" content="{{ 'Kullanıcı profil sayfası. Hesap bilgilerinizi ve ayarlarınızı görüntüleyin.' if dil=='tr' else 'User profile page. View your account info and settings.' }}">
+  <meta name="keywords" content="SAM, profil, kullanıcı, account, settings">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:title" content="{{ '👤 Profilim' if dil=='tr' else '👤 My Profile' }}">
+  <meta property="og:description" content="{{ 'Kullanıcı profil sayfası. Hesap bilgilerinizi ve ayarlarınızı görüntüleyin.' if dil=='tr' else 'User profile page. View your account info and settings.' }}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ request.url }}">
+  <meta property="og:image" content="https://sam-hypermind.onrender.com/static/logo.png">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ '👤 Profilim' if dil=='tr' else '👤 My Profile' }}">
+  <meta name="twitter:description" content="{{ 'Kullanıcı profil sayfası. Hesap bilgilerinizi ve ayarlarınızı görüntüleyin.' if dil=='tr' else 'User profile page. View your account info and settings.' }}">
+  <meta name="twitter:image" content="https://sam-hypermind.onrender.com/static/logo.png">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "{{ '👤 Profilim' if dil=='tr' else '👤 My Profile' }}",
+    "url": "{{ request.url }}",
+    "description": "{{ 'Kullanıcı profil sayfası. Hesap bilgilerinizi ve ayarlarınızı görüntüleyin.' if dil=='tr' else 'User profile page. View your account info and settings.' }}",
+    "publisher": {
+      "@type": "Organization",
+      "name": "SAM HyperMind",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://sam-hypermind.onrender.com/static/logo.png"
+      }
+    }
+  }
+  </script>
   <style>
     body {
       background-image: url("/static/profil.PNG");

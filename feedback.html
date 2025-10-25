@@ -2,9 +2,48 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>📬 Destek ve Geri Bildirim</title>
+
   <link rel="stylesheet" href="/static/style.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- SEO -->
+  <meta name="description" content="SAM platformunda destek ve geri bildirim gönderin. Sorularınızı iletin, önerilerinizi paylaşın.">
+  <meta name="keywords" content="SAM, destek, geri bildirim, iletişim, yardım">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="📬 SAM | Destek ve Geri Bildirim">
+  <meta property="og:description" content="SAM platformunda destek ve geri bildirim gönderin. Sorularınızı iletin, önerilerinizi paylaşın.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sam-hypermind.onrender.com/feedback">
+  <meta property="og:image" content="https://sam-hypermind.onrender.com/static/logo.png">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="📬 SAM | Destek ve Geri Bildirim">
+  <meta name="twitter:description" content="SAM platformunda destek ve geri bildirim gönderin. Sorularınızı iletin, önerilerinizi paylaşın.">
+  <meta name="twitter:image" content="https://sam-hypermind.onrender.com/static/logo.png">
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "📬 SAM | Destek ve Geri Bildirim",
+    "url": "https://sam-hypermind.onrender.com/feedback",
+    "description": "SAM platformunda destek ve geri bildirim gönderin. Sorularınızı iletin, önerilerinizi paylaşın.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "SAM HyperMind",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://sam-hypermind.onrender.com/static/logo.png"
+      }
+    }
+  }
+  </script>
+
   <style>
     body {
       margin: 0;
@@ -44,7 +83,6 @@
       margin: 0 auto;
     }
 
-
     input, textarea {
       width: 100%;
       padding: 12px;
@@ -56,56 +94,29 @@
       font-size: 15px;
     }
 
-textarea {
-  resize: none; /* 🔧 Boyutlandırma kolunu devre dışı bırakır */
-}
+    textarea {
+      resize: none;
+    }
 
+    .geri-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      font-size: 16px;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 8px 14px;
+      border-radius: 8px;
+      color: #ccc;
+      transition: background 0.3s, color 0.3s;
+      z-index: 1000;
+      backdrop-filter: blur(6px);
+    }
 
-.geri-btn {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  font-size: 16px;
-  text-decoration: none;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 8px 14px;
-  border-radius: 8px;
-  color: #ccc;
-  transition: background 0.3s, color 0.3s;
-  z-index: 1000;
-  backdrop-filter: blur(6px);
-}
-
-.geri-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: #fff;
-}
-
-.back-btn {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: transparent;
-    border: 2px solid #555;
-    border-radius: 50%;
-    color: #fff;
-    font-size: 18px;
-    width: 36px;
-    height: 36px;
-    cursor: pointer;
-    line-height: 30px;
-    text-align: center;
-    z-index: 9999;
-}
-
-.back-btn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-
-.feedback-title {
-  margin-left: 780px; /* Sağa kayma miktarı */
-}
+    .geri-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
 
     button {
       background-color: #444;
@@ -131,6 +142,8 @@ textarea {
   </style>
 </head>
 <body>
+
+
 
 <!-- Sesli komut için görünmez yönlendirme bağlantıları -->
 <div style="display: none;">
