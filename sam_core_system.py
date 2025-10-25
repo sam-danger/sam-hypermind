@@ -606,7 +606,7 @@ def login():
             data = request.get_json()
             identifier = data.get("email")
             password = data.get("password")
-        else:
+        else:  # Web Form
             identifier = request.form.get("identifier")
             password = request.form.get("password")
             remember = request.form.get("remember") == "on"
@@ -637,8 +637,15 @@ def login():
             flash("❌ Hatalı kullanıcı adı/e-posta veya şifre.", "danger")
             return redirect("/login")
 
-    return render_template("login.html", app_version=APP_VERSION)
+    # GET isteği -> login sayfasını render et
+    seo_data = {
+        "title": "SAM Giriş Paneli | SAM HyperMind",
+        "description": "SAM HyperMind giriş paneli. Kullanıcı adı veya e-posta ile giriş yapabilirsiniz.",
+        "url": "https://sam-hypermind.onrender.com/login",
+        "logo": "https://sam-hypermind.onrender.com/static/logo.png"
+    }
 
+    return render_template("login.html", app_version=APP_VERSION, seo=seo_data)
 
 
 
