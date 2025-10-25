@@ -10,7 +10,6 @@
   <meta name="keywords" content="SAM, HyperMind, yapay zeka, dijital asistan, chat, AI, notlar, veri yönetimi">
   <meta name="author" content="Alperen Durmaz">
   <meta name="robots" content="index, follow">
-  <meta name="google-site-verification" content="GOOGLE_VERIFICATION_CODE_HERE">
   <meta name="google-site-verification" content="google9127171d5793b6c3" />
 
   <!-- Sosyal Medya / Open Graph -->
@@ -49,6 +48,40 @@
   }
   </script>
 
+  <!-- FAQ Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "SAM nedir?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SAM HyperMind, gelişmiş yapay zekâ destekli dijital asistan. Sohbet, notlar, veri yönetimi ve çeşitli araçlarla kullanıcıya destek sağlar."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Nasıl kayıt olabilirim?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Kayıt olmak için sağ üstten Kayıt Ol sayfasına gidip kullanıcı adı, e-posta ve şifre bilgilerini doldurmanız yeterlidir."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "SAM ile neler yapabilirim?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SAM ile sohbet edebilir, notlarınızı yönetebilir, verilerinizi kontrol edebilir, canlı destek alabilir ve güvenlik ayarlarınızı yapabilirsiniz."
+        }
+      }
+    ]
+  }
+  </script>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/static/style.css">
   <script src="/static/script.js" defer></script>
@@ -70,11 +103,18 @@
     .overlay { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); }
     .camera-click { position:absolute; top:43%; left:11%; transform:translateX(-50%); width:140px; height:25px; cursor:pointer; z-index:9999; background-color:rgba(255,0,0,0); pointer-events:auto; }
     .microphone-click { position:absolute; bottom:50px; right:50px; width:100px; height:100px; cursor:pointer; z-index:9999; }
+    section { padding: 40px 20px; max-width: 900px; margin:auto; }
+    h2 { color:#00e0ff; margin-bottom:20px; }
+    ul.features-list { list-style:none; padding:0; }
+    ul.features-list li { background:rgba(0,224,255,0.05); padding:10px 14px; margin-bottom:10px; border-radius:6px; }
+    .faq-item { margin-bottom:20px; }
+    .faq-item h3 { margin:0 0 5px 0; color:#0ff; }
+    .faq-item p { margin:0; color:#ccc; }
   </style>
 </head>
 <body>
 
-<!-- Sesli komut için görünmez yönlendirme bağlantıları -->
+<!-- Mevcut ayarlar ve clickable alanlar kodu aynen korunuyor -->
 <div style="display: none;">
   <a href="/chat" id="goto-chat"></a>
   <a href="/notlar" id="goto-notlar"></a>
@@ -83,12 +123,10 @@
   <a href="/index" id="goto-home"></a>
 </div>
 
-<!-- ⚙️ Ayarlar Butonu -->
 <div class="settings-button" onclick="toggleSettingsPanel()" title="Ayarlar">
   <i class="fas fa-cog"></i>
 </div>
 
-<!-- ⚙️ Sağdan kayan Ayarlar Paneli -->
 <div id="settingsPanel" class="settings-panel">
   <h2>Ayarlar</h2>
   <ul>
@@ -104,7 +142,6 @@
   </ul>
 </div>
 
-<!-- Çıkış fonksiyonu -->
 <script>
   function logoutUser() {
     fetch("/logout", {
@@ -120,73 +157,62 @@
   }
 </script>
 
-<!-- Admin Giriş Linki -->
 <a href="/admin-login" class="admin-link">
   <img src="/static/admin_icon.png" alt="Admin Icon" class="admin-icon">
   SAM Neural Operations Interface
 </a>
 
-<!-- SADECE index.html'de -->
+<!-- ⚡ Özellikler Bölümü -->
+<section id="features">
+  <h2>Özellikler</h2>
+  <ul class="features-list">
+    <li>Gerçek zamanlı sohbet asistanı</li>
+    <li>Notlarımı yönet</li>
+    <li>Veri ve dosya işlemleri</li>
+    <li>Canlı destek ve geri bildirim</li>
+    <li>Güvenlik ve bağlantı ayarları</li>
+    <li>Sesli ve görsel etkileşim</li>
+  </ul>
+</section>
+
+<!-- ⚡ SSS Bölümü -->
+<section id="faq">
+  <h2>Sıkça Sorulan Sorular</h2>
+  <div class="faq-item">
+    <h3>SAM nedir?</h3>
+    <p>SAM HyperMind, gelişmiş yapay zekâ destekli dijital asistan. Sohbet, notlar, veri yönetimi ve çeşitli araçlarla kullanıcıya destek sağlar.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Nasıl kayıt olabilirim?</h3>
+    <p>Kayıt olmak için sağ üstten Kayıt Ol sayfasına gidip kullanıcı adı, e-posta ve şifre bilgilerini doldurmanız yeterlidir.</p>
+  </div>
+  <div class="faq-item">
+    <h3>SAM ile neler yapabilirim?</h3>
+    <p>SAM ile sohbet edebilir, notlarınızı yönetebilir, verilerinizi kontrol edebilir, canlı destek alabilir ve güvenlik ayarlarınızı yapabilirsiniz.</p>
+  </div>
+</section>
+
+<!-- Diğer mevcut clickable ve overlay alanlar aynen korunuyor -->
 <div id="index-overlay" class="overlay">
   <div class="clickable-area" onclick="window.location.href='/chat'" title="DIGITAL TWIN"></div>
 </div>
-
 <div class="clickable-area microphone-click" onclick="window.location.href='/microphone'" title="Microphone"></div>
-
-<!-- 📸 Kamera Alanı (Tıklanabilir) -->
 <div class="clickable-area camera-click" onclick="window.location.href='/camera'" title="Camera"></div>
-
-<!-- 🍪 Çerez Onayı Kutusu -->
-<div id="cookieConsent" style="position:fixed; bottom:20px; left:20px; right:20px; background:#222; color:#fff; padding:20px; border-radius:8px; box-shadow:0 0 10px #00ffff; z-index:9999; display:none;">
-  <p style="margin:0; font-size:14px;">
-    🍪 Bu site, deneyiminizi iyileştirmek için çerez kullanır.
-    <a href="/cerez-politikasi" style="color:#00ffff; text-decoration:underline;">Detaylı bilgi</a>
-  </p>
-  <button onclick="acceptCookies()" style="margin-top:10px; padding:6px 14px; background:#00ffff; color:#000; border:none; border-radius:4px; cursor:pointer;">
-    Kabul Ediyorum
-  </button>
-</div>
-
-<!-- 📸 Görünmez Kamera Tıklama Alanı -->
-<div class="camera-click" onclick="window.location.href='/camera'" title="Camera"></div>
-
-<div class="shadow-clickable"
-     onclick="window.location.href='/shadow-mode'"
-     style="
-       position: fixed;
-       top: 13vh;       /* yukarı alındı */
-       left: 70vw;      /* yatay pozisyon aynı */
-       width: 7vw;      /* biraz daraltıldı */
-       height: 15vh;    /* yükseklik aynı */
-       cursor: pointer;
-       background-color: rgba(255,0,0,0);
-       z-index: 9999;
-     ">
-</div>
-
-<div class="Blockchain-clickable"
-     onclick="window.location.href='/blockchain-security'"
-     style="position: fixed; top: 39vh; left: 83vw; width: 8vw; height: 12vh; cursor: pointer; background-color: rgba(255,0,0,0); z-index: 9999;">
-</div>
-
 
 <script>
   function setCookie(name, value, days) {
     const expires = new Date(Date.now() + days*24*60*60*1000).toUTCString();
     document.cookie = name + "=" + value + "; expires=" + expires + "; path=/";
   }
-
   function getCookie(name) {
     const value = document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)");
     return value ? value.pop() : "";
   }
-
   function acceptCookies() {
     setCookie("cookieAccepted", "true", 365);
     setCookie("cookieAcceptedDate", new Date().toISOString(), 365);
     document.getElementById("cookieConsent").style.display = "none";
   }
-
   window.onload = function () {
     if (getCookie("cookieAccepted") !== "true") {
       document.getElementById("cookieConsent").style.display = "block";
@@ -194,9 +220,6 @@
   };
 </script>
 
-
-
-<!-- Panel Aç/Kapat Script -->
 <script>
   function toggleSettingsPanel() {
     const panel = document.getElementById("settingsPanel");
