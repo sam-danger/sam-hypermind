@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /static/
+Disallow: /database/
+Sitemap: https://sam-hypermind.onrender.com/sitemap.xml
