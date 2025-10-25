@@ -34,3 +34,4 @@ openai==1.43.0              # ✅ Güncel ve kararlı sürüm
 Cython==3.0.11
 gunicorn==23.0.0
 reportlab==4.2.2
+models.py
