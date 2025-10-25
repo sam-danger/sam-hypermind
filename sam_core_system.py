@@ -3513,6 +3513,10 @@ def google_verification():
 def sitemap():
     return send_from_directory(os.getcwd(), 'sitemap.xml')
 
+@app.route('/robots.txt')
+def robots_txt():
+    return send_from_directory('.', 'robots.txt')
+
 
 # 🕒 Her gece 03:00'te 30 günden eski mesajları otomatik silen görev
 def cleanup_old_messages():
