@@ -275,7 +275,7 @@ class DestekCevap(db.Model):
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
-    kullanici_id = db.Column(db.String(50), unique=True, nullable=True)
+    kullanici_id = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
     rol = db.Column(db.String(20), default="kullanici")
@@ -604,11 +604,11 @@ def home():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        if request.is_json:  # ✅ Android / Flutter / Mobil
+        if request.is_json:
             data = request.get_json()
             identifier = data.get("email")
             password = data.get("password")
-        else:  # Web Form
+        else:
             identifier = request.form.get("identifier")
             password = request.form.get("password")
             remember = request.form.get("remember") == "on"
@@ -617,29 +617,31 @@ def login():
             (User.kullanici_id == identifier) | (User.email == identifier)
         ).first()
 
-        if user and check_password_hash(user.password, password):
-            if not user.aktif_mi:
-                if request.is_json:
-                    return jsonify({"success": False, "message": "Hesap aktif değil"}), 403
-                flash("❌ Hesabınız henüz aktif değil. E-postanızı kontrol edin.", "danger")
-                return redirect("/login")
+        if not user:
+            msg = "❌ Hatalı kullanıcı adı/e-posta veya şifre."
+            return jsonify({"success": False, "message": msg}), 401 if request.is_json else flash(msg, "danger") or redirect("/login")
 
-            session.permanent = not request.is_json and user.kullanici_id != "admin"
-            session["username"] = user.kullanici_id
-            session["email"] = user.email
-            session["rol"] = user.rol if user.rol else "kullanici"
+        if not check_password_hash(user.password, password):
+            msg = "❌ Hatalı kullanıcı adı/e-posta veya şifre."
+            return jsonify({"success": False, "message": msg}), 401 if request.is_json else flash(msg, "danger") or redirect("/login")
 
-            if request.is_json:
-                return jsonify({"success": True, "message": "Giriş başarılı"}), 200
-            return redirect("/index")
+        if not user.aktif_mi:
+            msg = "❌ Hesabınız henüz aktif değil. E-postanızı kontrol edin."
+            return jsonify({"success": False, "message": msg}), 403 if request.is_json else flash(msg, "danger") or redirect("/login")
 
-        else:
-            if request.is_json:
-                return jsonify({"success": False, "message": "Geçersiz giriş"}), 401
-            flash("❌ Hatalı kullanıcı adı/e-posta veya şifre.", "danger")
-            return redirect("/login")
+        # Başarılı login
+        if not request.is_json:
+            session.permanent = remember
+        session["username"] = user.kullanici_id
+        session["email"] = user.email
+        session["rol"] = user.rol if user.rol else "kullanici"
 
-    # GET isteği -> login sayfasını render et
+        if request.is_json:
+            return jsonify({"success": True, "message": "Giriş başarılı"}), 200
+
+        return redirect("/index")
+
+    # GET isteği -> login sayfası
     seo_data = {
         "title": "SAM Giriş Paneli | SAM HyperMind",
         "description": "SAM HyperMind giriş paneli. Kullanıcı adı veya e-posta ile giriş yapabilirsiniz.",
@@ -648,7 +650,6 @@ def login():
         "logo": "https://sam-hypermind.onrender.com/static/logo.png",
         "type": "WebPage"
     }
-
     return render_template("login.html", app_version=APP_VERSION, seo=seo_data)
 
 
