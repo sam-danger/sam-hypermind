@@ -22,6 +22,8 @@ from email.charset import Charset, QP
 from sklearn.ensemble import IsolationForest
 from modules import hardware_monitor
 from flask import Response
+from seo_data import SEO_PAGES
+from models import User
 
 from datetime import datetime, timezone
 from datetime import timedelta
@@ -641,8 +643,10 @@ def login():
     seo_data = {
         "title": "SAM Giriş Paneli | SAM HyperMind",
         "description": "SAM HyperMind giriş paneli. Kullanıcı adı veya e-posta ile giriş yapabilirsiniz.",
+        "keywords": "SAM, HyperMind, yapay zeka, dijital asistan, giriş, login",
         "url": "https://sam-hypermind.onrender.com/login",
-        "logo": "https://sam-hypermind.onrender.com/static/logo.png"
+        "logo": "https://sam-hypermind.onrender.com/static/logo.png",
+        "type": "WebPage"
     }
 
     return render_template("login.html", app_version=APP_VERSION, seo=seo_data)

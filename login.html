@@ -5,40 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- SEO Ayarları -->
-  <title id="seo-title">SAM Giriş Paneli | SAM HyperMind</title>
-  <meta name="description" id="seo-desc" content="SAM HyperMind giriş paneli. Kullanıcı adı veya e-posta ile giriş yapabilirsiniz.">
-  <meta name="keywords" content="SAM, HyperMind, yapay zeka, dijital asistan, giriş, login">
-  <meta name="author" content="Alperen Durmaz">
+  <title>{{ seo.title }}</title>
+  <meta name="description" content="{{ seo.description }}">
+  <meta name="keywords" content="{{ seo.keywords }}">
   <meta name="robots" content="index, follow">
-  <meta name="google-site-verification" content="google9127171d5793b6c3">
 
   <!-- Open Graph / Facebook -->
-  <meta property="og:title" content="SAM Giriş Paneli | SAM HyperMind">
-  <meta property="og:description" content="SAM HyperMind giriş paneli. Kullanıcı adı veya e-posta ile giriş yapabilirsiniz.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://sam-hypermind.onrender.com/login">
-  <meta property="og:image" content="https://sam-hypermind.onrender.com/static/logo.png">
+  <meta property="og:title" content="{{ seo.title }}">
+  <meta property="og:description" content="{{ seo.description }}">
+  <meta property="og:type" content="{{ seo.type }}">
+  <meta property="og:url" content="{{ seo.url }}">
+  <meta property="og:image" content="{{ seo.logo }}">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="SAM Giriş Paneli | SAM HyperMind">
-  <meta name="twitter:description" content="SAM HyperMind giriş paneli. Kullanıcı adı veya e-posta ile giriş yapabilirsiniz.">
-  <meta name="twitter:image" content="https://sam-hypermind.onrender.com/static/logo.png">
+  <meta name="twitter:title" content="{{ seo.title }}">
+  <meta name="twitter:description" content="{{ seo.description }}">
+  <meta name="twitter:image" content="{{ seo.logo }}">
 
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "SAM Giriş Paneli | SAM HyperMind",
-    "url": "https://sam-hypermind.onrender.com/login",
-    "description": "SAM HyperMind giriş paneli. Kullanıcı adı veya e-posta ile giriş yapabilirsiniz.",
+    "@type": "{{ seo.type }}",
+    "name": "{{ seo.title }}",
+    "url": "{{ seo.url }}",
+    "description": "{{ seo.description }}",
     "publisher": {
       "@type": "Organization",
       "name": "SAM HyperMind",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://sam-hypermind.onrender.com/static/logo.png"
+        "url": "{{ seo.logo }}"
       }
     }
   }
@@ -140,7 +138,7 @@
     </div>
 
     <div style="text-align:center; margin-top:30px; font-size:14px; color:#00ffff; font-weight:bold;">
-      SAM 1.0
+      SAM {{ app_version }}
     </div>
   </form>
 
@@ -151,7 +149,11 @@
       const box=document.getElementById("flash-message");
       box.textContent=decodeURIComponent(msg);
       box.style.display="block";
-      setTimeout(()=>{ box.style.transition="opacity 0.5s ease"; box.style.opacity=0; setTimeout(()=>box.remove(),500); },3000);
+      setTimeout(()=>{
+        box.style.transition="opacity 0.5s ease";
+        box.style.opacity=0;
+        setTimeout(()=>box.remove(),500);
+      },3000);
     }
   </script>
 </body>
