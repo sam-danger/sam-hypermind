@@ -617,17 +617,29 @@ def login():
             (User.kullanici_id == identifier) | (User.email == identifier)
         ).first()
 
+        # Kullanıcı bulunamadıysa
         if not user:
             msg = "❌ Hatalı kullanıcı adı/e-posta veya şifre."
-            return jsonify({"success": False, "message": msg}), 401 if request.is_json else flash(msg, "danger") or redirect("/login")
+            if request.is_json:
+                return jsonify({"success": False, "message": msg}), 401
+            flash(msg, "danger")
+            return redirect("/login")
 
+        # Şifre yanlışsa
         if not check_password_hash(user.password, password):
             msg = "❌ Hatalı kullanıcı adı/e-posta veya şifre."
-            return jsonify({"success": False, "message": msg}), 401 if request.is_json else flash(msg, "danger") or redirect("/login")
+            if request.is_json:
+                return jsonify({"success": False, "message": msg}), 401
+            flash(msg, "danger")
+            return redirect("/login")
 
+        # Hesap aktif değilse
         if not user.aktif_mi:
             msg = "❌ Hesabınız henüz aktif değil. E-postanızı kontrol edin."
-            return jsonify({"success": False, "message": msg}), 403 if request.is_json else flash(msg, "danger") or redirect("/login")
+            if request.is_json:
+                return jsonify({"success": False, "message": msg}), 403
+            flash(msg, "danger")
+            return redirect("/login")
 
         # Başarılı login
         if not request.is_json:
@@ -650,7 +662,9 @@ def login():
         "logo": "https://sam-hypermind.onrender.com/static/logo.png",
         "type": "WebPage"
     }
+
     return render_template("login.html", app_version=APP_VERSION, seo=seo_data)
+
 
 
 
