@@ -6,6 +6,26 @@
   <title>SAM Giriş Paneli</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Structured Data / Rich Snippet -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "SAM Giriş Paneli",
+    "url": "https://sam-hypermind.onrender.com/login",
+    "description": "SAM HyperMind giriş paneli. Kullanıcı adı veya e-posta ile giriş yapabilirsiniz.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "SAM HyperMind",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://sam-hypermind.onrender.com/static/logo.png"
+      }
+    }
+  }
+  </script>
+
   <style>
     * { margin: 0; padding: 0; font-family: 'Poppins', sans-serif; box-sizing: border-box; }
     body {
@@ -67,61 +87,55 @@
       font-size: 13px; display: none;
     }
     .remember-checkbox {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  color: #ccc;
-  margin-bottom: 20px;
-  user-select: none;
-}
-
-.remember-checkbox input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: #00ffff;
-  margin: 0;
-  cursor: pointer;
-}
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #ccc;
+      margin-bottom: 20px;
+      user-select: none;
+    }
+    .remember-checkbox input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: #00ffff;
+      margin: 0;
+      cursor: pointer;
+    }
     @media screen and (max-width: 480px) {
       .login-container { padding: 30px 20px; font-size: 14px; }
       .login-container h2 { font-size: 20px; }
       .login-container input, .login-container button { padding: 10px; font-size: 13px; }
     }
+
+    .flash-messages {
+      position: fixed;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      width: auto;
+      max-width: 400px;
+    }
+    .flash-messages .alert {
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 10px 15px;
+      box-shadow: 0px 4px 8px rgba(0,0,0,0.15);
+      margin-bottom: 10px;
+      animation: fadeInOut 4s ease-in-out forwards;
+    }
+    .alert-success { border-left: 4px solid #4CAF50; }
+    .alert-danger { border-left: 4px solid #F44336; }
+    .alert-warning { border-left: 4px solid #FFC107; }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translate(-50%, -10px); }
+      10% { opacity: 1; transform: translate(-50%, 0); }
+      80% { opacity: 1; }
+      100% { opacity: 0; transform: translate(-50%, -10px); }
+    }
   </style>
-
-<style>
-.flash-messages {
-  position: fixed;
-  top: 15px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9999;
-  width: auto;
-  max-width: 400px;
-}
-
-.flash-messages .alert {
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 10px 15px;
-  box-shadow: 0px 4px 8px rgba(0,0,0,0.15);
-  margin-bottom: 10px;
-  animation: fadeInOut 4s ease-in-out forwards;
-}
-
-.alert-success { border-left: 4px solid #4CAF50; }
-.alert-danger { border-left: 4px solid #F44336; }
-.alert-warning { border-left: 4px solid #FFC107; }
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translate(-50%, -10px); }
-  10% { opacity: 1; transform: translate(-50%, 0); }
-  80% { opacity: 1; }
-  100% { opacity: 0; transform: translate(-50%, -10px); }
-}
-</style>
-
 </head>
 <body>
   <form class="login-container" method="POST" action="/login">
@@ -133,9 +147,9 @@
     <input type="password" name="password" placeholder="Şifre" required>
 
     <label class="remember-checkbox">
-  <input type="checkbox" name="remember" id="remember">
-  <span>Oturumumu hatırla</span>
-</label>
+      <input type="checkbox" name="remember" id="remember">
+      <span>Oturumumu hatırla</span>
+    </label>
 
     <button type="submit">Giriş Yap</button>
 
@@ -144,13 +158,10 @@
       <a href="/register">Kayıt Ol</a>
     </div>
 
-<div style="text-align: center; margin-top: 30px; font-size: 14px; color: #00ffff; font-weight: bold;">
-  SAM {{ app_version }}
-</div>
-
-
+    <div style="text-align: center; margin-top: 30px; font-size: 14px; color: #00ffff; font-weight: bold;">
+      SAM {{ app_version }}
+    </div>
   </form>
-
 
   <script>
     const params = new URLSearchParams(window.location.search);
@@ -167,15 +178,14 @@
     }
   </script>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <div class="flash-messages">
-      {% for category, message in messages %}
-        <div class="alert alert-{{ category }}">{{ message }}</div>
-      {% endfor %}
-    </div>
-  {% endif %}
-{% endwith %}
-
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
 </body>
 </html>
