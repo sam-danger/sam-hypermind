@@ -3505,8 +3505,7 @@ def manage_tasks():
 
 @app.route('/google9127171d5793b6c3.html')
 def google_verification():
-    return send_from_directory('static', 'google9127171d5793b6c3.html')
-
+    return send_from_directory('.', 'google9127171d5793b6c3.html')
 
 
 # 🕒 Her gece 03:00'te 30 günden eski mesajları otomatik silen görev
