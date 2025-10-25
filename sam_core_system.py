@@ -2735,7 +2735,16 @@ def search_web():
 def microphone_page():
     if "username" not in session:
         return redirect("/login")
-    return render_template("microphone.html", username=session["username"])
+    
+    seo = {
+        "title": "SAM HyperMind | Yapay Zekâ Asistanı",
+        "description": "SAM HyperMind, gelişmiş yapay zekâ destekli dijital asistan. Sohbet, notlar, veri yönetimi ve daha fazlası.",
+        "keywords": "SAM, HyperMind, yapay zeka, dijital asistan, chat, AI, notlar, veri yönetimi",
+        "url": "https://www.samyourwebsite.com/microphone",  # Burayı kendi URL’inle değiştir
+        "logo": "https://www.samyourwebsite.com/static/logo.png"  # Burayı logo yolunla değiştir
+    }
+    
+    return render_template("microphone.html", username=session["username"], seo=seo)
 
 
 
