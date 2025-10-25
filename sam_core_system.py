@@ -3508,6 +3508,12 @@ def google_verification():
     return send_from_directory('.', 'google9127171d5793b6c3.html')
 
 
+
+@app.route('/sitemap.xml')
+def sitemap():
+    return send_from_directory(os.getcwd(), 'sitemap.xml')
+
+
 # 🕒 Her gece 03:00'te 30 günden eski mesajları otomatik silen görev
 def cleanup_old_messages():
     try:
