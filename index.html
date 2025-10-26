@@ -1,73 +1,21 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SAM HyperMind | Yapay Zekâ Asistanı</title>
-
-  <!-- 🔍 Temel SEO -->
-  <meta name="description" content="SAM HyperMind — Gelişmiş yapay zekâ destekli dijital asistan. Sohbet edin, verilerinizi yönetin ve kişisel yapay zekânızla etkileşime geçin." />
-  <meta name="keywords" content="SAM HyperMind, yapay zeka, dijital asistan, sohbet, chat, AI, SAM sistemi" />
-  <meta name="author" content="SAM HyperMind Ekibi" />
-  <meta name="robots" content="index, follow" />
-  <meta name="language" content="Turkish" />
-  <meta name="theme-color" content="#00ffff" />
-
-  <!-- 🔑 Google Search Console -->
-  <meta name="google-site-verification" content="GOOGLE_VERIFICATION_CODE_HERE" />
-
-  <!-- 📱 Open Graph (Facebook, LinkedIn, WhatsApp) -->
-  <meta property="og:title" content="SAM HyperMind | Yapay Zekâ Asistanı" />
-  <meta property="og:description" content="SAM HyperMind — Kişisel dijital zekânız. Sohbet edin, notlar alın, verilerinizi yönetin ve yapay zekâyla etkileşime geçin." />
-  <meta property="og:image" content="https://sam-hypermind.onrender.com/static/logo.png" />
-  <meta property="og:url" content="https://sam-hypermind.onrender.com" />
-  <meta property="og:type" content="website" />
-  <meta property="og:locale" content="tr_TR" />
-  <meta property="og:site_name" content="SAM HyperMind" />
-
-  <!-- 🐦 Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="SAM HyperMind | Yapay Zekâ Asistanı" />
-  <meta name="twitter:description" content="Kişisel yapay zekânız SAM ile tanışın! Sohbet edin, öğrenin, planlayın ve yönetin." />
-  <meta name="twitter:image" content="https://sam-hypermind.onrender.com/static/logo.png" />
-  <meta name="twitter:site" content="@samhypermind" />
-
-  <!-- 🧠 JSON-LD (Yapılandırılmış Veri - Google Rich Results) -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "SAM HyperMind",
-    "operatingSystem": "Web, Android, iOS",
-    "applicationCategory": "AI Assistant",
-    "description": "SAM HyperMind — Gelişmiş yapay zekâ destekli dijital asistan. Sohbet, not, veri ve güvenlik modülleriyle kişisel deneyim sağlar.",
-    "url": "https://sam-hypermind.onrender.com",
-    "image": "https://sam-hypermind.onrender.com/static/logo.png",
-    "creator": {
-      "@type": "Organization",
-      "name": "SAM HyperMind Team"
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.9",
-      "ratingCount": "1234"
-    }
-  }
-  </script>
-
-  <!-- 🎨 Stil ve Script -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="stylesheet" href="/static/style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAM System Interface</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/static/style.css">
   <script src="/static/script.js" defer></script>
-
   <style>
     body {
       background-color: #111;
       color: #fff;
-      font-family: "Segoe UI", sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 0;
     }
+
     /* ⚙️ Ayarlar Butonu */
     .settings-button {
       position: fixed;
@@ -78,13 +26,13 @@
       padding: 10px 14px;
       border-radius: 6px;
       cursor: pointer;
-      z-index: 10000;
+      z-index: 10001; /* Üstte olmalı */
       font-weight: bold;
       transition: background-color 0.3s;
     }
-    .settings-button:hover {
-      background-color: #222;
-    }
+    .settings-button:hover { background-color: #222; }
+
+    /* ⚙️ Sağdan kayan Ayarlar Paneli */
     .settings-panel {
       position: fixed;
       top: 0;
@@ -98,46 +46,13 @@
       box-shadow: -2px 0 6px rgba(0, 255, 255, 0.2);
       border-left: 1px solid rgba(0, 255, 255, 0.08);
       transition: right 0.4s ease-in-out;
-      z-index: 9999;
+      z-index: 10002; /* Ayarlar paneli üstte */
     }
-    .settings-panel.open {
-      right: 0;
-    }
-    .settings-panel h2 {
-      margin-top: 0;
-      font-size: 20px;
-      border-bottom: 1px solid #444;
-      padding-bottom: 10px;
-    }
-    .settings-panel ul {
-      list-style: none;
-      padding: 0;
-      margin-top: 20px;
-    }
-    .settings-panel li {
-      margin: 14px 0;
-    }
-    .settings-panel a {
-      color: #00e0ff;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .settings-panel a:hover {
-      text-decoration: underline;
-    }
-    .close-btn {
-      background: none;
-      border: none;
-      color: red;
-      font-size: 18px;
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      cursor: pointer;
-    }
+    .settings-panel.open { right: 0; }
+
     /* Admin Giriş Linki */
     .admin-link {
-      position: absolute;
+      position: fixed;
       top: 9px;
       left: 50%;
       transform: translateX(-50%);
@@ -147,14 +62,39 @@
       text-decoration: none;
       font-weight: 500;
       letter-spacing: 0.5px;
-      z-index: 1000;
+      z-index: 10003; /* Üstte */
       transition: 0.3s ease;
     }
     .admin-link:hover {
       text-shadow: 0 0 6px rgba(0, 255, 229, 0.5);
       color: rgba(0, 255, 255, 0.8);
     }
-    /* Kamera tıklama alanı */
+
+    /* Overlay ve Tıklanabilir Alanlar */
+    .overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10000; /* Chat tıklaması üstte olmalı ama admin ve ayarlar altında */
+    }
+    .clickable-area {
+      cursor: pointer;
+      background-color: rgba(0,255,0,0.15); /* Tıklanabilir alan test için */
+      z-index: 10000;
+    }
+
+    /* Mikrofon */
+    .microphone-click {
+      position: absolute;
+      bottom: 50px;
+      right: 50px;
+      width: 100px;
+      height: 100px;
+      z-index: 10000;
+    }
+
+    /* Kamera */
     .camera-click {
       position: absolute;
       top: 43%;
@@ -163,18 +103,28 @@
       width: 140px;
       height: 25px;
       cursor: pointer;
-      z-index: 9999;
-      background-color: rgba(255, 0, 0, 0);
-      pointer-events: auto;
+      z-index: 10000;
     }
+
+    /* Shadow ve Blockchain */
+    .shadow-clickable, .Blockchain-clickable {
+      position: fixed;
+      cursor: pointer;
+      background-color: rgba(255, 0, 0, 0);
+      z-index: 10000;
+    }
+    .shadow-clickable { top: 13vh; left: 70vw; width: 7vw; height: 15vh; }
+    .Blockchain-clickable { top: 39vh; left: 83vw; width: 8vw; height: 12vh; }
   </style>
 </head>
-
 <body>
-  <!-- ⚙️ Ayarlar Butonu -->
-  <div class="settings-button" onclick="toggleSettingsPanel()" title="Ayarlar"><i class="fas fa-cog"></i></div>
 
-  <!-- ⚙️ Sağdan kayan Ayarlar Paneli -->
+  <!-- ⚙️ Ayarlar Butonu -->
+  <div class="settings-button" onclick="toggleSettingsPanel()" title="Ayarlar">
+    <i class="fas fa-cog"></i>
+  </div>
+
+  <!-- ⚙️ Ayarlar Paneli -->
   <div id="settingsPanel" class="settings-panel">
     <h2>Ayarlar</h2>
     <ul>
@@ -184,60 +134,39 @@
       <li><a href="/data">Veri İşlemleri</a></li>
       <li><a href="/notes">Notlarım / Randevu</a></li>
       <li><a href="/oturum">Hesap ve Oturum</a></li>
-      <li><a href="/feedback">📬 Destek ve Geri Bildirim</a></li>
-      <li><a href="/canli-destek">💬 Canlı Destek</a></li>
+      <li><a href="/feedback" target="_parent">📬 Destek ve Geri Bildirim</a></li>
+      <li><a href="/canli-destek" target="_parent">💬 Canlı Destek</a></li>
       <li><a href="#" onclick="logoutUser()">Çıkış Yap</a></li>
     </ul>
   </div>
 
-  <!-- Admin Giriş Linki -->
+  <!-- Admin Linki -->
   <a href="/admin-login" class="admin-link">
     <img src="/static/admin_icon.png" alt="Admin Icon" class="admin-icon">
     SAM Neural Operations Interface
   </a>
 
-  <!-- 🔒 Güvenlik Overlay -->
+  <!-- Overlay ve Tıklanabilir Alanlar -->
+  <div id="index-overlay" class="overlay">
+    <div class="clickable-area" onclick="window.location.href='/chat'" title="DIGITAL TWIN"></div>
+  </div>
+  <div class="clickable-area microphone-click" onclick="window.location.href='/microphone'" title="Microphone"></div>
+  <div class="clickable-area camera-click" onclick="window.location.href='/camera'" title="Camera"></div>
+  <div class="shadow-clickable" onclick="window.location.href='/shadow-mode'"></div>
+  <div class="Blockchain-clickable" onclick="window.location.href='/blockchain-security'"></div>
+
   <script>
     function toggleSettingsPanel() {
-      document.getElementById("settingsPanel").classList.toggle("open");
+      const panel = document.getElementById("settingsPanel");
+      panel.classList.toggle("open");
     }
 
     function logoutUser() {
       fetch("/logout", { method: "POST", headers: { "Content-Type": "application/json" } })
         .then(res => res.json())
-        .then(data => {
-          if (data.redirect) window.location.href = data.redirect;
-        });
+        .then(data => { if (data.redirect) window.location.href = data.redirect; });
     }
-
-    // Otomatik güvenlik modu (2 dk hareketsizlik)
-    let samTimeout, samOverlay;
-    function createSecurityOverlay() {
-      samOverlay = document.createElement("div");
-      samOverlay.id = "samOverlay";
-      samOverlay.style = `
-        position:fixed;top:0;left:0;width:100%;height:100%;
-        background:rgba(0,0,0,0.9);backdrop-filter:blur(10px);
-        display:flex;align-items:center;justify-content:center;
-        color:#00ffff;font-size:20px;text-align:center;z-index:99999;cursor:pointer;`;
-      samOverlay.innerHTML = "🔒 SAM Güvenlik Modu<br><br>Uzun süreli hareketsizlik algılandı.<br>Sistemi devam ettirmek için ekrana dokunun...";
-      samOverlay.onclick = removeSecurityOverlay;
-      document.body.appendChild(samOverlay);
-    }
-    function removeSecurityOverlay() {
-      if (samOverlay) { samOverlay.remove(); samOverlay = null; }
-    }
-    function resetSamInactivityTimer() {
-      clearTimeout(samTimeout);
-      samTimeout = setTimeout(createSecurityOverlay, 120000);
-    }
-    ["click","mousemove","keydown","touchstart"].forEach(evt => {
-      document.addEventListener(evt, () => {
-        removeSecurityOverlay();
-        resetSamInactivityTimer();
-      });
-    });
-    window.addEventListener("load", resetSamInactivityTimer);
   </script>
+
 </body>
 </html>

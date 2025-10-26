@@ -284,50 +284,37 @@ class DestekCevap(db.Model):
 
 class User(db.Model):
     __tablename__ = "users"
+
     id = db.Column(db.Integer, primary_key=True)
-
-    # Temel bilgiler
-    kullanici_id = db.Column(db.String(150), unique=True, nullable=False)  # Uzun kullanıcı adları için
-    email = db.Column(db.String(255), unique=True, nullable=False)         # Uzun e-posta adresleri için
-    password = db.Column(db.String(255), nullable=True)                     # Hash'ler uzun olabiliyor
-    rol = db.Column(db.String(50), default="kullanici")
-    ad = db.Column(db.String(100), default="")
-    soyad = db.Column(db.String(100), default="")
-    tc = db.Column(db.String(20), default="")
-    telefon = db.Column(db.String(50), default="")
-    dil = db.Column(db.String(20), default="tr")
-    tema = db.Column(db.String(20), default="dark")
-    durum = db.Column(db.String(50), default="aktif")
-
-    # Aktivasyon sistemi
-    aktivasyon_token = db.Column(db.String(255), default="")
+    kullanici_id = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(150), unique=True, nullable=False)
+    password = db.Column(db.String(512), nullable=False)  # 100 -> 512
+    rol = db.Column(db.String(50), nullable=False)
+    ad = db.Column(db.String(100))
+    soyad = db.Column(db.String(100))
+    tc = db.Column(db.String(20))
+    telefon = db.Column(db.String(50))
+    dil = db.Column(db.String(20))
+    tema = db.Column(db.String(20))
+    durum = db.Column(db.String(50))
+    aktivasyon_token = db.Column(db.String(256))  # 100 -> 256
     aktif_mi = db.Column(db.Boolean, default=False)
-
-    # Sosyal medya bağlantıları
     google = db.Column(db.Boolean, default=False)
     github = db.Column(db.Boolean, default=False)
     discord = db.Column(db.Boolean, default=False)
     facebook = db.Column(db.Boolean, default=False)
     instagram = db.Column(db.Boolean, default=False)
     apple = db.Column(db.Boolean, default=False)
-
-    # 2FA alanları
     fa_sms = db.Column(db.Boolean, default=False)
     fa_email = db.Column(db.Boolean, default=False)
-
-    # Sosyal medya e-postaları
-    google_email = db.Column(db.String(255), default="")
-    github_email = db.Column(db.String(255), default="")
-    discord_email = db.Column(db.String(255), default="")
-    facebook_email = db.Column(db.String(255), default="")
-    instagram_email = db.Column(db.String(255), default="")
-
-    # SAM özel ayarları
-    ses_tonu = db.Column(db.String(50), default="resmi")
+    google_email = db.Column(db.String(150))
+    github_email = db.Column(db.String(150))
+    discord_email = db.Column(db.String(150))
+    facebook_email = db.Column(db.String(150))
+    instagram_email = db.Column(db.String(150))
+    ses_tonu = db.Column(db.String(50))
     detayli_cevap = db.Column(db.Boolean, default=True)
-
-    # Şifre sıfırlama tokeni
-    reset_token = db.Column(db.String(255), nullable=True)
+    reset_token = db.Column(db.String(256))  # 100 -> 256
 
 
 
