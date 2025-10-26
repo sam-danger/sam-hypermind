@@ -1329,6 +1329,7 @@ def connect_google():
 
 
 # ── GOOGLE CALLBACK ─────────────────────────────────────────────
+# ── GOOGLE CALLBACK ─────────────────────────────────────────────
 @app.route("/google-callback")
 def google_callback():
     try:
@@ -1350,12 +1351,13 @@ def google_callback():
             flash("Google e-posta bilgisi alınamadı.", "error")
             return redirect("/register")
 
+        # Veritabanında kullanıcı kontrolü
         user = User.query.filter_by(email=email).first()
         if not user:
             user = User(
                 kullanici_id=email.split("@")[0],
                 email=email,
-                password=None,
+                password='',           # Google kullanıcıları için boş string
                 rol="kullanici",
                 aktif_mi=True,
                 google_email=email,
@@ -1364,11 +1366,13 @@ def google_callback():
             db.session.add(user)
             db.session.commit()
 
+        # Session bilgilerini ayarla
         session["username"] = user.kullanici_id
         session["email"] = user.email
         session["rol"] = user.rol or "kullanici"
 
-        return redirect("/index")
+        # Giriş sonrası yönlendirme
+        return redirect("/index")  # veya /chat
 
     except Exception as e:
         print("Google giriş hatası:", e)
