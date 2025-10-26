@@ -196,16 +196,8 @@ scheduled_tasks = [
     {"id": 2, "task": "E-posta bildirimleri", "time": "09:00"}
 ]
 
-# ── VERİTABANI AYARLARI ──────────────────────────────────────────
-# PostgreSQL URL (psycopg3 uyumlu)
-# Örn: postgresql://user:password@host:port/dbname
-database_url = os.getenv("DATABASE_URL")
-if database_url:
-    database_url = database_url.replace("postgresql://", "postgresql+psycopg://")
-
-app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://sam_db_iyh1_user:IDuVXLH6fF6lnfkJL0mhzYYNI5zt5uus@dpg-d3v2nube5dus73a2t6v0-a.oregon-postgres.render.com/sam_db_iyh1"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 db = SQLAlchemy(app)
 app.config['MAIL_SERVER'] = os.getenv("SMTP_HOST")
 app.config['MAIL_PORT'] = int(os.getenv("SMTP_PORT"))
