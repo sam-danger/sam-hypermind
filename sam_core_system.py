@@ -289,6 +289,7 @@ class User(db.Model):
     # Temel bilgiler
     kullanici_id = db.Column(db.String(100), unique=True, nullable=False)
     email = db.Column(db.String(150), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=True)  # ← Burayı ekle
     rol = db.Column(db.String(50), default="kullanici")
     ad = db.Column(db.String(100), default="")
     soyad = db.Column(db.String(100), default="")
@@ -297,9 +298,10 @@ class User(db.Model):
     dil = db.Column(db.String(20), default="tr")
     tema = db.Column(db.String(20), default="dark")
     durum = db.Column(db.String(50), default="aktif")
+
+    # Aktivasyon
     aktivasyon_token = db.Column(db.String(255), default="")
     aktif_mi = db.Column(db.Boolean, default=False)
-
 
     # Sosyal medya bağlantıları
     google = db.Column(db.Boolean, default=False)
@@ -309,12 +311,12 @@ class User(db.Model):
     instagram = db.Column(db.Boolean, default=False)
     apple = db.Column(db.Boolean, default=False)
 
-    # 2FA alanları
+    # 2FA
     fa_sms = db.Column(db.Boolean, default=False)
     fa_email = db.Column(db.Boolean, default=False)
 
-    # Sosyal medya e-postaları
-    google_email = db.Column(db.String(255), default="")   # ← Daha uzun
+    # Sosyal e-postalar
+    google_email = db.Column(db.String(255), default="")
     github_email = db.Column(db.String(255), default="")
     discord_email = db.Column(db.String(255), default="")
     facebook_email = db.Column(db.String(255), default="")
@@ -324,8 +326,9 @@ class User(db.Model):
     ses_tonu = db.Column(db.String(20), default="resmi")
     detayli_cevap = db.Column(db.Boolean, default=True)
 
-    # Şifre sıfırlama tokeni
-    reset_token = db.Column(db.String(255), nullable=True)  # ← Uzun hash veya token
+    # Şifre sıfırlama
+    reset_token = db.Column(db.String(255), nullable=True)
+
 
 # ── TABLOLARI OLUŞTUR ────────────────────────────────────────────
 with app.app_context():
