@@ -287,9 +287,9 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     # Temel bilgiler
-    kullanici_id = db.Column(db.String(100), unique=True, nullable=False)
-    email = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=True)  # ← Burayı ekle
+    kullanici_id = db.Column(db.String(150), unique=True, nullable=False)  # Uzun kullanıcı adları için
+    email = db.Column(db.String(255), unique=True, nullable=False)         # Uzun e-posta adresleri için
+    password = db.Column(db.String(255), nullable=True)                     # Hash'ler uzun olabiliyor
     rol = db.Column(db.String(50), default="kullanici")
     ad = db.Column(db.String(100), default="")
     soyad = db.Column(db.String(100), default="")
@@ -299,7 +299,7 @@ class User(db.Model):
     tema = db.Column(db.String(20), default="dark")
     durum = db.Column(db.String(50), default="aktif")
 
-    # Aktivasyon
+    # Aktivasyon sistemi
     aktivasyon_token = db.Column(db.String(255), default="")
     aktif_mi = db.Column(db.Boolean, default=False)
 
@@ -311,11 +311,11 @@ class User(db.Model):
     instagram = db.Column(db.Boolean, default=False)
     apple = db.Column(db.Boolean, default=False)
 
-    # 2FA
+    # 2FA alanları
     fa_sms = db.Column(db.Boolean, default=False)
     fa_email = db.Column(db.Boolean, default=False)
 
-    # Sosyal e-postalar
+    # Sosyal medya e-postaları
     google_email = db.Column(db.String(255), default="")
     github_email = db.Column(db.String(255), default="")
     discord_email = db.Column(db.String(255), default="")
@@ -323,11 +323,12 @@ class User(db.Model):
     instagram_email = db.Column(db.String(255), default="")
 
     # SAM özel ayarları
-    ses_tonu = db.Column(db.String(20), default="resmi")
+    ses_tonu = db.Column(db.String(50), default="resmi")
     detayli_cevap = db.Column(db.Boolean, default=True)
 
-    # Şifre sıfırlama
+    # Şifre sıfırlama tokeni
     reset_token = db.Column(db.String(255), nullable=True)
+
 
 
 # ── TABLOLARI OLUŞTUR ────────────────────────────────────────────
@@ -686,17 +687,18 @@ def login():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        username = request.form.get("username").strip()
-        email = request.form.get("email").strip()
-        password = request.form.get("password")
-        confirm = request.form.get("confirm_password")
+        # Form verilerini al
+        username = request.form.get("username", "").strip()
+        email = request.form.get("email", "").strip()
+        password = request.form.get("password", "")
+        confirm = request.form.get("confirm_password", "")
 
         # Şifre eşleşme kontrolü
         if password != confirm:
             flash("❌ Şifreler eşleşmiyor!", "danger")
             return redirect("/register")
 
-        # Kullanıcı adı veya e-posta kontrolü
+        # Kullanıcı adı veya e-posta daha önce kayıtlı mı kontrol et
         existing = User.query.filter(
             (User.kullanici_id == username) | (User.email == email)
         ).first()
@@ -705,16 +707,19 @@ def register():
             flash("⚠️ Bu kullanıcı adı veya e-posta zaten kayıtlı.", "warning")
             return redirect("/register")
 
-        # Şifre hash'le
+        # Şifreyi hash'le
         hashed_pw = generate_password_hash(password)
+
+        # Aktivasyon tokeni oluştur
         token = str(uuid4())
 
+        # Yeni kullanıcıyı veritabanına ekle
         yeni_kullanici = User(
             kullanici_id=username,
             email=email,
             password=hashed_pw,
             aktivasyon_token=token,
-            aktif_mi=False,
+            aktif_mi=False
         )
 
         db.session.add(yeni_kullanici)
@@ -722,10 +727,12 @@ def register():
 
         # Aktivasyon e-postası gönder
         try:
-            link = f"http://127.0.0.1:5000/activate/{token}"
-            msg = Message(subject="SAM Hesap Aktivasyonu",
-                          sender=app.config['MAIL_USERNAME'],
-                          recipients=[email])
+            link = f"http://127.0.0.1:5000/activate/{token}"  # Deploy ortamına göre değiştir
+            msg = Message(
+                subject="SAM Hesap Aktivasyonu",
+                sender=app.config['MAIL_USERNAME'],
+                recipients=[email]
+            )
 
             msg.html = f"""
             <html>
@@ -745,6 +752,7 @@ def register():
 
         return redirect("/login")
 
+    # GET isteği için register sayfasını render et
     return render_template("register.html", app_version=APP_VERSION)
 
 
