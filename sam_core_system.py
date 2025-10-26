@@ -284,9 +284,11 @@ class DestekCevap(db.Model):
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
+
+    # Temel bilgiler
     kullanici_id = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(100), nullable=False)
+    password = db.Column(db.String(255), nullable=True)  # ← Hash için uzatıldı ve nullable
     rol = db.Column(db.String(20), default="kullanici")
     ad = db.Column(db.String(50), default="")
     soyad = db.Column(db.String(50), default="")
@@ -296,7 +298,7 @@ class User(db.Model):
     tema = db.Column(db.String(10), default="dark")
     durum = db.Column(db.String(20), default="aktif")
 
-    # 🔐 Aktivasyon sistemi için:
+    # Aktivasyon sistemi
     aktivasyon_token = db.Column(db.String(120), default="")
     aktif_mi = db.Column(db.Boolean, default=False)
 
@@ -313,17 +315,18 @@ class User(db.Model):
     fa_email = db.Column(db.Boolean, default=False)
 
     # Sosyal medya e-postaları
-    google_email = db.Column(db.String(120), default="")
-    github_email = db.Column(db.String(120), default="")
-    discord_email = db.Column(db.String(120), default="")
-    facebook_email = db.Column(db.String(120), default="")
-    instagram_email = db.Column(db.String(120), default="")
+    google_email = db.Column(db.String(255), default="")   # ← Daha uzun
+    github_email = db.Column(db.String(255), default="")
+    discord_email = db.Column(db.String(255), default="")
+    facebook_email = db.Column(db.String(255), default="")
+    instagram_email = db.Column(db.String(255), default="")
 
     # SAM özel ayarları
     ses_tonu = db.Column(db.String(20), default="resmi")
     detayli_cevap = db.Column(db.Boolean, default=True)
 
-    reset_token = db.Column(db.String(100), nullable=True)
+    # Şifre sıfırlama tokeni
+    reset_token = db.Column(db.String(255), nullable=True)  # ← Uzun hash veya token
 
 # ── TABLOLARI OLUŞTUR ────────────────────────────────────────────
 with app.app_context():
@@ -681,15 +684,17 @@ def login():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        username = request.form.get("username")
-        email = request.form.get("email")
+        username = request.form.get("username").strip()
+        email = request.form.get("email").strip()
         password = request.form.get("password")
         confirm = request.form.get("confirm_password")
 
+        # Şifre eşleşme kontrolü
         if password != confirm:
             flash("❌ Şifreler eşleşmiyor!", "danger")
             return redirect("/register")
 
+        # Kullanıcı adı veya e-posta kontrolü
         existing = User.query.filter(
             (User.kullanici_id == username) | (User.email == email)
         ).first()
@@ -698,8 +703,9 @@ def register():
             flash("⚠️ Bu kullanıcı adı veya e-posta zaten kayıtlı.", "warning")
             return redirect("/register")
 
+        # Şifre hash'le
         hashed_pw = generate_password_hash(password)
-        token = str(uuid.uuid4())
+        token = str(uuid4())
 
         yeni_kullanici = User(
             kullanici_id=username,
@@ -712,6 +718,7 @@ def register():
         db.session.add(yeni_kullanici)
         db.session.commit()
 
+        # Aktivasyon e-postası gönder
         try:
             link = f"http://127.0.0.1:5000/activate/{token}"
             msg = Message(subject="SAM Hesap Aktivasyonu",
@@ -1355,9 +1362,9 @@ def google_callback():
         user = User.query.filter_by(email=email).first()
         if not user:
             user = User(
-                kullanici_id=email.split("@")[0],
+                kullanici_id=email.split("@")[0][:50],  # 50 karakter limit
                 email=email,
-                password='',           # Google kullanıcıları için boş string
+                password=None,           # Google kullanıcıları için şifre boş
                 rol="kullanici",
                 aktif_mi=True,
                 google_email=email,
@@ -1371,7 +1378,6 @@ def google_callback():
         session["email"] = user.email
         session["rol"] = user.rol or "kullanici"
 
-        # Giriş sonrası yönlendirme
         return redirect("/index")  # veya /chat
 
     except Exception as e:
