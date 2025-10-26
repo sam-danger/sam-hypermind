@@ -288,18 +288,18 @@ class User(db.Model):
 
     # Temel bilgiler
     kullanici_id = db.Column(db.String(100), unique=True, nullable=False)
-email = db.Column(db.String(150), unique=True, nullable=False)
-rol = db.Column(db.String(50), default="kullanici")
-ad = db.Column(db.String(100), default="")
-soyad = db.Column(db.String(100), default="")
-tc = db.Column(db.String(20), default="")
-telefon = db.Column(db.String(50), default="")
-dil = db.Column(db.String(20), default="tr")
-tema = db.Column(db.String(20), default="dark")
-durum = db.Column(db.String(50), default="aktif")
-aktivasyon_token = db.Column(db.String(255), default="")
-
+    email = db.Column(db.String(150), unique=True, nullable=False)
+    rol = db.Column(db.String(50), default="kullanici")
+    ad = db.Column(db.String(100), default="")
+    soyad = db.Column(db.String(100), default="")
+    tc = db.Column(db.String(20), default="")
+    telefon = db.Column(db.String(50), default="")
+    dil = db.Column(db.String(20), default="tr")
+    tema = db.Column(db.String(20), default="dark")
+    durum = db.Column(db.String(50), default="aktif")
+    aktivasyon_token = db.Column(db.String(255), default="")
     aktif_mi = db.Column(db.Boolean, default=False)
+
 
     # Sosyal medya bağlantıları
     google = db.Column(db.Boolean, default=False)
