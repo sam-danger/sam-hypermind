@@ -197,7 +197,8 @@ scheduled_tasks = [
 ]
 
 # ── VERİTABANI AYARLARI ──────────────────────────────────────────
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL") or "sqlite:///sam_database.db"
+# psycopg3 kullanmak için
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL") or "postgresql+psycopg://sam_db_a6li_user:UHXGUisSyi0sY6ho1yCGQqrk5vJouRWL@dpg-d3v17n6uk2gs73e7g70g-a.oregon-postgres.render.com:5432/sam_db_a6li"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
