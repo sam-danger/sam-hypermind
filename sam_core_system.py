@@ -197,8 +197,15 @@ scheduled_tasks = [
 ]
 
 # ── VERİTABANI AYARLARI ──────────────────────────────────────────
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
+# PostgreSQL URL (psycopg3 uyumlu)
+# Örn: postgresql://user:password@host:port/dbname
+database_url = os.getenv("DATABASE_URL")
+if database_url:
+    database_url = database_url.replace("postgresql://", "postgresql+psycopg://")
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(app)
 app.config['MAIL_SERVER'] = os.getenv("SMTP_HOST")
 app.config['MAIL_PORT'] = int(os.getenv("SMTP_PORT"))
