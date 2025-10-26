@@ -1333,11 +1333,13 @@ def google_callback():
             state=session.get('oauth_state'),
             redirect_uri=REDIRECT_URI
         )
+
         token = google.fetch_token(
             TOKEN_URL,
             client_secret=GOOGLE_CLIENT_SECRET,
             authorization_response=request.url
         )
+
         user_info = google.get(USER_INFO_URL).json()
         email = user_info.get("email")
 
@@ -1351,22 +1353,20 @@ def google_callback():
             user = User(
                 kullanici_id=email.split("@")[0],
                 email=email,
-                sifre=None,
+                password=None,       # ✅ düzeltildi
                 rol="kullanici",
-                aktif=True,
+                aktif_mi=True,       # ✅ düzeltildi
                 google_email=email,
                 google=True
             )
             db.session.add(user)
             db.session.commit()
 
-        # ✅ Oturum bilgilerini set et
+        # ✅ Oturum bilgilerini kaydet
         session["username"] = user.kullanici_id
         session["email"] = user.email
-        session["rol"] = user.rol if user.rol else "kullanici"
-        session["role"] = user.rol or "kullanici"
+        session["rol"] = user.rol or "kullanici"
 
-        # ✅ Giriş sonrası bilgileri göster
         print(f"👤 Aktif kullanıcı: {session['username']}")
         print(f"🔐 Rol: {session['rol']}")
 
@@ -1376,6 +1376,7 @@ def google_callback():
         print("Google giriş hatası:", e)
         flash("Google ile giriş yapılamadı.", "error")
         return redirect("/register")
+
 
 
 
