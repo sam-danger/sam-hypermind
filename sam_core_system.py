@@ -197,7 +197,7 @@ scheduled_tasks = [
 ]
 
 # ── VERİTABANI AYARLARI ──────────────────────────────────────────
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sam_db.sqlite'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 app.config['MAIL_SERVER'] = os.getenv("SMTP_HOST")
