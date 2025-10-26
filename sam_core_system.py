@@ -674,11 +674,19 @@ def login():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        # Form verilerini al
-        username = request.form.get("username", "").strip()
-        email = request.form.get("email", "").strip()
+        # Form verilerini al ve boş bırakılanları varsayılanla doldur
+        username = request.form.get("username", "").strip()[:150]
+        email = request.form.get("email", "").strip()[:255]
         password = request.form.get("password", "")
         confirm = request.form.get("confirm_password", "")
+
+        ad = request.form.get("ad", "").strip()[:100]
+        soyad = request.form.get("soyad", "").strip()[:100]
+        tc = request.form.get("tc", "").strip()[:20]
+        telefon = request.form.get("telefon", "").strip()[:50]
+        dil = request.form.get("dil", "tr").strip()[:20]
+        tema = request.form.get("tema", "light").strip()[:20]
+        ses_tonu = request.form.get("ses_tonu", "normal").strip()[:50]
 
         # Şifre eşleşme kontrolü
         if password != confirm:
@@ -698,19 +706,49 @@ def register():
         hashed_pw = generate_password_hash(password)
 
         # Aktivasyon tokeni oluştur
-        token = str(uuid4())
+        token = str(uuid4())[:256]
 
         # Yeni kullanıcıyı veritabanına ekle
         yeni_kullanici = User(
             kullanici_id=username,
             email=email,
             password=hashed_pw,
+            rol="user",
+            ad=ad,
+            soyad=soyad,
+            tc=tc,
+            telefon=telefon,
+            dil=dil,
+            tema=tema,
+            durum="aktif",
             aktivasyon_token=token,
-            aktif_mi=False
+            aktif_mi=False,
+            ses_tonu=ses_tonu,
+            detayli_cevap=True,
+            google=False,
+            github=False,
+            discord=False,
+            facebook=False,
+            instagram=False,
+            apple=False,
+            fa_sms=False,
+            fa_email=False,
+            google_email="",
+            github_email="",
+            discord_email="",
+            facebook_email="",
+            instagram_email="",
+            reset_token=""
         )
 
-        db.session.add(yeni_kullanici)
-        db.session.commit()
+        try:
+            db.session.add(yeni_kullanici)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            print("❌ Veritabanı hatası:", e)
+            flash("⚠️ Kullanıcı kaydı sırasında hata oluştu. Lütfen tekrar deneyin.", "danger")
+            return redirect("/register")
 
         # Aktivasyon e-postası gönder
         try:
@@ -720,7 +758,6 @@ def register():
                 sender=app.config['MAIL_USERNAME'],
                 recipients=[email]
             )
-
             msg.html = f"""
             <html>
                 <body style="font-family: Arial; font-size: 16px; color: #333;">
@@ -741,6 +778,7 @@ def register():
 
     # GET isteği için register sayfasını render et
     return render_template("register.html", app_version=APP_VERSION)
+
 
 
 # ── SAM CHAT PANELİ ─────────────────────────────────────────────

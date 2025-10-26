@@ -166,37 +166,52 @@
   <div id="successBox" class="success-message">✔ Aktivasyon bağlantısı e-posta adresinize gönderildi.</div>
 
   <div class="social-buttons">
-    <a href="/connect-google" class="google">🔗 Google ile Giriş Yapl</a>
+    <a href="/connect-google" class="google">🔗 Google ile Giriş Yap</a>
     <a href="/facebook-login" class="facebook">📘 Facebook ile Giriş Yap</a>
     <a href="/connect-github" class="github">🐱 GitHub ile Kaydol</a>
     <a href="#" class="discord" onclick="alert('Discord bağlantısı henüz aktif değil.')">💬 Discord ile Kaydol</a>
     <a href="#" class="apple" onclick="alert('Apple bağlantısı henüz aktif değil.')">🍏 Apple ile Kaydol</a>
   </div>
 
-  <input type="text" name="username" maxlength="100" placeholder="Kullanıcı Adı" required>
-  <input type="email" name="email" maxlength="100" placeholder="E-posta Adresi" required>
-  <input type="password" name="password" maxlength="255" placeholder="Şifre" required>
-  <input type="password" name="confirm_password" maxlength="255" placeholder="Şifre (tekrar)" required>
+  <input type="text" name="username" maxlength="150" placeholder="Kullanıcı Adı" required>
+  <input type="text" name="ad" maxlength="100" placeholder="Ad">
+  <input type="text" name="soyad" maxlength="100" placeholder="Soyad">
+  <input type="text" name="tc" maxlength="20" placeholder="TC Kimlik No">
+  <input type="text" name="telefon" maxlength="50" placeholder="Telefon">
+  <select name="dil">
+    <option value="tr">Türkçe</option>
+    <option value="en">English</option>
+  </select>
+  <select name="tema">
+    <option value="light">Açık Tema</option>
+    <option value="dark">Koyu Tema</option>
+  </select>
+  <select name="ses_tonu">
+    <option value="normal">Normal</option>
+    <option value="derin">Derin</option>
+    <option value="ince">İnce</option>
+  </select>
+
+  <input type="email" name="email" maxlength="255" placeholder="E-posta Adresi" required>
+  <input type="password" name="password" maxlength="512" placeholder="Şifre" required>
+  <input type="password" name="confirm_password" maxlength="512" placeholder="Şifre (tekrar)" required>
 
   <p class="policy-note">🔐 En az 8 karakter, büyük harf, küçük harf ve rakam içermelidir.</p>
 
   <label class="kvkk-checkbox">
     <input type="checkbox" name="kvkk" required>
-    <span>Kaydolarak <a href="/kvkk" style="color:cyan" target="_blank">KVKK Aydınlatma Metni</a>, 
-    <a href="/gizlilik" style="color:cyan" target="_blank">Gizlilik Politikası</a> ve 
-    <a href="/sozlesme" style="color:cyan" target="_blank">Kullanıcı Sözleşmesi</a>'ni kabul ediyorum.</span>
+    <span>Kaydolarak <a href="/kvkk" target="_blank">KVKK Aydınlatma Metni</a>, 
+    <a href="/gizlilik" target="_blank">Gizlilik Politikası</a> ve 
+    <a href="/sozlesme" target="_blank">Kullanıcı Sözleşmesi</a>'ni kabul ediyorum.</span>
   </label>
 
   <button class="btn" type="submit">Kayıt Ol</button>
-
-  <p style="font-size: 12px; color: gray; text-align: center; margin-top: 10px;">
-    Daha fazla bilgi için: <a href="/hukuki-iletisim" style="color:#00ffff;">⚖️ Hukuki İletişim</a>
-  </p>
 
   <div class="login-link">
     Zaten hesabın var mı? <a href="/login">Giriş Yap</a>
   </div>
 </form>
+
 
 <script>
 document.querySelector("form").addEventListener("submit", function (e) {
@@ -252,6 +267,254 @@ window.addEventListener("DOMContentLoaded", function () {
     </div>
   {% endif %}
 {% endwith %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const form = document.querySelector("form");
+  const usernameInput = form.querySelector('input[name="username"]');
+  const emailInput = form.querySelector('input[name="email"]');
+  const passwordInput = form.querySelector('input[name="password"]');
+  const confirmInput = form.querySelector('input[name="confirm_password"]');
+
+  const showError = (msg) => {
+    const box = document.getElementById("errorBox");
+    box.textContent = "❗ " + msg;
+    box.style.display = "block";
+    box.style.opacity = "1";
+    setTimeout(() => {
+      box.style.transition = "opacity 0.5s ease";
+      box.style.opacity = "0";
+      setTimeout(() => { box.style.display = "none"; box.style.opacity = "1"; }, 500);
+    }, 2500);
+  };
+
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
+  form.addEventListener("submit", function(e) {
+    // Kullanıcı adı kontrolü
+    if (usernameInput.value.length < 3) {
+      e.preventDefault();
+      showError("Kullanıcı adı en az 3 karakter olmalı.");
+      return;
+    }
+
+    // E-posta kontrolü
+    if (!validateEmail(emailInput.value)) {
+      e.preventDefault();
+      showError("Geçerli bir e-posta adresi girin.");
+      return;
+    }
+
+    // Şifre kontrolü
+    const password = passwordInput.value;
+    if (password.length < 8 || 
+        !/[a-z]/.test(password) || 
+        !/[A-Z]/.test(password) || 
+        !/[0-9]/.test(password)) {
+      e.preventDefault();
+      showError("Şifre en az 8 karakter, büyük/küçük harf ve rakam içermelidir.");
+      return;
+    }
+
+    // Şifre eşleşme kontrolü
+    if (password !== confirmInput.value) {
+      e.preventDefault();
+      showError("Şifreler eşleşmiyor.");
+      return;
+    }
+  });
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const usernameInput = document.querySelector('input[name="username"]');
+  const emailInput = document.querySelector('input[name="email"]');
+  const passwordInput = document.querySelector('input[name="password"]');
+  const confirmInput = document.querySelector('input[name="confirm_password"]');
+
+  // Durum göstergeleri
+  const createStatus = (msg, color) => {
+    let status = document.querySelector(".status-msg");
+    if (!status) {
+      status = document.createElement("div");
+      status.className = "status-msg";
+      status.style.fontSize = "13px";
+      status.style.marginTop = "-14px";
+      status.style.marginBottom = "10px";
+      status.style.minHeight = "18px";
+      status.style.transition = "color 0.3s ease";
+      usernameInput.parentNode.insertBefore(status, usernameInput.nextSibling);
+    }
+    status.textContent = msg;
+    status.style.color = color;
+  };
+
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validatePassword = (pass) =>
+    pass.length >= 8 && /[a-z]/.test(pass) && /[A-Z]/.test(pass) && /[0-9]/.test(pass);
+
+  usernameInput.addEventListener("input", () => {
+    if (usernameInput.value.length < 3) createStatus("Kullanıcı adı en az 3 karakter olmalı.", "orange");
+    else createStatus("✅ Kullanıcı adı uygun.", "lime");
+  });
+
+  emailInput.addEventListener("input", () => {
+    if (!validateEmail(emailInput.value)) createStatus("Geçerli bir e-posta girin.", "orange");
+    else createStatus("✅ E-posta uygun.", "lime");
+  });
+
+  passwordInput.addEventListener("input", () => {
+    if (!validatePassword(passwordInput.value))
+      createStatus("Şifre güçlü değil (En az 8 karakter, büyük/küçük harf, rakam).", "orange");
+    else createStatus("✅ Şifre güçlü.", "lime");
+  });
+
+  confirmInput.addEventListener("input", () => {
+    if (confirmInput.value !== passwordInput.value) createStatus("Şifreler eşleşmiyor.", "red");
+    else createStatus("✅ Şifreler eşleşiyor.", "lime");
+  });
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const form = document.querySelector("form");
+
+  const fields = {
+    username: form.querySelector('input[name="username"]'),
+    ad: form.querySelector('input[name="ad"]'),
+    soyad: form.querySelector('input[name="soyad"]'),
+    tc: form.querySelector('input[name="tc"]'),
+    telefon: form.querySelector('input[name="telefon"]'),
+    email: form.querySelector('input[name="email"]'),
+    password: form.querySelector('input[name="password"]'),
+    confirm_password: form.querySelector('input[name="confirm_password"]')
+  };
+
+  // Status boxları oluştur
+  Object.keys(fields).forEach(key => {
+    const status = document.createElement("div");
+    status.className = "status-box";
+    status.style.fontSize = "13px";
+    status.style.margin = "4px 0 12px";
+    status.style.minHeight = "16px";
+    fields[key].parentNode.insertBefore(status, fields[key].nextSibling);
+    fields[key].statusBox = status;
+  });
+
+  const validateEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validatePassword = pass => pass.length >= 8 && /[a-z]/.test(pass) && /[A-Z]/.test(pass) && /[0-9]/.test(pass);
+
+  // Anlık validation
+  fields.username.addEventListener("input", () => {
+    if(fields.username.value.length < 3){
+      fields.username.statusBox.textContent = "Kullanıcı adı en az 3 karakter olmalı.";
+      fields.username.statusBox.style.color = "orange";
+    } else {
+      fields.username.statusBox.textContent = "✅ Kullanıcı adı uygun.";
+      fields.username.statusBox.style.color = "lime";
+    }
+  });
+
+  fields.email.addEventListener("input", () => {
+    if(!validateEmail(fields.email.value)){
+      fields.email.statusBox.textContent = "Geçerli bir e-posta girin.";
+      fields.email.statusBox.style.color = "orange";
+    } else {
+      fields.email.statusBox.textContent = "✅ E-posta uygun.";
+      fields.email.statusBox.style.color = "lime";
+    }
+  });
+
+  fields.password.addEventListener("input", () => {
+    if(!validatePassword(fields.password.value)){
+      fields.password.statusBox.textContent = "Şifre güçlü değil (En az 8 karakter, büyük/küçük harf, rakam).";
+      fields.password.statusBox.style.color = "orange";
+    } else {
+      fields.password.statusBox.textContent = "✅ Şifre güçlü.";
+      fields.password.statusBox.style.color = "lime";
+    }
+  });
+
+  fields.confirm_password.addEventListener("input", () => {
+    if(fields.confirm_password.value !== fields.password.value){
+      fields.confirm_password.statusBox.textContent = "Şifreler eşleşmiyor.";
+      fields.confirm_password.statusBox.style.color = "red";
+    } else {
+      fields.confirm_password.statusBox.textContent = "✅ Şifreler eşleşiyor.";
+      fields.confirm_password.statusBox.style.color = "lime";
+    }
+  });
+
+  // Basit boş alan kontrolü
+  ['ad','soyad','tc','telefon'].forEach(key => {
+    fields[key].addEventListener("input", () => {
+      if(fields[key].value.trim() === ""){
+        fields[key].statusBox.textContent = "Bu alan boş bırakılamaz.";
+        fields[key].statusBox.style.color = "orange";
+      } else {
+        fields[key].statusBox.textContent = "✅ Uygun.";
+        fields[key].statusBox.style.color = "lime";
+      }
+    });
+  });
+
+  // Submit öncesi final check
+  form.addEventListener("submit", function(e) {
+    let valid = true;
+
+    // Username
+    if(fields.username.value.length < 3){
+      valid = false;
+      fields.username.statusBox.textContent = "Kullanıcı adı en az 3 karakter olmalı.";
+      fields.username.statusBox.style.color = "orange";
+    }
+
+    // Email
+    if(!validateEmail(fields.email.value)){
+      valid = false;
+      fields.email.statusBox.textContent = "Geçerli bir e-posta girin.";
+      fields.email.statusBox.style.color = "orange";
+    }
+
+    // Password
+    if(!validatePassword(fields.password.value)){
+      valid = false;
+      fields.password.statusBox.textContent = "Şifre güçlü değil (En az 8 karakter, büyük/küçük harf, rakam).";
+      fields.password.statusBox.style.color = "orange";
+    }
+
+    // Confirm Password
+    if(fields.confirm_password.value !== fields.password.value){
+      valid = false;
+      fields.confirm_password.statusBox.textContent = "Şifreler eşleşmiyor.";
+      fields.confirm_password.statusBox.style.color = "red";
+    }
+
+    // Diğer alanlar
+    ['ad','soyad','tc','telefon'].forEach(key => {
+      if(fields[key].value.trim() === ""){
+        valid = false;
+        fields[key].statusBox.textContent = "Bu alan boş bırakılamaz.";
+        fields[key].statusBox.style.color = "orange";
+      }
+    });
+
+    if(!valid){
+      e.preventDefault();
+      const box = document.getElementById("errorBox");
+      box.textContent = "❗ Lütfen tüm alanları doğru şekilde doldurun.";
+      box.style.display = "block";
+      setTimeout(() => { box.style.display = "none"; }, 3000);
+    }
+  });
+});
+</script>
+
 
 </body>
 </html>
