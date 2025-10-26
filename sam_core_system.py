@@ -24,6 +24,7 @@ from modules import hardware_monitor
 from flask import Response
 from seo_data import SEO_PAGES
 from models import User
+from uuid import uuid4
 
 from datetime import datetime, timezone
 from datetime import timedelta
