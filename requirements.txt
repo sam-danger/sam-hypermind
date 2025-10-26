@@ -24,7 +24,6 @@ apscheduler==3.11.0
 psutil==6.0.0
 
 # Ses ve sıkıştırma
-sounddevice==0.4.7          # ✅ PyAudio alternatifi
 pyzipper==0.3.6             # ✅ Python 3.13 uyumlu sürüm
 
 # OpenAI API
@@ -34,7 +33,7 @@ openai==1.43.0              # ✅ Güncel ve kararlı sürüm
 Cython==3.0.11
 gunicorn==23.0.0
 reportlab==4.2.2
-psycopg2-binary
+psycopg2-binary==2.9.7
 
 
 
