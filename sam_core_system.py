@@ -746,7 +746,14 @@ def register():
             db.session.commit()
         except Exception as e:
             db.session.rollback()
+            # Hangi alanların uzunluğunu kontrol ettiğimizi yazdır
             print("❌ Veritabanı hatası:", e)
+            print("ad length:", len(ad))
+            print("soyad length:", len(soyad))
+            print("kullanici_id length:", len(username))
+            print("email length:", len(email))
+            print("aktivasyon_token length:", len(token))
+            print("password length:", len(hashed_pw))
             flash("⚠️ Kullanıcı kaydı sırasında hata oluştu. Lütfen tekrar deneyin.", "danger")
             return redirect("/register")
 
