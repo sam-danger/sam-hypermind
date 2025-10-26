@@ -286,8 +286,8 @@ class User(db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    kullanici_id = db.Column(db.String(150), unique=True, nullable=False)  # 100 -> 150
-    email = db.Column(db.String(255), unique=True, nullable=False)          # 150 -> 255
+    kullanici_id = db.Column(db.String(150), unique=True, nullable=False)
+    email = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(512), nullable=False)
     rol = db.Column(db.String(100), nullable=False)
     ad = db.Column(db.String(255))
@@ -315,6 +315,7 @@ class User(db.Model):
     ses_tonu = db.Column(db.String(50))
     detayli_cevap = db.Column(db.Boolean, default=True)
     reset_token = db.Column(db.String(256))
+
 
 
 
