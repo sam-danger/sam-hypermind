@@ -1,147 +1,156 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SAM Kayıt Ol</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700">
-  <link rel="icon" href="data:;base64,=">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAM Kayıt Ol</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700">
+<link rel="icon" href="data:;base64,=">
 
-  <!-- SEO -->
-  <meta name="description" content="SAM HyperMind platformuna kayıt olun ve tüm özelliklerden yararlanın.">
-  <meta name="keywords" content="SAM, kayıt, kullanıcı, hesap, HyperMind">
-  <meta name="robots" content="index, follow">
+<!-- SEO -->
+<meta name="description" content="SAM HyperMind platformuna kayıt olun ve tüm özelliklerden yararlanın.">
+<meta name="keywords" content="SAM, kayıt, kullanıcı, hesap, HyperMind">
+<meta name="robots" content="index, follow">
 
-  <!-- Open Graph / Facebook -->
-  <meta property="og:title" content="SAM Kayıt Ol">
-  <meta property="og:description" content="SAM HyperMind platformuna kayıt olun ve tüm özelliklerden yararlanın.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://sam-hypermind.onrender.com/register">
-  <meta property="og:image" content="https://sam-hypermind.onrender.com/static/logo.png">
+<!-- Open Graph / Facebook -->
+<meta property="og:title" content="SAM Kayıt Ol">
+<meta property="og:description" content="SAM HyperMind platformuna kayıt olun ve tüm özelliklerden yararlanın.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sam-hypermind.onrender.com/register">
+<meta property="og:image" content="https://sam-hypermind.onrender.com/static/logo.png">
 
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="SAM Kayıt Ol">
-  <meta name="twitter:description" content="SAM HyperMind platformuna kayıt olun ve tüm özelliklerden yararlanın.">
-  <meta name="twitter:image" content="https://sam-hypermind.onrender.com/static/logo.png">
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SAM Kayıt Ol">
+<meta name="twitter:description" content="SAM HyperMind platformuna kayıt olun ve tüm özelliklerden yararlanın.">
+<meta name="twitter:image" content="https://sam-hypermind.onrender.com/static/logo.png">
 
-  <!-- JSON-LD Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "SAM Kayıt Ol",
-    "url": "https://sam-hypermind.onrender.com/register",
-    "description": "SAM HyperMind platformuna kayıt olun ve tüm özelliklerden yararlanın.",
-    "publisher": {
-      "@type": "Organization",
-      "name": "SAM HyperMind",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://sam-hypermind.onrender.com/static/logo.png"
-      }
-    }
-  }
-  </script>
-  <style>
-    * { box-sizing: border-box; font-family: 'Roboto', sans-serif; }
-    body {
-      background: url("/static/sam_register_bg.jpg") no-repeat center center fixed;
-      background-size: cover;
-      margin: 0;
-      padding: 0;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: white;
-    }
-    .register-container {
-      background-color: transparent;
-      box-shadow: none;
-      padding: 30px;
-      width: 100%;
-      max-width: 400px;
-    }
-    .register-container h2 {
-      text-align: center;
-      margin-bottom: 25px;
-      font-size: 24px;
-      background: linear-gradient(to right, #00ffff, #0077ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .register-container input, .register-container select {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 18px;
-      border: none;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-    }
-    .register-container input::placeholder { color: #ccc; }
-    .register-container select option { background: #1e1e1e; color: #fff; }
-    .btn {
-      width: 100%;
-      padding: 12px;
-      background-color: #00ffff;
-      color: black;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      font-size: 15px;
-      cursor: pointer;
-    }
-    .btn:hover { background-color: #00cccc; }
-    .login-link { margin-top: 18px; text-align: center; font-size: 14px; }
-    .login-link a { color: #00ffff; text-decoration: none; }
-    .login-link a:hover { text-decoration: underline; }
-    .success-message {
-      background-color: rgba(0, 255, 0, 0.15);
-      border: 1px solid lime;
-      padding: 12px;
-      border-radius: 8px;
-      margin-bottom: 15px;
-      color: #00ff99;
-      font-size: 14px;
-      text-align: center;
-      display: none;
-    }
-    .terms-label { font-size: 13px; display: block; margin: -10px 0 18px; line-height: 1.4; }
-    .terms-label input { margin-right: 6px; transform: scale(1.1); }
-    .terms-label a { color: #00ffff; text-decoration: underline; }
-    .social-buttons { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-    .social-buttons a { display: inline-block; text-align: center; padding: 10px; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; text-decoration: none; }
-    .google { background: #ffffff; color: #000; }
-    .facebook { background: #3b5998; color: #fff; }
-    .github { background: #333; color: #fff; }
-    .apple { background: #000; color: #fff; }
-    .discord { background: #5865F2; color: #fff; }
-    @media screen and (max-width: 480px) {
-      .register-container { padding: 25px 20px; }
-      .register-container h2 { font-size: 20px; }
-    }
-    .policy-note { font-size: 12.5px; color: gray; margin-bottom: 15px; text-align: center; }
-    .kvkk-checkbox { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #ccc; margin: 12px 0 20px 0; user-select: none; line-height: 1.4; }
-    .kvkk-checkbox input[type="checkbox"] { width: 16px; height: 16px; accent-color: #00ffff; margin: 0; cursor: pointer; }
-    .flash-messages { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 9999; width: auto; max-width: 400px; }
-    .flash-messages .alert {
-      background-color: #fff;
-      border-radius: 8px;
-      padding: 10px 15px;
-      box-shadow: 0px 4px 8px rgba(0,0,0,0.15);
-      margin-bottom: 10px;
-      animation: fadeInOut 4s ease-in-out forwards;
-    }
-    .alert-success { border-left: 4px solid #4CAF50; }
-    .alert-danger { border-left: 4px solid #F44336; }
-    .alert-warning { border-left: 4px solid #FFC107; }
-    @keyframes fadeInOut { 0% { opacity: 0; transform: translate(-50%, -10px); } 10% { opacity: 1; transform: translate(-50%, 0); } 80% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -10px); } }
-  </style>
+<style>
+* { box-sizing: border-box; font-family: 'Roboto', sans-serif; }
+body { 
+    background: url("/static/sam_register_bg.jpg") no-repeat center center fixed; 
+    background-size: cover; margin: 0; padding: 0; height: 100vh; 
+    display: flex; justify-content: center; align-items: center; color: white; 
+}
+
+.register-container { 
+    background-color: transparent; 
+    box-shadow: none; 
+    padding: 30px; 
+    width: 100%; 
+    max-width: 400px; 
+}
+
+.register-container h2 { 
+    text-align: center; 
+    margin-bottom: 25px; 
+    font-size: 24px; 
+    background: linear-gradient(to right, #00ffff, #0077ff); 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+}
+
+.register-container input {
+    display: block;
+    width: 100%;
+    padding: 12px 15px;
+    margin: 8px 0;          /* tüm inputlar için tutarlı üst-alt boşluk */
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 15px;
+}
+
+.register-container input::placeholder {
+    color: #ccc;
+    font-size: 14px;
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;       /* son input ile buton arası boşluk */
+    background-color: #00ffff;
+    color: black;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.btn:hover { background-color: #00cccc; }
+
+.login-link { margin-top: 18px; text-align: center; font-size: 14px; }
+.login-link a { color: #00ffff; text-decoration: none; }
+.login-link a:hover { text-decoration: underline; }
+
+.success-message { 
+    background-color: rgba(0, 255, 0, 0.15); 
+    border: 1px solid lime; 
+    padding: 12px; 
+    border-radius: 8px; 
+    margin-bottom: 15px; 
+    color: #00ff99; 
+    font-size: 14px; 
+    text-align: center; 
+    display: none; 
+}
+
+.policy-note { font-size: 12.5px; color: gray; margin-bottom: 15px; text-align: center; }
+
+.kvkk-checkbox { 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+    font-size: 13px; 
+    color: #ccc; 
+    margin: 12px 0 20px 0; 
+    user-select: none; 
+    line-height: 1.4; 
+}
+
+.kvkk-checkbox input[type="checkbox"] { width: 16px; height: 16px; accent-color: #00ffff; cursor: pointer; }
+
+.social-buttons a {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+    padding: 10px 0;
+    border-radius: 8px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    background: rgba(0,0,0,0.3);
+    transition: background 0.3s;
+}
+
+.social-buttons a:hover { background: rgba(0,0,0,0.5); }
+
+.flash-messages { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 9999; width: auto; max-width: 400px; }
+.flash-messages .alert { 
+    background-color: #fff; border-radius: 8px; padding: 10px 15px; 
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.15); margin-bottom: 10px; 
+    animation: fadeInOut 4s ease-in-out forwards; 
+}
+.alert-success { border-left: 4px solid #4CAF50; }
+.alert-danger { border-left: 4px solid #F44336; }
+.alert-warning { border-left: 4px solid #FFC107; }
+
+@keyframes fadeInOut { 
+    0% { opacity: 0; transform: translate(-50%, -10px); } 
+    10% { opacity: 1; transform: translate(-50%, 0); } 
+    80% { opacity: 1; } 
+    100% { opacity: 0; transform: translate(-50%, -10px); } 
+}
+</style>
 </head>
 <body>
 
+<!-- 💥 Hata kutusu -->
 <div id="errorBox" class="error-message" style="
   background-color: rgba(255, 0, 0, 0.15);
   border: 1px solid red;
@@ -158,344 +167,107 @@
   z-index: 9999;
   backdrop-filter: blur(6px);
   box-shadow: 0 0 10px rgba(255,0,0,0.2);
-">❗ Şifreler eşleşmiyor.</div>
-
-<form class="register-container" method="POST" action="/register">
-  <h2>Yeni Hesap Oluştur</h2>
-
-  <div id="successBox" class="success-message">✔ Aktivasyon bağlantısı e-posta adresinize gönderildi.</div>
-
-  <div class="social-buttons">
-    <a href="/connect-google" class="google">🔗 Google ile Giriş Yap</a>
-    <a href="/facebook-login" class="facebook">📘 Facebook ile Giriş Yap</a>
-    <a href="/connect-github" class="github">🐱 GitHub ile Kaydol</a>
-    <a href="#" class="discord" onclick="alert('Discord bağlantısı henüz aktif değil.')">💬 Discord ile Kaydol</a>
-    <a href="#" class="apple" onclick="alert('Apple bağlantısı henüz aktif değil.')">🍏 Apple ile Kaydol</a>
-  </div>
-
-  <input type="text" name="username" maxlength="150" placeholder="Kullanıcı Adı" required>
-  <input type="email" name="email" maxlength="255" placeholder="E-posta Adresi" required>
-  <input type="password" name="password" maxlength="512" placeholder="Şifre" required>
-  <input type="password" name="confirm_password" maxlength="512" placeholder="Şifre (tekrar)" required>
-
-  <p class="policy-note">🔐 En az 8 karakter, büyük harf, küçük harf ve rakam içermelidir.</p>
-
-  <label class="kvkk-checkbox">
-    <input type="checkbox" name="kvkk" required>
-    <span>Kaydolarak <a href="/kvkk" target="_blank">KVKK Aydınlatma Metni</a>, 
-    <a href="/gizlilik" target="_blank">Gizlilik Politikası</a> ve 
-    <a href="/sozlesme" target="_blank">Kullanıcı Sözleşmesi</a>'ni kabul ediyorum.</span>
-  </label>
-
-  <button class="btn" type="submit">Kayıt Ol</button>
-
-  <div class="login-link">
-    Zaten hesabın var mı? <a href="/login">Giriş Yap</a>
-  </div>
-</form>
+">
+❗ Şifreler eşleşmiyor.
+</div>
 
 
-<script>
-document.querySelector("form").addEventListener("submit", function (e) {
-  const pass1 = document.querySelector('input[name="password"]').value;
-  const pass2 = document.querySelector('input[name="confirm_password"]').value;
-  const box = document.getElementById("errorBox");
+  <form class="register-container" method="POST" action="/register">
+    <h2>Yeni Hesap Oluştur</h2>
 
-  if (pass1 !== pass2) {
-    e.preventDefault();
-    box.style.display = "block";
-    box.style.opacity = "1";
-    setTimeout(() => {
-      box.style.transition = "opacity 0.5s ease";
-      box.style.opacity = "0";
-      setTimeout(() => { box.style.display = "none"; box.style.opacity = "1"; }, 2000);
-    }, 2000);
-  }
-});
-</script>
+    <div id="successBox" class="success-message">✔ Aktivasyon bağlantısı e-posta adresinize gönderildi.</div>
 
-<script>
-window.addEventListener("DOMContentLoaded", function () {
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get("kvkk") === "onaylandi") {
-    const toast = document.createElement("div");
-    toast.textContent = "✅ KVKK başvurunuz alındı. Şimdi kayıt olabilirsiniz.";
-    toast.style.position = "fixed";
-    toast.style.top = "20px";
-    toast.style.left = "50%";
-    toast.style.transform = "translateX(-50%)";
-    toast.style.padding = "12px 24px";
-    toast.style.borderRadius = "8px";
-    toast.style.background = "rgba(0, 255, 255, 0.12)";
-    toast.style.color = "#00ffff";
-    toast.style.border = "1px solid #00ffff";
-    toast.style.fontSize = "14px";
-    toast.style.backdropFilter = "blur(6px)";
-    toast.style.boxShadow = "0 0 12px rgba(0,255,255,0.2)";
-    toast.style.zIndex = "9999";
-    toast.style.transition = "opacity 0.5s ease";
-    document.body.appendChild(toast);
-    setTimeout(() => { toast.style.opacity = "0"; setTimeout(() => toast.remove(), 600); }, 3500);
-  }
-});
-</script>
+    <!-- 🌐 Sosyal Giriş Butonları -->
+<div class="social-buttons">
+  <a href="/connect-google" class="google">🔗 Google ile Kaydol</a>
+  <a href="/facebook-login" class="btn btn-facebook">📘 Facebook ile Giriş Yap</a>
+  <a href="/connect-github" class="github">🐱 GitHub ile Kaydol</a>
+  <a href="#" class="discord" onclick="alert('Discord bağlantısı henüz aktif değil.')">💬 Discord ile Kaydol</a>
+  <a href="#" class="apple" onclick="alert('Apple bağlantısı henüz aktif değil.')">🍏 Apple ile Kaydol</a>
+</div>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <div class="flash-messages">
-      {% for category, message in messages %}
-        <div class="alert alert-{{ category }}">{{ message }}</div>
-      {% endfor %}
+    <input type="text" name="username" placeholder="Kullanıcı Adı" required>
+    <input type="email" name="email" placeholder="E-posta Adresi" required>
+    <input type="password" name="password" placeholder="Şifre" required>
+<input type="password" name="confirm_password" placeholder="Şifre (tekrar)" required>
+
+    <p class="policy-note" style="margin-top: -10px; margin-bottom: 10px;">
+      🔐 En az 8 karakter, büyük harf, küçük harf ve rakam içermelidir.
+    </p>
+
+    <label class="kvkk-checkbox">
+  <input type="checkbox" name="kvkk" required>
+  <span>
+    Kaydolarak <a href="/kvkk" style="color:cyan" target="_blank">KVKK Aydınlatma Metni</a>, 
+    <a href="/gizlilik" style="color:cyan" target="_blank">Gizlilik Politikası</a> ve 
+    <a href="/sozlesme" style="color:cyan" target="_blank">Kullanıcı Sözleşmesi</a>'ni kabul ediyorum.
+  </span>
+</label>
+
+    <button class="btn" type="submit">Kayıt Ol</button>
+
+    <p style="font-size: 12px; color: gray; text-align: center; margin-top: 10px;">
+      Daha fazla bilgi için: <a href="/hukuki-iletisim" style="color:#00ffff;">⚖️ Hukuki İletişim</a>
+    </p>
+
+    <div class="login-link">
+      Zaten hesabın var mı? <a href="/login">Giriş Yap</a>
     </div>
-  {% endif %}
-{% endwith %}
+  </form>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  const form = document.querySelector("form");
-  const usernameInput = form.querySelector('input[name="username"]');
-  const emailInput = form.querySelector('input[name="email"]');
-  const passwordInput = form.querySelector('input[name="password"]');
-  const confirmInput = form.querySelector('input[name="confirm_password"]');
-
-  const showError = (msg) => {
+ <script>
+  document.querySelector("form").addEventListener("submit", function (e) {
+    const pass1 = document.querySelector('input[name="password"]').value;
+    const pass2 = document.querySelector('input[name="confirm_password"]').value;
     const box = document.getElementById("errorBox");
-    box.textContent = "❗ " + msg;
-    box.style.display = "block";
-    box.style.opacity = "1";
-    setTimeout(() => {
-      box.style.transition = "opacity 0.5s ease";
-      box.style.opacity = "0";
-      setTimeout(() => { box.style.display = "none"; box.style.opacity = "1"; }, 500);
-    }, 2500);
-  };
 
-  const validateEmail = (email) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-  };
-
-  form.addEventListener("submit", function(e) {
-    // Kullanıcı adı kontrolü
-    if (usernameInput.value.length < 3) {
+    if (pass1 !== pass2) {
       e.preventDefault();
-      showError("Kullanıcı adı en az 3 karakter olmalı.");
-      return;
-    }
-
-    // E-posta kontrolü
-    if (!validateEmail(emailInput.value)) {
-      e.preventDefault();
-      showError("Geçerli bir e-posta adresi girin.");
-      return;
-    }
-
-    // Şifre kontrolü
-    const password = passwordInput.value;
-    if (password.length < 8 || 
-        !/[a-z]/.test(password) || 
-        !/[A-Z]/.test(password) || 
-        !/[0-9]/.test(password)) {
-      e.preventDefault();
-      showError("Şifre en az 8 karakter, büyük/küçük harf ve rakam içermelidir.");
-      return;
-    }
-
-    // Şifre eşleşme kontrolü
-    if (password !== confirmInput.value) {
-      e.preventDefault();
-      showError("Şifreler eşleşmiyor.");
-      return;
-    }
-  });
-});
-</script>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  const usernameInput = document.querySelector('input[name="username"]');
-  const emailInput = document.querySelector('input[name="email"]');
-  const passwordInput = document.querySelector('input[name="password"]');
-  const confirmInput = document.querySelector('input[name="confirm_password"]');
-
-  // Durum göstergeleri
-  const createStatus = (msg, color) => {
-    let status = document.querySelector(".status-msg");
-    if (!status) {
-      status = document.createElement("div");
-      status.className = "status-msg";
-      status.style.fontSize = "13px";
-      status.style.marginTop = "-14px";
-      status.style.marginBottom = "10px";
-      status.style.minHeight = "18px";
-      status.style.transition = "color 0.3s ease";
-      usernameInput.parentNode.insertBefore(status, usernameInput.nextSibling);
-    }
-    status.textContent = msg;
-    status.style.color = color;
-  };
-
-  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const validatePassword = (pass) =>
-    pass.length >= 8 && /[a-z]/.test(pass) && /[A-Z]/.test(pass) && /[0-9]/.test(pass);
-
-  usernameInput.addEventListener("input", () => {
-    if (usernameInput.value.length < 3) createStatus("Kullanıcı adı en az 3 karakter olmalı.", "orange");
-    else createStatus("✅ Kullanıcı adı uygun.", "lime");
-  });
-
-  emailInput.addEventListener("input", () => {
-    if (!validateEmail(emailInput.value)) createStatus("Geçerli bir e-posta girin.", "orange");
-    else createStatus("✅ E-posta uygun.", "lime");
-  });
-
-  passwordInput.addEventListener("input", () => {
-    if (!validatePassword(passwordInput.value))
-      createStatus("Şifre güçlü değil (En az 8 karakter, büyük/küçük harf, rakam).", "orange");
-    else createStatus("✅ Şifre güçlü.", "lime");
-  });
-
-  confirmInput.addEventListener("input", () => {
-    if (confirmInput.value !== passwordInput.value) createStatus("Şifreler eşleşmiyor.", "red");
-    else createStatus("✅ Şifreler eşleşiyor.", "lime");
-  });
-});
-</script>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  const form = document.querySelector("form");
-
-  const fields = {
-    username: form.querySelector('input[name="username"]'),
-    ad: form.querySelector('input[name="ad"]'),
-    soyad: form.querySelector('input[name="soyad"]'),
-    tc: form.querySelector('input[name="tc"]'),
-    telefon: form.querySelector('input[name="telefon"]'),
-    email: form.querySelector('input[name="email"]'),
-    password: form.querySelector('input[name="password"]'),
-    confirm_password: form.querySelector('input[name="confirm_password"]')
-  };
-
-  // Status boxları oluştur
-  Object.keys(fields).forEach(key => {
-    const status = document.createElement("div");
-    status.className = "status-box";
-    status.style.fontSize = "13px";
-    status.style.margin = "4px 0 12px";
-    status.style.minHeight = "16px";
-    fields[key].parentNode.insertBefore(status, fields[key].nextSibling);
-    fields[key].statusBox = status;
-  });
-
-  const validateEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const validatePassword = pass => pass.length >= 8 && /[a-z]/.test(pass) && /[A-Z]/.test(pass) && /[0-9]/.test(pass);
-
-  // Anlık validation
-  fields.username.addEventListener("input", () => {
-    if(fields.username.value.length < 3){
-      fields.username.statusBox.textContent = "Kullanıcı adı en az 3 karakter olmalı.";
-      fields.username.statusBox.style.color = "orange";
-    } else {
-      fields.username.statusBox.textContent = "✅ Kullanıcı adı uygun.";
-      fields.username.statusBox.style.color = "lime";
-    }
-  });
-
-  fields.email.addEventListener("input", () => {
-    if(!validateEmail(fields.email.value)){
-      fields.email.statusBox.textContent = "Geçerli bir e-posta girin.";
-      fields.email.statusBox.style.color = "orange";
-    } else {
-      fields.email.statusBox.textContent = "✅ E-posta uygun.";
-      fields.email.statusBox.style.color = "lime";
-    }
-  });
-
-  fields.password.addEventListener("input", () => {
-    if(!validatePassword(fields.password.value)){
-      fields.password.statusBox.textContent = "Şifre güçlü değil (En az 8 karakter, büyük/küçük harf, rakam).";
-      fields.password.statusBox.style.color = "orange";
-    } else {
-      fields.password.statusBox.textContent = "✅ Şifre güçlü.";
-      fields.password.statusBox.style.color = "lime";
-    }
-  });
-
-  fields.confirm_password.addEventListener("input", () => {
-    if(fields.confirm_password.value !== fields.password.value){
-      fields.confirm_password.statusBox.textContent = "Şifreler eşleşmiyor.";
-      fields.confirm_password.statusBox.style.color = "red";
-    } else {
-      fields.confirm_password.statusBox.textContent = "✅ Şifreler eşleşiyor.";
-      fields.confirm_password.statusBox.style.color = "lime";
-    }
-  });
-
-  // Basit boş alan kontrolü
-  ['ad','soyad','tc','telefon'].forEach(key => {
-    fields[key].addEventListener("input", () => {
-      if(fields[key].value.trim() === ""){
-        fields[key].statusBox.textContent = "Bu alan boş bırakılamaz.";
-        fields[key].statusBox.style.color = "orange";
-      } else {
-        fields[key].statusBox.textContent = "✅ Uygun.";
-        fields[key].statusBox.style.color = "lime";
-      }
-    });
-  });
-
-  // Submit öncesi final check
-  form.addEventListener("submit", function(e) {
-    let valid = true;
-
-    // Username
-    if(fields.username.value.length < 3){
-      valid = false;
-      fields.username.statusBox.textContent = "Kullanıcı adı en az 3 karakter olmalı.";
-      fields.username.statusBox.style.color = "orange";
-    }
-
-    // Email
-    if(!validateEmail(fields.email.value)){
-      valid = false;
-      fields.email.statusBox.textContent = "Geçerli bir e-posta girin.";
-      fields.email.statusBox.style.color = "orange";
-    }
-
-    // Password
-    if(!validatePassword(fields.password.value)){
-      valid = false;
-      fields.password.statusBox.textContent = "Şifre güçlü değil (En az 8 karakter, büyük/küçük harf, rakam).";
-      fields.password.statusBox.style.color = "orange";
-    }
-
-    // Confirm Password
-    if(fields.confirm_password.value !== fields.password.value){
-      valid = false;
-      fields.confirm_password.statusBox.textContent = "Şifreler eşleşmiyor.";
-      fields.confirm_password.statusBox.style.color = "red";
-    }
-
-    // Diğer alanlar
-    ['ad','soyad','tc','telefon'].forEach(key => {
-      if(fields[key].value.trim() === ""){
-        valid = false;
-        fields[key].statusBox.textContent = "Bu alan boş bırakılamaz.";
-        fields[key].statusBox.style.color = "orange";
-      }
-    });
-
-    if(!valid){
-      e.preventDefault();
-      const box = document.getElementById("errorBox");
-      box.textContent = "❗ Lütfen tüm alanları doğru şekilde doldurun.";
       box.style.display = "block";
-      setTimeout(() => { box.style.display = "none"; }, 3000);
+      box.style.opacity = "1";
+      setTimeout(() => {
+        box.style.transition = "opacity 0.5s ease";
+        box.style.opacity = "0";
+        setTimeout(() => { box.style.display = "none"; box.style.opacity = "1"; }, 2000);
+      }, 2000);
     }
   });
-});
 </script>
+
+
+  <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("kvkk") === "onaylandi") {
+        const toast = document.createElement("div");
+        toast.textContent = "✅ KVKK başvurunuz alındı. Şimdi kayıt olabilirsiniz.";
+        toast.style.position = "fixed";
+        toast.style.top = "20px";
+        toast.style.left = "50%";
+        toast.style.transform = "translateX(-50%)";
+        toast.style.padding = "12px 24px";
+        toast.style.borderRadius = "8px";
+        toast.style.background = "rgba(0, 255, 255, 0.12)";
+        toast.style.color = "#00ffff";
+        toast.style.border = "1px solid #00ffff";
+        toast.style.fontSize = "14px";
+        toast.style.backdropFilter = "blur(6px)";
+        toast.style.boxShadow = "0 0 12px rgba(0,255,255,0.2)";
+        toast.style.zIndex = "9999";
+        toast.style.transition = "opacity 0.5s ease";
+
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.opacity = "0";
+          setTimeout(() => toast.remove(), 600);
+        }, 3500);
+      }
+    });
+  </script>
+
+
+
 
 
 </body>
