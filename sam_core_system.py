@@ -287,20 +287,18 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     # Temel bilgiler
-    kullanici_id = db.Column(db.String(50), unique=True, nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=True)  # ← Hash için uzatıldı ve nullable
-    rol = db.Column(db.String(20), default="kullanici")
-    ad = db.Column(db.String(50), default="")
-    soyad = db.Column(db.String(50), default="")
-    tc = db.Column(db.String(11), default="")
-    telefon = db.Column(db.String(20), default="")
-    dil = db.Column(db.String(10), default="tr")
-    tema = db.Column(db.String(10), default="dark")
-    durum = db.Column(db.String(20), default="aktif")
+    kullanici_id = db.Column(db.String(100), unique=True, nullable=False)
+email = db.Column(db.String(150), unique=True, nullable=False)
+rol = db.Column(db.String(50), default="kullanici")
+ad = db.Column(db.String(100), default="")
+soyad = db.Column(db.String(100), default="")
+tc = db.Column(db.String(20), default="")
+telefon = db.Column(db.String(50), default="")
+dil = db.Column(db.String(20), default="tr")
+tema = db.Column(db.String(20), default="dark")
+durum = db.Column(db.String(50), default="aktif")
+aktivasyon_token = db.Column(db.String(255), default="")
 
-    # Aktivasyon sistemi
-    aktivasyon_token = db.Column(db.String(120), default="")
     aktif_mi = db.Column(db.Boolean, default=False)
 
     # Sosyal medya bağlantıları
