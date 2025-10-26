@@ -33,7 +33,7 @@ openai==1.43.0              # ✅ Güncel ve kararlı sürüm
 Cython==3.0.11
 gunicorn==23.0.0
 reportlab==4.2.2
-psycopg2==2.9.9
+psycopg[binary]==3.2.0
 
 
 
