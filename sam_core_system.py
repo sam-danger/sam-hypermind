@@ -332,7 +332,7 @@ GITHUB_USER_URL = "https://api.github.com/user/emails"
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
-GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
+REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
 SCOPE = ["openid", "email", "profile"]
 AUTHORIZATION_BASE_URL = "https://accounts.google.com/o/oauth2/auth"
 TOKEN_URL = "https://oauth2.googleapis.com/token"
@@ -1309,8 +1309,12 @@ def connections():
 # ── GOOGLE BAĞLANTISI BAŞLAT ────────────────────────────────────
 @app.route("/connect-google")
 def connect_google():
-    google = OAuth2Session(GOOGLE_CLIENT_ID, redirect_uri=GOOGLE_REDIRECT_URI, scope=SCOPE)
-    authorization_url, state = google.authorization_url(AUTHORIZATION_BASE_URL, access_type="offline", prompt="consent")
+    google = OAuth2Session(GOOGLE_CLIENT_ID, redirect_uri=REDIRECT_URI, scope=SCOPE)
+    authorization_url, state = google.authorization_url(
+        AUTHORIZATION_BASE_URL, 
+        access_type="offline", 
+        prompt="consent"
+    )
     session['oauth_state'] = state
     return redirect(authorization_url)
 
@@ -1319,8 +1323,17 @@ def connect_google():
 @app.route("/google-callback")
 def google_callback():
     try:
-        google = OAuth2Session(GOOGLE_CLIENT_ID, state=session.get('oauth_state'), redirect_uri=GOOGLE_REDIRECT_URI)
-        token = google.fetch_token(TOKEN_URL, client_secret=GOOGLE_CLIENT_SECRET, authorization_response=request.url)
+        google = OAuth2Session(
+            GOOGLE_CLIENT_ID,
+            state=session.get('oauth_state'),
+            redirect_uri=REDIRECT_URI
+        )
+        token = google.fetch_token(
+            TOKEN_URL,
+            client_secret=GOOGLE_CLIENT_SECRET,
+            authorization_response=request.url
+        )
+
         user_info = google.get(USER_INFO_URL).json()
         email = user_info.get("email")
 
@@ -1328,10 +1341,17 @@ def google_callback():
             flash("Google e-posta bilgisi alınamadı.", "error")
             return redirect("/register")
 
-        # Kullanıcıyı DB'de bul veya oluştur
         user = User.query.filter_by(email=email).first()
         if not user:
-            user = User(kullanici_id=email.split("@")[0], email=email, password=None, rol="kullanici", aktif_mi=True, google_email=email, google=True)
+            user = User(
+                kullanici_id=email.split("@")[0],
+                email=email,
+                password=None,
+                rol="kullanici",
+                aktif_mi=True,
+                google_email=email,
+                google=True
+            )
             db.session.add(user)
             db.session.commit()
 
@@ -1340,11 +1360,11 @@ def google_callback():
         session["rol"] = user.rol or "kullanici"
 
         return redirect("/index")
+
     except Exception as e:
         print("Google giriş hatası:", e)
         flash("Google ile giriş yapılamadı.", "error")
         return redirect("/register")
-
 
 
 
