@@ -197,18 +197,18 @@ scheduled_tasks = [
 ]
 
 # ── VERİTABANI AYARLARI ──────────────────────────────────────────
-database_url = os.getenv("DATABASE_URL")
-if database_url:
-    # psycopg3 prefix
-    database_url = database_url.replace("postgresql://", "postgresql+psycopg://")
-else:
-    # local için fallback SQLite
-    database_url = "sqlite:///sam_database.db"
-
-app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 db = SQLAlchemy(app)
+app.config['MAIL_SERVER'] = os.getenv("SMTP_HOST")
+app.config['MAIL_PORT'] = int(os.getenv("SMTP_PORT"))
+app.config['MAIL_USERNAME'] = os.getenv("SMTP_USER")
+app.config['MAIL_PASSWORD'] = os.getenv("SMTP_PASS")
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_ASCII_ATTACHMENTS'] = False
+
+mail = Mail(app)
 
 
 
