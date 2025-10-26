@@ -286,9 +286,9 @@ class User(db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    kullanici_id = db.Column(db.String(100), unique=True, nullable=False)
-    email = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(512), nullable=False)  # 100 -> 512
+    kullanici_id = db.Column(db.String(150), unique=True, nullable=False)  # 100 -> 150
+    email = db.Column(db.String(255), unique=True, nullable=False)          # 150 -> 255
+    password = db.Column(db.String(512), nullable=False)
     rol = db.Column(db.String(50), nullable=False)
     ad = db.Column(db.String(100))
     soyad = db.Column(db.String(100))
@@ -297,7 +297,7 @@ class User(db.Model):
     dil = db.Column(db.String(20))
     tema = db.Column(db.String(20))
     durum = db.Column(db.String(50))
-    aktivasyon_token = db.Column(db.String(256))  # 100 -> 256
+    aktivasyon_token = db.Column(db.String(256))
     aktif_mi = db.Column(db.Boolean, default=False)
     google = db.Column(db.Boolean, default=False)
     github = db.Column(db.Boolean, default=False)
@@ -314,7 +314,7 @@ class User(db.Model):
     instagram_email = db.Column(db.String(150))
     ses_tonu = db.Column(db.String(50))
     detayli_cevap = db.Column(db.Boolean, default=True)
-    reset_token = db.Column(db.String(256))  # 100 -> 256
+    reset_token = db.Column(db.String(256))
 
 
 
