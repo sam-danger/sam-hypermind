@@ -289,7 +289,7 @@ class User(db.Model):
     kullanici_id = db.Column(db.String(150), unique=True, nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(512), nullable=False)
-    rol = db.Column(db.String(100), nullable=False)
+    rol = db.Column(db.String(255), nullable=False)  # <<< burayı 255 yaptık
     ad = db.Column(db.String(255))
     soyad = db.Column(db.String(255))
     tc = db.Column(db.String(50))
