@@ -742,6 +742,36 @@ def register():
             reset_token=""
         )
 
+        # ✅ ALAN UZUNLUK KONTROLÜ
+        column_limits = {
+            'kullanici_id': 150,
+            'email': 255,
+            'password': 512,
+            'rol': 255,
+            'ad': 255,
+            'soyad': 255,
+            'tc': 50,
+            'telefon': 50,
+            'dil': 20,
+            'tema': 20,
+            'durum': 255,
+            'aktivasyon_token': 256,
+            'google_email': 255,
+            'github_email': 255,
+            'discord_email': 255,
+            'facebook_email': 255,
+            'instagram_email': 255,
+            'ses_tonu': 255,
+            'reset_token': 256
+        }
+
+        for key, limit in column_limits.items():
+            value = getattr(yeni_kullanici, key)
+            if value is not None and len(str(value)) > limit:
+                flash(f"⚠️ '{key}' alanı limit aşıyor! Uzunluk: {len(str(value))}, Limit: {limit}", "danger")
+                print(f"⚠️ '{key}' alanı limit aşıyor! Uzunluk: {len(str(value))}, Limit: {limit}")
+                return redirect("/register")
+
         # ✅ DEBUG: Aktif veritabanını ve kayıt bilgilerini terminalde göster
         print("──────────────────────────────")
         print("🔍 Aktif veritabanı bağlantısı:", db.engine.url)
@@ -794,8 +824,6 @@ def register():
 
     # GET isteği için register sayfasını render et
     return render_template("register.html", app_version=APP_VERSION)
-
-
 
 # ── SAM CHAT PANELİ ─────────────────────────────────────────────
 # ── Chat route
