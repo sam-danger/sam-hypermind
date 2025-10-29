@@ -742,9 +742,16 @@ def register():
             reset_token=""
         )
 
+        # ✅ DEBUG: Aktif veritabanını ve kayıt bilgilerini terminalde göster
+        print("──────────────────────────────")
+        print("🔍 Aktif veritabanı bağlantısı:", db.engine.url)
+        print("📦 Kayıt edilecek kullanıcı:", yeni_kullanici.email)
+        print("──────────────────────────────")
+
         try:
             db.session.add(yeni_kullanici)
             db.session.commit()
+            print("✅ Kayıt başarıyla eklendi.")
         except Exception as e:
             db.session.rollback()
             # Hangi alanların uzunluğunu kontrol ettiğimizi yazdır
@@ -755,6 +762,7 @@ def register():
             print("email length:", len(email))
             print("aktivasyon_token length:", len(token))
             print("password length:", len(hashed_pw))
+            print("──────────────────────────────")
             flash("⚠️ Kullanıcı kaydı sırasında hata oluştu. Lütfen tekrar deneyin.", "danger")
             return redirect("/register")
 
