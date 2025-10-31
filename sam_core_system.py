@@ -27,7 +27,7 @@ from models import User
 from uuid import uuid4
 from flask_migrate import Migrate
 from flask.cli import FlaskGroup
-from app import app, db
+
 
 from datetime import datetime, timezone
 from datetime import timedelta
