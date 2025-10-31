@@ -35,6 +35,8 @@ gunicorn==23.0.0
 reportlab==4.2.2
 psycopg==3.2.12
 psycopg2-binary==2.9.10
+Flask-Migrate==4.0.7
+alembic==1.13.2
 
 
 

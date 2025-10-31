@@ -26,6 +26,8 @@ from seo_data import SEO_PAGES
 from models import User
 from uuid import uuid4
 from flask_migrate import Migrate
+from flask.cli import FlaskGroup
+from app import app, db
 
 from datetime import datetime, timezone
 from datetime import timedelta
@@ -202,6 +204,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://sam_db_iyh1_user:IDuVXLH6f
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+cli = FlaskGroup(app)
 app.config['MAIL_SERVER'] = os.getenv("SMTP_HOST")
 app.config['MAIL_PORT'] = int(os.getenv("SMTP_PORT"))
 app.config['MAIL_USERNAME'] = os.getenv("SMTP_USER")
