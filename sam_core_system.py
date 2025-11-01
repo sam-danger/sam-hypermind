@@ -27,7 +27,9 @@ from models import User
 from uuid import uuid4
 from flask_migrate import Migrate
 from flask.cli import FlaskGroup
-
+from flask_mail import Message
+from threading import Thread
+from eventlet.green import smtplib
 
 from datetime import datetime, timezone
 from datetime import timedelta
@@ -203,11 +205,9 @@ scheduled_tasks = [
     {"id": 2, "task": "E-posta bildirimleri", "time": "09:00"}
 ]
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://sam_db_iyh1_user:IDuVXLH6fF6lnfkJL0mhzYYNI5zt5uus@dpg-d3v2nube5dus73a2t6v0-a.oregon-postgres.render.com/sam_db_iyh1"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-cli = FlaskGroup(app)
+
 app.config['MAIL_SERVER'] = os.getenv("SMTP_HOST")
 app.config['MAIL_PORT'] = int(os.getenv("SMTP_PORT"))
 app.config['MAIL_USERNAME'] = os.getenv("SMTP_USER")
@@ -217,6 +217,7 @@ app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_ASCII_ATTACHMENTS'] = False
 
 mail = Mail(app)
+
 
 
 
@@ -449,6 +450,7 @@ def send_email_to_admin(subject, content):
         msg["From"] = sender_email
         msg["To"] = receiver_email
 
+        # Eventlet uyumlu SMTP
         with smtplib.SMTP_SSL(os.getenv("SMTP_HOST"), 465) as server:
             server.login(sender_email, password)
             server.sendmail(sender_email, [receiver_email], msg.as_string())
@@ -457,6 +459,7 @@ def send_email_to_admin(subject, content):
 
     except Exception as e:
         print("❌ E-posta gönderme hatası:", e)
+
 
 
 # ── Kullanıcıya E-posta ─────────────────────────
