@@ -440,25 +440,25 @@ Teşekkürler.
 
 # ── Admin E-postası ─────────────────────────────
 def send_email_to_admin(subject, content):
-    try:
-        sender_email = os.getenv("SMTP_USER")
-        receiver_email = os.getenv("ADMIN_EMAIL")
-        password = os.getenv("SMTP_PASS")
+    import smtplib
+    from email.mime.text import MIMEText
+    from email.header import Header
+    import os
 
-        msg = MIMEText(content, "plain", "utf-8")
-        msg["Subject"] = Header(subject, "utf-8")
-        msg["From"] = sender_email
-        msg["To"] = receiver_email
+    sender_email = os.getenv("SMTP_USER")
+    receiver_email = os.getenv("ADMIN_EMAIL")
+    password = os.getenv("SMTP_PASS")
+    
+    msg = MIMEText(content, "plain", "utf-8")
+    msg["Subject"] = Header(subject, "utf-8")
+    msg["From"] = sender_email
+    msg["To"] = receiver_email
 
-        # Eventlet uyumlu SMTP
-        with smtplib.SMTP_SSL(os.getenv("SMTP_HOST"), 465) as server:
-            server.login(sender_email, password)
-            server.sendmail(sender_email, [receiver_email], msg.as_string())
+    with smtplib.SMTP_SSL(os.getenv("SMTP_HOST"), 465) as server:
+        server.login(sender_email, password)
+        server.sendmail(sender_email, [receiver_email], msg.as_string())
 
-        print("✅ Admin'e e-posta bildirimi gönderildi.")
-
-    except Exception as e:
-        print("❌ E-posta gönderme hatası:", e)
+    print("✅ Admin'e e-posta bildirimi gönderildi.")
 
 
 
@@ -2991,6 +2991,7 @@ def canli_destek_umumi():
         email = request.form.get("email")
         mesaj = request.form.get("mesaj")
 
+        # Mesajı JSON dosyasına kaydet
         yeni_mesaj = {
             "adsoyad": adsoyad,
             "email": email,
@@ -2998,14 +2999,18 @@ def canli_destek_umumi():
             "tarih": datetime.now().strftime("%Y-%m-%d %H:%M")
         }
 
-        # JSON dosyasına UTF-8 ile kaydet
         with open("destek_mesajlari.json", "a", encoding="utf-8") as f:
             f.write(json.dumps(yeni_mesaj, ensure_ascii=False) + "\n")
 
-        # Admin'e e-posta bildirimi
-        try:
-            subject = f"📩 Yeni Ziyaretçi Destek Talebi - {adsoyad}"
-            body = f"""
+        # E-posta gönderimini thread ile async çalıştır
+        def send_async_email(subject, body):
+            try:
+                send_email_to_admin(subject, body)
+            except Exception as e:
+                print("❌ Admin e-posta gönderilemedi:", e)
+
+        subject = f"📩 Yeni Ziyaretçi Destek Talebi - {adsoyad}"
+        body = f"""
 📩 Yeni canlı destek mesajı alındı:
 
 👤 Ad Soyad: {adsoyad}
@@ -3015,9 +3020,7 @@ def canli_destek_umumi():
 
 Tarih: {yeni_mesaj['tarih']}
 """
-            send_email_to_admin(subject, body)
-        except Exception as e:
-            print("❌ Admin e-posta gönderilemedi:", e)
+        Thread(target=send_async_email, args=(subject, body)).start()
 
         return redirect("/canli-destek-umumi?basarili=1")
 
