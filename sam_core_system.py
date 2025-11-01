@@ -405,7 +405,7 @@ def send_activation_email(email, token):
         smtp_port = int(os.getenv("SMTP_PORT", 587))
         smtp_user = os.getenv("SMTP_USER")
         smtp_pass = os.getenv("SMTP_PASS")
-        site_url = os.getenv("SITE_URL")  # Render ortamı için doğrudan alıyoruz
+        site_url = os.getenv("SITE_URL")  # Render ortamında SITE_URL alınır
 
         link = f"{site_url}/activate/{token}"
         subject = "🔐 SAM Hesap Aktivasyonu"
@@ -420,15 +420,16 @@ Eğer bu işlemi siz yapmadıysanız bu mesajı görmezden gelebilirsiniz.
 Teşekkürler.
 """
 
+        # UTF-8 encode edilmiş MIMEText
         msg = MIMEText(body, "plain", "utf-8")
         msg["Subject"] = Header(subject, "utf-8")
         msg["From"] = smtp_user
         msg["To"] = email
 
-        with smtplib.SMTP(smtp_host, smtp_port) as server:
-            server.starttls()
+        # SMTP SSL ile güvenli gönderim
+        with smtplib.SMTP_SSL(smtp_host, 465) as server:
             server.login(smtp_user, smtp_pass)
-            server.sendmail(smtp_user, email, msg.as_string())
+            server.sendmail(smtp_user, [email], msg.as_string())
 
         print(f"✅ Aktivasyon e-postası gönderildi: {email}")
 
@@ -448,9 +449,9 @@ def send_email_to_admin(subject, content):
         msg["From"] = sender_email
         msg["To"] = receiver_email
 
-        with smtplib.SMTP_SSL(os.getenv("SMTP_HOST", "smtp.gmail.com"), 465) as server:
+        with smtplib.SMTP_SSL(os.getenv("SMTP_HOST"), 465) as server:
             server.login(sender_email, password)
-            server.sendmail(sender_email, receiver_email, msg.as_string())
+            server.sendmail(sender_email, [receiver_email], msg.as_string())
 
         print("✅ Admin'e e-posta bildirimi gönderildi.")
 
@@ -469,16 +470,15 @@ def send_email(recipient_email, subject, content):
         msg["From"] = sender_email
         msg["To"] = recipient_email
 
-        with smtplib.SMTP_SSL(os.getenv("SMTP_HOST", "smtp.gmail.com"), 465) as server:
+        # SMTP SSL ile gönderim
+        with smtplib.SMTP_SSL(os.getenv("SMTP_HOST"), 465) as server:
             server.login(sender_email, password)
-            server.sendmail(sender_email, recipient_email, msg.as_string())
+            server.sendmail(sender_email, [recipient_email], msg.as_string())
 
         print(f"📤 E-posta gönderildi: {recipient_email}")
 
     except Exception as e:
         print("❌ E-posta gönderme hatası:", e)
-
-
 
 # ── OPENAI ve Admin Ayarı ────────────────────────────────────────
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -2995,11 +2995,11 @@ def canli_destek_umumi():
             "tarih": datetime.now().strftime("%Y-%m-%d %H:%M")
         }
 
-        # JSON dosyasına kaydet (opsiyonel)
+        # JSON dosyasına UTF-8 ile kaydet
         with open("destek_mesajlari.json", "a", encoding="utf-8") as f:
             f.write(json.dumps(yeni_mesaj, ensure_ascii=False) + "\n")
 
-        # Admin'e e-posta gönder
+        # Admin'e e-posta bildirimi
         try:
             subject = f"📩 Yeni Ziyaretçi Destek Talebi - {adsoyad}"
             body = f"""
@@ -3013,9 +3013,8 @@ def canli_destek_umumi():
 Tarih: {yeni_mesaj['tarih']}
 """
             send_email_to_admin(subject, body)
-            print("✅ Admin'e e-posta gönderildi (canli-destek-umumi)")
         except Exception as e:
-            print("❌ E-posta gönderme hatası:", e)
+            print("❌ Admin e-posta gönderilemedi:", e)
 
         return redirect("/canli-destek-umumi?basarili=1")
 
