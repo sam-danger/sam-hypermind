@@ -191,10 +191,12 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 app = Flask(__name__, template_folder='.')
 app.secret_key = 'supersecretkey'
 CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
+
+# Windows + Python 3.13 uyumlu
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
+
 app.permanent_session_lifetime = timedelta(days=30)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB limit
-
 
 scheduled_tasks = [
     {"id": 1, "task": "Günlük temizlik", "time": "03:00"},
@@ -396,17 +398,16 @@ def derin_yanit_uret(metin):
 
 
 
-# ── Aktivasyon E-postası ─────────────────────────────
+# ── Aktivasyon E-postası ─────────────────────────
 def send_activation_email(email, token):
     try:
-        smtp_host = os.getenv("SMTP_HOST", "smtp.gmail.com")
+        smtp_host = os.getenv("SMTP_HOST")
         smtp_port = int(os.getenv("SMTP_PORT", 587))
         smtp_user = os.getenv("SMTP_USER")
         smtp_pass = os.getenv("SMTP_PASS")
-        site_url = os.getenv("SITE_URL", "http://127.0.0.1:5000")
+        site_url = os.getenv("SITE_URL")  # Render ortamı için doğrudan alıyoruz
 
         link = f"{site_url}/activate/{token}"
-
         subject = "🔐 SAM Hesap Aktivasyonu"
         body = f"""Merhaba,
 
@@ -419,11 +420,10 @@ Eğer bu işlemi siz yapmadıysanız bu mesajı görmezden gelebilirsiniz.
 Teşekkürler.
 """
 
-        msg = MIMEMultipart()
+        msg = MIMEText(body, "plain", "utf-8")
+        msg["Subject"] = Header(subject, "utf-8")
         msg["From"] = smtp_user
         msg["To"] = email
-        msg["Subject"] = Header(subject, "utf-8")
-        msg.attach(MIMEText(body, "plain", "utf-8"))
 
         with smtplib.SMTP(smtp_host, smtp_port) as server:
             server.starttls()
@@ -438,45 +438,47 @@ Teşekkürler.
 
 # ── Admin E-postası ─────────────────────────────
 def send_email_to_admin(subject, content):
-    sender_email = os.getenv("SMTP_USER")
-    receiver_email = os.getenv("ADMIN_EMAIL")
-    password = os.getenv("SMTP_PASS")
-
-    msg = MIMEMultipart()
-    msg["From"] = sender_email
-    msg["To"] = receiver_email
-    msg["Subject"] = Header(subject, "utf-8")
-    msg.attach(MIMEText(content, "plain", "utf-8"))
-
     try:
-        with smtplib.SMTP(os.getenv("SMTP_HOST", "smtp.gmail.com"), int(os.getenv("SMTP_PORT", 587))) as server:
-            server.starttls()
+        sender_email = os.getenv("SMTP_USER")
+        receiver_email = os.getenv("ADMIN_EMAIL")
+        password = os.getenv("SMTP_PASS")
+
+        msg = MIMEText(content, "plain", "utf-8")
+        msg["Subject"] = Header(subject, "utf-8")
+        msg["From"] = sender_email
+        msg["To"] = receiver_email
+
+        with smtplib.SMTP_SSL(os.getenv("SMTP_HOST", "smtp.gmail.com"), 465) as server:
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, msg.as_string())
+
         print("✅ Admin'e e-posta bildirimi gönderildi.")
+
     except Exception as e:
         print("❌ E-posta gönderme hatası:", e)
 
 
-# ── Kullanıcıya Genel E-posta ─────────────────────
-def send_email_to_user(recipient_email, subject, content):
-    sender_email = os.getenv("SMTP_USER")
-    password = os.getenv("SMTP_PASS")
-
-    msg = MIMEMultipart()
-    msg["From"] = sender_email
-    msg["To"] = recipient_email
-    msg["Subject"] = Header(subject, "utf-8")
-    msg.attach(MIMEText(content, "plain", "utf-8"))
-
+# ── Kullanıcıya E-posta ─────────────────────────
+def send_email(recipient_email, subject, content):
     try:
-        with smtplib.SMTP(os.getenv("SMTP_HOST", "smtp.gmail.com"), int(os.getenv("SMTP_PORT", 587))) as server:
-            server.starttls()
+        sender_email = os.getenv("SMTP_USER")
+        password = os.getenv("SMTP_PASS")
+
+        msg = MIMEText(content, "plain", "utf-8")
+        msg["Subject"] = Header(subject, "utf-8")
+        msg["From"] = sender_email
+        msg["To"] = recipient_email
+
+        with smtplib.SMTP_SSL(os.getenv("SMTP_HOST", "smtp.gmail.com"), 465) as server:
             server.login(sender_email, password)
             server.sendmail(sender_email, recipient_email, msg.as_string())
-        print(f"📤 Kullanıcıya e-posta gönderildi: {recipient_email}")
+
+        print(f"📤 E-posta gönderildi: {recipient_email}")
+
     except Exception as e:
-        print("❌ Kullanıcıya e-posta gönderme hatası:", e)
+        print("❌ E-posta gönderme hatası:", e)
+
+
 
 # ── OPENAI ve Admin Ayarı ────────────────────────────────────────
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -2978,6 +2980,7 @@ def gizlilik():
 
 
 
+# ── Canlı Destek Genel ───────────────────────────
 @app.route("/canli-destek-umumi", methods=["GET", "POST"])
 def canli_destek_umumi():
     if request.method == "POST":
@@ -2996,17 +2999,8 @@ def canli_destek_umumi():
         with open("destek_mesajlari.json", "a", encoding="utf-8") as f:
             f.write(json.dumps(yeni_mesaj, ensure_ascii=False) + "\n")
 
-        # ✅ Admin'e e-posta gönder
+        # Admin'e e-posta gönder
         try:
-            from email.mime.text import MIMEText
-            import smtplib, os
-
-            smtp_host = os.getenv("SMTP_HOST")
-            smtp_port = int(os.getenv("SMTP_PORT", 587))
-            smtp_user = os.getenv("SMTP_USER")
-            smtp_pass = os.getenv("SMTP_PASS")
-            admin_email = os.getenv("ADMIN_EMAIL")
-
             subject = f"📩 Yeni Ziyaretçi Destek Talebi - {adsoyad}"
             body = f"""
 📩 Yeni canlı destek mesajı alındı:
@@ -3018,19 +3012,8 @@ def canli_destek_umumi():
 
 Tarih: {yeni_mesaj['tarih']}
 """
-
-            msg = MIMEText(body, "plain", "utf-8")
-            msg["Subject"] = subject
-            msg["From"] = smtp_user
-            msg["To"] = admin_email
-
-            with smtplib.SMTP(smtp_host, smtp_port) as server:
-                server.starttls()
-                server.login(smtp_user, smtp_pass)
-                server.sendmail(smtp_user, admin_email, msg.as_string())
-
+            send_email_to_admin(subject, body)
             print("✅ Admin'e e-posta gönderildi (canli-destek-umumi)")
-
         except Exception as e:
             print("❌ E-posta gönderme hatası:", e)
 
@@ -3039,6 +3022,7 @@ Tarih: {yeni_mesaj['tarih']}
     return render_template("canli_destek_umumi.html")
 
 
+# ── KVKK / Veri Sahibi Hakları ───────────────────
 @app.route("/veri-sahibi-haklari", methods=["GET", "POST"])
 def veri_sahibi_haklari():
     if request.method == "POST":
@@ -3058,28 +3042,13 @@ def veri_sahibi_haklari():
         """
 
         try:
-            smtp_server = os.getenv("SMTP_HOST")
-            smtp_port = int(os.getenv("SMTP_PORT"))
-            sender_email = os.getenv("SMTP_USER")
-            sender_password = os.getenv("SMTP_PASS")
-            recipient_email = os.getenv("ADMIN_EMAIL")
-
-            msg = MIMEText(body)
-            msg["Subject"] = subject
-            msg["From"] = sender_email
-            msg["To"] = recipient_email
-
-            server = smtplib.SMTP(smtp_server, smtp_port)
-            server.starttls()
-            server.login(sender_email, sender_password)
-            server.sendmail(sender_email, recipient_email, msg.as_string())
-            server.quit()
-
+            send_email_to_admin(subject, body)
             return redirect("/register?kvkk=onaylandi")
         except Exception as e:
             return f"E-posta gönderilemedi: {str(e)}"
 
     return send_from_directory('.', "veri-sahibi-haklari.html")
+
 
 
 @app.route("/kvkk-aydinlatma")
@@ -3088,6 +3057,7 @@ def kvkk_aydinlatma():
 
 
 
+# ── Hukuki İletişim ─────────────────────────────
 @app.route("/hukuki-iletisim", methods=["GET", "POST"])
 def hukuki_iletisim():
     if request.method == "POST":
@@ -3107,29 +3077,12 @@ def hukuki_iletisim():
         """
 
         try:
-            smtp_server = os.getenv("SMTP_HOST")
-            smtp_port = int(os.getenv("SMTP_PORT"))
-            sender_email = os.getenv("SMTP_USER")
-            sender_password = os.getenv("SMTP_PASS")
-            recipient_email = os.getenv("ADMIN_EMAIL")
-
-            msg = MIMEText(body)
-            msg["Subject"] = subject
-            msg["From"] = sender_email
-            msg["To"] = recipient_email
-
-            server = smtplib.SMTP(smtp_server, smtp_port)
-            server.starttls()
-            server.login(sender_email, sender_password)
-            server.sendmail(sender_email, recipient_email, msg.as_string())
-            server.quit()
-
+            send_email_to_admin(subject, body)
             return redirect("/hukuki-iletisim?gonderildi=true")
         except Exception as e:
             return f"Hata oluştu: {str(e)}"
 
     return send_from_directory('.', "hukuki-iletisim.html")
-
 
 @app.route("/cerez-politikasi")
 def cerez_politikasi():
@@ -3680,11 +3633,7 @@ if __name__ == "__main__":
         db.create_all()
     print("🔧 SAM Shadow Mode başlatılıyor...")
     port = int(os.getenv("PORT", 5000))
-    socketio.run(app, host="0.0.0.0", port=port)
-
-
-
-
+    socketio.run(app, host="0.0.0.0", port=port, debug=True, use_reloader=False)
 
 
 
