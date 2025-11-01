@@ -16,7 +16,7 @@
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 0;
-      overflow-x: hidden; /* Yatay scroll engelle */
+      overflow-x: hidden;
     }
 
     /* ⚙️ Ayarlar Butonu */
@@ -29,7 +29,7 @@
       padding: 10px 14px;
       border-radius: 6px;
       cursor: pointer;
-      z-index: 10005;
+      z-index: 10010; /* Her zaman panel üstünde */
       font-weight: bold;
       transition: background-color 0.3s;
     }
@@ -49,7 +49,7 @@
       box-shadow: -2px 0 12px rgba(0, 255, 255, 0.3);
       border-left: 1px solid rgba(0, 255, 255, 0.08);
       transition: right 0.4s ease-in-out;
-      z-index: 10006;
+      z-index: 10005;
       overflow-y: auto;
     }
     .settings-panel.open { right: 0; }
@@ -102,7 +102,7 @@
     }
     .clickable-area {
       cursor: pointer;
-      background-color: rgba(0,255,0,0.15); /* Test için renk */
+      background-color: rgba(0,255,0,0.15);
       z-index: 10000;
     }
 
@@ -137,6 +137,42 @@
     }
     .shadow-clickable { top: 13vh; left: 70vw; width: 7vw; height: 15vh; }
     .Blockchain-clickable { top: 39vh; left: 83vw; width: 8vw; height: 12vh; }
+
+/* Mobil ve tablet uyumlu tasarım */
+@media (max-width: 768px) {
+  /* Ayarlar paneli mobilde tam genişlik */
+  .settings-panel {
+    width: 85%;
+    right: -85%;
+  }
+
+  /* Overlay küçültme ve konum ayarı */
+  .overlay {
+    width: 80%;
+    height: 35%;
+  }
+
+  /* Mikrofon küçültme ve konum */
+  .microphone-click {
+    width: 60px;
+    height: 60px;
+    bottom: 20px;
+    right: 20px;
+  }
+
+  /* Kamera küçültme ve konum */
+  .camera-click {
+    width: 100px;
+    top: 40%;
+    left: 20%;
+  }
+
+  /* Shadow ve Blockchain tıklanabilir alanları gizle */
+  .shadow-clickable,
+  .Blockchain-clickable {
+    display: none;
+  }
+}
   </style>
 </head>
 <body>
@@ -178,10 +214,19 @@
   <div class="Blockchain-clickable" onclick="window.location.href='/blockchain-security'"></div>
 
   <script>
+    const settingsButton = document.querySelector('.settings-button');
+    const settingsPanel = document.getElementById('settingsPanel');
+
     function toggleSettingsPanel() {
-      const panel = document.getElementById("settingsPanel");
-      panel.classList.toggle("open");
+      settingsPanel.classList.toggle('open');
     }
+
+    // Panel dışında tıklayınca panel kapanması
+    document.addEventListener('click', function(e) {
+      if (!settingsPanel.contains(e.target) && !settingsButton.contains(e.target)) {
+        settingsPanel.classList.remove('open');
+      }
+    });
 
     function logoutUser() {
       fetch("/logout", { method: "POST", headers: { "Content-Type": "application/json" } })

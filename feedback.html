@@ -1,197 +1,193 @@
 <!DOCTYPE html>
+
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>📬 Destek ve Geri Bildirim</title>
+  <title>📬 Destek ve Geri Bildirim | SAM</title>
 
-  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+  <link rel="icon" href="data:;base64,=">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <!-- SEO -->
+
   <meta name="description" content="SAM platformunda destek ve geri bildirim gönderin. Sorularınızı iletin, önerilerinizi paylaşın.">
   <meta name="keywords" content="SAM, destek, geri bildirim, iletişim, yardım">
+  <meta name="robots" content="index, follow">
 
   <!-- Open Graph -->
+
   <meta property="og:title" content="📬 SAM | Destek ve Geri Bildirim">
   <meta property="og:description" content="SAM platformunda destek ve geri bildirim gönderin. Sorularınızı iletin, önerilerinizi paylaşın.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://sam-hypermind.onrender.com/feedback">
   <meta property="og:image" content="https://sam-hypermind.onrender.com/static/logo.png">
 
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="📬 SAM | Destek ve Geri Bildirim">
-  <meta name="twitter:description" content="SAM platformunda destek ve geri bildirim gönderin. Sorularınızı iletin, önerilerinizi paylaşın.">
-  <meta name="twitter:image" content="https://sam-hypermind.onrender.com/static/logo.png">
-
-  <!-- JSON-LD -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "📬 SAM | Destek ve Geri Bildirim",
-    "url": "https://sam-hypermind.onrender.com/feedback",
-    "description": "SAM platformunda destek ve geri bildirim gönderin. Sorularınızı iletin, önerilerinizi paylaşın.",
-    "publisher": {
-      "@type": "Organization",
-      "name": "SAM HyperMind",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://sam-hypermind.onrender.com/static/logo.png"
-      }
-    }
-  }
-  </script>
+  <!-- Responsive CSS -->
 
   <style>
     body {
       margin: 0;
-      padding: 20px 20px;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      color: #fff;
       background: url('/static/feedback_bg.jpg') no-repeat center center fixed;
       background-size: cover;
-      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .geri-btn {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
       color: #fff;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+      text-align: center;
+      line-height: 38px;
+      cursor: pointer;
+      z-index: 1000;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .geri-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: scale(1.1);
     }
 
     h1 {
       font-size: 26px;
+      margin-top: 80px;
       text-align: center;
-      margin-bottom: 40px;
-      color: #fff;
+      color: #00ffff;
     }
 
-    h2 {
-      font-size: 20px;
-      color: #aaa;
-      margin-top: 40px;
-      margin-bottom: 12px;
+    section {
+      width: 90%;
+      max-width: 800px;
+      margin-top: 30px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
     }
 
     .sss-item {
-      margin-bottom: 14px;
-      line-height: 1.6;
-      background-color: rgba(0, 0, 0, 0.35);
+      margin-bottom: 12px;
       padding: 12px;
-      border-radius: 10px;
+      border-left: 3px solid #00ffff;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+    }
+
+    .feedback-title {
+      font-size: 20px;
+      color: #00ffff;
+      margin-top: 20px;
+      margin-bottom: 15px;
+      text-align: center;
     }
 
     form {
-      max-width: 700px;
-      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 10px;
     }
 
     input, textarea {
       width: 100%;
       padding: 12px;
-      margin-bottom: 16px;
       border: none;
       border-radius: 10px;
-      background: rgba(30, 30, 30, 0.6);
+      background: rgba(255, 255, 255, 0.1);
       color: #fff;
       font-size: 15px;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      background: rgba(0, 255, 255, 0.1);
+      box-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
     }
 
     textarea {
       resize: none;
-    }
-
-    .geri-btn {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      font-size: 16px;
-      text-decoration: none;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 8px 14px;
-      border-radius: 8px;
-      color: #ccc;
-      transition: background 0.3s, color 0.3s;
-      z-index: 1000;
-      backdrop-filter: blur(6px);
-    }
-
-    .geri-btn:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
+      min-height: 100px;
     }
 
     button {
-      background-color: #444;
-      color: #fff;
+      background-color: #00ffff;
+      color: #000;
       border: none;
-      padding: 12px 20px;
+      padding: 14px;
       border-radius: 10px;
       font-weight: bold;
-      font-size: 15px;
+      font-size: 16px;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: all 0.3s;
     }
 
     button:hover {
-      background-color: #666;
+      background-color: #00d9d9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 255, 255, 0.2);
     }
 
-    @media screen and (max-width: 600px) {
-      h1 {
-        font-size: 22px;
-      }
+    @media (max-width: 600px) {
+      h1 { font-size: 22px; margin-top: 60px; }
+      section { padding: 18px; }
+      button { font-size: 15px; }
     }
   </style>
+
 </head>
 <body>
 
-
-
-<!-- Sesli komut için görünmez yönlendirme bağlantıları -->
-<div style="display: none;">
-  <a href="/chat" id="goto-chat"><span class="visually-hidden">Chat</span></a>
-  <a href="/notlar" id="goto-notlar"><span class="visually-hidden">Notlar</span></a>
-  <a href="/data" id="goto-veri"><span class="visually-hidden">Veri</span></a>
-  <a href="/profil" id="goto-profil"><span class="visually-hidden">Profil</span></a>
-  <a href="/index" id="goto-home"><span class="visually-hidden">Ana Sayfa</span></a>
-</div>
-
-
-<button class="back-btn" onclick="window.location.href='/index'">←</button>
-
+  <div class="geri-btn" onclick="window.location.href='/index'">←</div>
 
   <h1>📬 Destek ve Geri Bildirim</h1>
 
-  <section class="sss">
-    <h2>❓ Sık Sorulan Sorular</h2>
-    <div class="sss-item"><strong>Giriş yapamıyorum:</strong> Şifrenizi unuttuysanız, giriş ekranındaki “Şifremi Unuttum” seçeneğini kullanabilirsiniz.</div>
-    <div class="sss-item"><strong>Hesabımı nasıl silerim?:</strong> Ayarlar > Hesap ve Oturum menüsünden hesabınızı kalıcı olarak silebilirsiniz.</div>
-    <div class="sss-item"><strong>Verilerim güvende mi?:</strong> Tüm verileriniz şifreli ve GDPR uyumludur.</div>
-    <div class="sss-item"><strong>Canlı destek saatleri nedir?:</strong> Canlı destek haftanın her günü 09:00–23:00 saatleri arasında aktiftir.</div>
-    <div class="sss-item"><strong>Bildirimlerimi nasıl kapatırım?:</strong> Profil ayarlarından e-posta ve sistem bildirimlerini kontrol edebilirsiniz.</div>
-    <div class="sss-item"><strong>Destek ekibi ne zaman dönüş yapar?:</strong> Genellikle 24 saat içinde geri dönüş sağlanır.</div>
-    <div class="sss-item"><strong>Şikayetimi nereye bildirebilirim?:</strong> Aşağıdaki geri bildirim formunu kullanarak destek ekibimize ulaşabilirsiniz.</div>
-  </section>
-
-  <section class="feedback-form">
+  <section>
     <h2 class="feedback-title">💡 Geri Bildirim Gönder</h2>
     <form id="feedbackForm">
       <input type="text" name="adsoyad" placeholder="Adınız Soyadınız" required>
       <input type="email" name="email" placeholder="E-posta Adresiniz" required>
-      <textarea name="feedback" rows="5" placeholder="Görüş veya önerinizi buraya yazın..." required></textarea>
+      <textarea name="feedback" placeholder="Görüş veya önerinizi buraya yazın..." required></textarea>
       <button type="submit">Gönder</button>
     </form>
   </section>
 
+  <section>
+    <h2 class="feedback-title">❓ Sık Sorulan Sorular</h2>
+    <div class="sss-item"><b>Giriş yapamıyorum:</b> Şifrenizi unuttuysanız, “Şifremi Unuttum” seçeneğini kullanabilirsiniz.</div>
+    <div class="sss-item"><b>Hesabımı nasıl silerim?:</b> Ayarlar > Hesap menüsünden hesabınızı kalıcı olarak silebilirsiniz.</div>
+    <div class="sss-item"><b>Verilerim güvende mi?:</b> Tüm verileriniz şifreli ve güvenli şekilde saklanır.</div>
+    <div class="sss-item"><b>Canlı destek saatleri:</b> Haftanın her günü 09:00–23:00 saatleri arasında aktiftir.</div>
+  </section>
+
   <script>
-    document.getElementById("feedbackForm").addEventListener("submit", function(e) {
+    document.getElementById("feedbackForm").addEventListener("submit", async (e) => {
       e.preventDefault();
+      const formData = new FormData(e.target);
 
-      const formData = new FormData(this);
+      try {
+        const response = await fetch("/submit-feedback", {
+          method: "POST",
+          body: formData
+        });
 
-      fetch("/submit-feedback", {
-        method: "POST",
-        body: formData
-      })
-      .then(response => {
         if (response.ok) {
           Swal.fire({
             icon: 'success',
@@ -200,72 +196,19 @@
             timer: 2000,
             showConfirmButton: false
           });
-          this.reset();
+          e.target.reset();
         } else {
           throw new Error("Gönderim başarısız");
         }
-      })
-      .catch(error => {
+      } catch {
         Swal.fire({
           icon: 'error',
           title: 'Hata!',
           text: 'Geri bildirim gönderilemedi. Lütfen tekrar deneyin.'
         });
-      });
+      }
     });
   </script>
-
-<script>
-let samTimeout;
-let samOverlay;
-
-function createSecurityOverlay() {
-    samOverlay = document.createElement("div");
-    samOverlay.id = "samOverlay";
-    samOverlay.style.position = "fixed";
-    samOverlay.style.top = 0;
-    samOverlay.style.left = 0;
-    samOverlay.style.width = "100%";
-    samOverlay.style.height = "100%";
-    samOverlay.style.background = "rgba(0, 0, 0, 0.9)";
-    samOverlay.style.backdropFilter = "blur(10px)";
-    samOverlay.style.display = "flex";
-    samOverlay.style.alignItems = "center";
-    samOverlay.style.justifyContent = "center";
-    samOverlay.style.zIndex = 999999;
-    samOverlay.innerHTML = `<div style="color:#00ffff; font-size:20px; text-align:center;">
-        🔒 SAM Güvenlik Modu <br><br>
-        Uzun süreli hareketsizlik algılandı.<br>
-        Sistemi devam ettirmek için ekrana dokunun...
-    </div>`;
-    document.body.appendChild(samOverlay);
-}
-
-function removeSecurityOverlay() {
-    if (samOverlay) {
-        samOverlay.remove();
-        samOverlay = null;
-    }
-}
-
-function resetSamInactivityTimer() {
-    clearTimeout(samTimeout);
-    samTimeout = setTimeout(() => {
-        createSecurityOverlay();
-    }, 120000); // 2 dakika (120000 ms)
-}
-
-// Her etkileşimde sıfırla
-["click", "mousemove", "keydown", "touchstart"].forEach(evt => {
-    document.addEventListener(evt, () => {
-        removeSecurityOverlay();
-        resetSamInactivityTimer();
-    });
-});
-
-window.addEventListener("load", resetSamInactivityTimer);
-</script>
-
 
 </body>
 </html>

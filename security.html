@@ -1,305 +1,193 @@
 <!DOCTYPE html>
+
 <html lang="{{ dil }}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ 'Güvenlik Ayarları' if dil == 'tr' else 'Security Settings' }}</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <title>{{ '🔐 Güvenlik Ayarları' if dil == 'tr' else '🔐 Security Settings' }}</title>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
   <link rel="icon" href="data:;base64,=">
 
-  <!-- SEO -->
-  <meta name="description" content="{{ 'SAM HyperMind güvenlik ayarları ve kontrol paneli.' if dil == 'tr' else 'SAM HyperMind security settings and control panel.' }}">
-  <meta name="keywords" content="SAM, güvenlik, ayarlar, security, HyperMind, kontrol paneli">
-  <meta name="robots" content="noindex, nofollow">
-
-  <!-- Open Graph / Facebook -->
-  <meta property="og:title" content="{{ 'Güvenlik Ayarları' if dil == 'tr' else 'Security Settings' }}">
-  <meta property="og:description" content="{{ 'SAM HyperMind güvenlik ayarları ve kontrol paneli.' if dil == 'tr' else 'SAM HyperMind security settings and control panel.' }}">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://sam-hypermind.onrender.com/security-settings">
-  <meta property="og:image" content="https://sam-hypermind.onrender.com/static/logo.png">
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="{{ 'Güvenlik Ayarları' if dil == 'tr' else 'Security Settings' }}">
-  <meta name="twitter:description" content="{{ 'SAM HyperMind güvenlik ayarları ve kontrol paneli.' if dil == 'tr' else 'SAM HyperMind security settings and control panel.' }}">
-  <meta name="twitter:image" content="https://sam-hypermind.onrender.com/static/logo.png">
-
-  <!-- JSON-LD Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "{{ 'Güvenlik Ayarları' if dil == 'tr' else 'Security Settings' }}",
-    "url": "https://sam-hypermind.onrender.com/security-settings",
-    "description": "{{ 'SAM HyperMind güvenlik ayarları ve kontrol paneli.' if dil == 'tr' else 'SAM HyperMind security settings and control panel.' }}",
-    "publisher": {
-      "@type": "Organization",
-      "name": "SAM HyperMind",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://sam-hypermind.onrender.com/static/logo.png"
-      }
-    }
-  }
-  </script>
   <style>
-    body {
-      background-image: url("/static/security-bg.jpg");
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-      background-position: center;
+    :root {
+      --cyan: #00ffff;
+      --dark-cyan: #007a7a;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    html, body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      color: white;
-    }
-
-    .container, .scroll-wrapper {
-      background: transparent;
-      padding: 30px;
-      box-shadow: none;
-      border: none;
-    }
-
-    form, .card, .twofa-section .card {
-      background-color: rgba(0, 0, 0, 0.25);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      will-change: transform;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 15px;
-    }
-
-    input[type="password"],
-    input[type="email"],
-    input[type="tel"] {
-      background-color: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: white;
-      padding: 10px;
-      width: 100%;
-      border-radius: 8px;
-      margin-bottom: 15px;
-    }
-
-    button, .twofa-save-button {
-      background-color: #00e5ff;
-      color: black;
-      padding: 10px 20px;
-      border-radius: 8px;
-      border: none;
-      width: 100%;
-      font-weight: bold;
-      transition: 0.3s ease;
-      cursor: pointer;
-    }
-
-    button:hover, .twofa-save-button:hover {
-      background-color: #00c6e0;
-    }
-
-    h1, h3 {
-      color: #00e5ff;
-    }
-
-    .flash-messages {
-      margin-bottom: 20px;
-    }
-
-    .scroll-wrapper {
-      height: 111vh;
-      overflow-y: auto;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      color: #fff;
+      background: url("/static/security-bg.jpg") center/cover no-repeat fixed;
+      height: 100%;
+      overflow: hidden; /* Yukarı aşağı kaydırma yok */
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 10px;
-      box-sizing: border-box;
     }
 
-    .flash.success {
-      background-color: rgba(0, 255, 0, 0.2);
-      color: #8aff8a;
+    .content {
+      width: 90%;
+      max-width: 800px;
+      text-align: left;
+      padding: 30px;
+      background: rgba(0, 0, 0, 0.55);
+      border-radius: 14px;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      color: var(--cyan);
+      margin-bottom: 25px;
+    }
+
+    h3 {
+      color: var(--cyan);
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin: 10px 0 6px;
+    }
+
+    input {
+      width: 100%;
       padding: 10px;
+      border: 1px solid rgba(255,255,255,0.3);
       border-radius: 8px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      font-size: 15px;
     }
 
-    .flash.error {
-      background-color: rgba(255, 0, 0, 0.2);
-      color: #ff8a8a;
-      padding: 10px;
-      border-radius: 8px;
+    input:focus {
+      border-color: var(--cyan);
+      outline: none;
+      box-shadow: 0 0 8px rgba(0,255,255,0.5);
     }
 
-    .back-btn{
+    button {
+      margin-top: 15px;
+      width: 100%;
+      background: var(--dark-cyan);
+      color: #fff;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all .3s;
+    }
+
+    button:hover {
+      background: var(--cyan);
+      color: #000;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,255,255,0.3);
+    }
+
+    p, b {
+      color: #fff;
+      font-size: 16px;
+    }
+
+    .section {
+      margin-bottom: 25px;
+    }
+
+    .back-btn {
       position: fixed;
       top: 20px;
       left: 20px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 14px;
-      font-size: 0.95rem;
-      color: #fff;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 8px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      color: var(--cyan);
+      text-align: center;
+      line-height: 40px;
+      font-size: 20px;
       cursor: pointer;
-      user-select: none;
-      backdrop-filter: blur(4px);
-      transition: background .25s, border .25s;
+      z-index: 1000;
+      transition: transform .2s;
     }
 
-    .back-btn:hover{
-      background: rgba(255,255,255,0.14);
-      border-color: rgba(255,255,255,0.25);
+    .back-btn:hover {
+      transform: scale(1.1);
     }
 
-    .back-btn svg{
-      flex-shrink: 0;
+    @media (max-width: 768px) {
+      .content {
+        padding: 20px;
+        width: 92%;
+      }
+
+      h1 {
+        font-size: 22px;
+      }
+
+      input, button {
+        font-size: 14px;
+      }
     }
   </style>
+
 </head>
 
 <body>
+  <div class="back-btn" onclick="window.location.href='/'" title="{{ 'Geri' if dil == 'tr' else 'Back' }}">←</div>
 
-<!-- Sesli komut için görünmez yönlendirme bağlantıları -->
-<div style="display: none;">
-  <a href="/chat" id="goto-chat"><span class="visually-hidden">Chat</span></a>
-  <a href="/notlar" id="goto-notlar"><span class="visually-hidden">Notlar</span></a>
-  <a href="/data" id="goto-veri"><span class="visually-hidden">Veri</span></a>
-  <a href="/profil" id="goto-profil"><span class="visually-hidden">Profil</span></a>
-  <a href="/index" id="goto-home"><span class="visually-hidden">Ana Sayfa</span></a>
+  <div class="content">
+    <h1>{{ '🔐 Güvenlik Ayarları' if dil == 'tr' else '🔐 Security Settings' }}</h1>
+
+<!-- Şifre Güncelleme -->
+<div class="section">
+  <label>{{ 'Mevcut Şifre' if dil == 'tr' else 'Current Password' }}</label>
+  <input type="password" name="old_password" required>
+
+  <label>{{ 'Yeni Şifre' if dil == 'tr' else 'New Password' }}</label>
+  <input type="password" name="new_password" required>
+
+  <button>{{ 'Şifreyi Güncelle' if dil == 'tr' else 'Update Password' }}</button>
+</div>
+
+<!-- Son Giriş Bilgileri -->
+<div class="section">
+  <h3>{{ '📌 Son Giriş Bilgileri' if dil == 'tr' else '📌 Last Login Info' }}</h3>
+  <p><b>{{ 'IP Adresi' if dil == 'tr' else 'IP Address' }}:</b> 192.168.1.1</p>
+  <p><b>{{ 'Giriş Tarihi' if dil == 'tr' else 'Login Time' }}:</b> 2024-07-01 12:30</p>
+  <p><b>{{ 'Cihaz' if dil == 'tr' else 'Device' }}:</b> Chrome (Windows)</p>
+</div>
+
+<!-- 2FA -->
+<div class="section">
+  <h3>{{ '🛡️ İki Aşamalı Doğrulama (2FA)' if dil == 'tr' else '🛡️ Two-Factor Authentication (2FA)' }}</h3>
+  <p>{{ 'Hesabınızı korumak için ekstra bir güvenlik katmanı ekleyin.' if dil == 'tr' else 'Add an extra layer of security to your account.' }}</p>
+
+  <label>{{ '📱 SMS ile 2FA' if dil == 'tr' else '📱 2FA via SMS' }}</label>
+  <input type="tel" name="telefon" placeholder="{{ '05xx xxx xx xx' if dil == 'tr' else '+90 5XX XXX XX XX' }}">
+
+  <label>{{ '📧 Mail ile 2FA' if dil == 'tr' else '📧 2FA via Email' }}</label>
+  <input type="email" name="mail_2fa" placeholder="ornek@eposta.com">
+
+  <button>{{ 'Kaydet ve Etkinleştir' if dil == 'tr' else 'Save and Activate' }}</button>
 </div>
 
 
-
-  <!-- Geri Düğmesi -->
-  <div class="back-btn" onclick="window.location.href='/'" title="{{ 'Geri' if dil == 'tr' else 'Back' }}">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <span>{{ 'Geri' if dil == 'tr' else 'Back' }}</span>
   </div>
-
-  <div class="scroll-wrapper">
-    <div class="container">
-      <h1>{{ '🔐 Güvenlik Ayarları' if dil == 'tr' else '🔐 Security Settings' }}</h1>
-
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          <div class="flash-messages">
-            {% for category, message in messages %}
-              <div class="flash {{ category }}">{{ message }}</div>
-            {% endfor %}
-          </div>
-        {% endif %}
-      {% endwith %}
-
-      <!-- Şifre Güncelleme Formu -->
-      <form method="POST" action="/update_password">
-        <label>{{ 'Mevcut Şifre' if dil == 'tr' else 'Current Password' }}</label>
-        <input type="password" name="old_password" required>
-
-        <label>{{ 'Yeni Şifre' if dil == 'tr' else 'New Password' }}</label>
-        <input type="password" name="new_password" required>
-
-        <button type="submit">{{ 'Şifreyi Güncelle' if dil == 'tr' else 'Update Password' }}</button>
-      </form>
-
-      <!-- Giriş Bilgileri -->
-      <div class="card">
-        <h3>{{ '📌 Son Giriş Bilgileri' if dil == 'tr' else '📌 Last Login Info' }}</h3>
-        <p><strong>{{ 'IP Adresi' if dil == 'tr' else 'IP Address' }}:</strong> 192.168.1.1</p>
-        <p><strong>{{ 'Giriş Tarihi' if dil == 'tr' else 'Login Time' }}:</strong> 2024-07-01 12:30</p>
-        <p><strong>{{ 'Cihaz' if dil == 'tr' else 'Device' }}:</strong> Chrome (Windows)</p>
-      </div>
-
-      <!-- 2FA Ayarları -->
-      <div class="twofa-section">
-        <h3>{{ '🛡️ İki Aşamalı Doğrulama (2FA)' if dil == 'tr' else '🛡️ Two-Factor Authentication (2FA)' }}</h3>
-        <p>{{ 'Hesabınızı korumak için ekstra bir güvenlik katmanı ekleyin.' if dil == 'tr' else 'Add an extra layer of security to your account.' }}</p>
-
-        <div class="card">
-          <p><strong>{{ '📱 SMS ile 2FA' if dil == 'tr' else '📱 2FA via SMS' }}</strong></p>
-          <p>{{ 'Telefonunuza doğrulama kodu gönderilecektir.' if dil == 'tr' else 'A verification code will be sent to your phone.' }}</p>
-          <input type="tel" name="telefon" placeholder="{{ '05xx xxx xx xx' if dil == 'tr' else '+90 5XX XXX XX XX' }}">
-        </div>
-
-        <div class="card">
-          <p><strong>{{ '📧 Mail ile 2FA' if dil == 'tr' else '📧 2FA via Email' }}</strong></p>
-          <p>{{ 'Girişlerde bu e-posta adresine kod gönderilir.' if dil == 'tr' else 'A code will be sent to this email during login.' }}</p>
-          <input type="email" name="mail_2fa" placeholder="ornek@eposta.com">
-        </div>
-
-        <button class="twofa-save-button">{{ 'Kaydet ve Etkinleştir' if dil == 'tr' else 'Save and Activate' }}</button>
-      </div>
-
-      <script>
-        setTimeout(() => {
-          const flashMessages = document.querySelector('.flash-messages');
-          if (flashMessages) {
-            flashMessages.style.transition = 'opacity 0.5s ease';
-            flashMessages.style.opacity = '0';
-            setTimeout(() => flashMessages.remove(), 500);
-          }
-        }, 2000);
-      </script>
-    </div>
-  </div>
-
-<script>
-let samTimeout;
-let samOverlay;
-
-function createSecurityOverlay() {
-    samOverlay = document.createElement("div");
-    samOverlay.id = "samOverlay";
-    samOverlay.style.position = "fixed";
-    samOverlay.style.top = 0;
-    samOverlay.style.left = 0;
-    samOverlay.style.width = "100%";
-    samOverlay.style.height = "100%";
-    samOverlay.style.background = "rgba(0, 0, 0, 0.9)";
-    samOverlay.style.backdropFilter = "blur(10px)";
-    samOverlay.style.display = "flex";
-    samOverlay.style.alignItems = "center";
-    samOverlay.style.justifyContent = "center";
-    samOverlay.style.zIndex = 999999;
-    samOverlay.innerHTML = `<div style="color:#00ffff; font-size:20px; text-align:center;">
-        🔒 SAM Güvenlik Modu <br><br>
-        Uzun süreli hareketsizlik algılandı.<br>
-        Sistemi devam ettirmek için ekrana dokunun...
-    </div>`;
-    document.body.appendChild(samOverlay);
-}
-
-function removeSecurityOverlay() {
-    if (samOverlay) {
-        samOverlay.remove();
-        samOverlay = null;
-    }
-}
-
-function resetSamInactivityTimer() {
-    clearTimeout(samTimeout);
-    samTimeout = setTimeout(() => {
-        createSecurityOverlay();
-    }, 120000); // 2 dakika (120000 ms)
-}
-
-// Her etkileşimde sıfırla
-["click", "mousemove", "keydown", "touchstart"].forEach(evt => {
-    document.addEventListener(evt, () => {
-        removeSecurityOverlay();
-        resetSamInactivityTimer();
-    });
-});
-
-window.addEventListener("load", resetSamInactivityTimer);
-</script>
-
 </body>
 </html>

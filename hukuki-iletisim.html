@@ -7,24 +7,18 @@
 
   <title>⚖️ Hukuki İletişim | SAM</title>
 
-  <!-- SEO -->
+  <!-- SEO & Open Graph & Twitter Card & JSON-LD -->
   <meta name="description" content="SAM üzerinden hukuki iletişim ve destek ile ilgili tüm bilgilere erişin.">
   <meta name="keywords" content="SAM, Hukuki İletişim, Avukat, Hukuk, Destek, İletişim">
-
-  <!-- Open Graph -->
   <meta property="og:title" content="⚖️ Hukuki İletişim | SAM">
   <meta property="og:description" content="SAM üzerinden hukuki iletişim ve destek ile ilgili tüm bilgilere erişin.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://sam-hypermind.onrender.com/legal-contact">
   <meta property="og:image" content="https://sam-hypermind.onrender.com/static/logo.png">
-
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="⚖️ Hukuki İletişim | SAM">
   <meta name="twitter:description" content="SAM üzerinden hukuki iletişim ve destek ile ilgili tüm bilgilere erişin.">
   <meta name="twitter:image" content="https://sam-hypermind.onrender.com/static/logo.png">
-
-  <!-- JSON-LD -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -44,27 +38,14 @@
   </script>
 
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #111;
-      color: #eee;
-      padding: 30px;
-    }
-    h1 {
-      text-align: center;
-      color: #00e0ff;
-    }
-  </style>
     * { box-sizing: border-box; }
-
     body {
       font-family: Arial, sans-serif;
       background: linear-gradient(to right, #0f0f0f, #1a1a1a);
       color: #ffffff;
-      padding: 30px 20px;
       margin: 0;
+      padding: 30px 20px;
     }
-
     .container {
       background: rgba(0, 0, 0, 0.65);
       padding: 30px;
@@ -73,35 +54,30 @@
       margin: auto;
       box-shadow: 0 0 20px rgba(0,255,255,0.1);
     }
-
     h1 {
       color: #00ffff;
       text-align: center;
       font-size: 24px;
+      margin-bottom: 20px;
     }
-
     h2 {
       color: #00ccff;
       margin-top: 30px;
       font-size: 18px;
     }
-
     p {
       margin-bottom: 15px;
       line-height: 1.7;
       font-size: 15px;
     }
-
     ul {
       margin-left: 20px;
       font-size: 15px;
     }
-
     a {
       color: #00ffff;
       text-decoration: none;
     }
-
     .info-box {
       background: rgba(255,255,255,0.05);
       border: 1px solid #00ffff44;
@@ -110,42 +86,61 @@
       margin-top: 15px;
       font-size: 14px;
     }
-
+    form label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
     input, textarea {
       width: 100%;
-      padding: 10px;
-      margin-bottom: 12px;
+      padding: 12px;
+      margin-bottom: 16px;
       border-radius: 6px;
       border: 1px solid #444;
       background: #222;
       color: #fff;
+      font-size: 14px;
     }
-
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #00ffff;
+      box-shadow: 0 0 8px rgba(0,255,255,0.3);
+    }
     button {
+      width: 100%;
       background: #00cccc;
       color: black;
       border: none;
-      padding: 12px 20px;
+      padding: 12px;
       border-radius: 6px;
       cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      transition: 0.3s;
     }
-
-    @media (max-width: 600px) {
-      body { padding: 20px 10px; }
+    button:hover {
+      background: #00aaaa;
+    }
+    @media (max-width: 768px) {
+      body { padding: 20px 15px; }
       .container { padding: 20px; }
+      h1 { font-size: 22px; }
+      h2 { font-size: 17px; }
+      p, ul { font-size: 14px; }
+      input, textarea, button { font-size: 14px; padding: 10px; }
+    }
+    @media (max-width: 480px) {
       h1 { font-size: 20px; }
       h2 { font-size: 16px; }
-      p, ul { font-size: 14px; }
+      p, ul { font-size: 13px; }
+      input, textarea, button { font-size: 13px; padding: 8px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>⚖️ Hukuki İletişim Bilgileri</h1>
-
-    <p>
-      SAM Yapay Zeka Sistemleri’ne yönelik tüm <strong>hukuki talepler, resmi başvurular ve yasal iletişim süreçleri</strong> için aşağıdaki bilgiler geçerlidir.
-    </p>
+    <p>SAM Yapay Zeka Sistemleri’ne yönelik tüm <strong>hukuki talepler, resmi başvurular ve yasal iletişim süreçleri</strong> için aşağıdaki bilgiler geçerlidir.</p>
 
     <h2>🏢 Yetkili Şirket / Veri Sorumlusu</h2>
     <div class="info-box">
@@ -155,15 +150,15 @@
       <p><strong>Tebligat Adresi:</strong> Yıldız Mahallesi, Hukuk Sokak, No:1, Beşiktaş / İstanbul</p>
     </div>
 
-    <h2>📧 Resmi Başvuru E-Postası</h2>
-    <div class="info-box">
-      <p>Tüm resmi başvurularınızı aşağıdaki e-posta adresine iletebilirsiniz:</p>
-      <p>
-        <a href="mailto:sam.core.system@gmail.com?subject=KVKK%20Talebi&amp;body=Lütfen%20yasal%20talebinizi%20belirtiniz.">
-          legal@samplatformu.com
-        </a>
-      </p>
-    </div>
+   <h2>📧 Resmi Başvuru E-Postası</h2>
+<div class="info-box">
+  <p>Tüm resmi başvurularınızı aşağıdaki e-posta adresine iletebilirsiniz:</p>
+  <p>
+    <a href="mailto:sam.core.system@gmail.com?subject=KVKK%20Talebi&body=Lütfen%20yasal%20talebinizi%20belirtiniz.">
+      sam.core.system@gmail.com
+    </a>
+  </p>
+</div>
 
     <h2>📄 Değerlendirilebilecek Başvuru Konuları</h2>
     <ul>
@@ -173,16 +168,10 @@
     </ul>
 
     <h2>🕓 Yanıt Süresi</h2>
-    <p>
-      Gönderilen başvurular, 6698 sayılı KVKK ve ilgili diğer mevzuatlar kapsamında en geç
-      <strong>15 iş günü</strong> içinde değerlendirilerek başvuru sahibine dönüş sağlanır.
-    </p>
+    <p>Gönderilen başvurular, 6698 sayılı KVKK ve ilgili diğer mevzuatlar kapsamında en geç <strong>15 iş günü</strong> içinde değerlendirilerek başvuru sahibine dönüş sağlanır.</p>
 
     <h2>📌 Not</h2>
-    <p>
-      Bu sayfa yalnızca yasal talepler ve resmi iletişim içindir. Genel sorular ve teknik destek için lütfen
-      <a href="/canli-destek">Canlı Destek</a> kanalımızı kullanınız.
-    </p>
+    <p>Bu sayfa yalnızca yasal talepler ve resmi iletişim içindir. Genel sorular ve teknik destek için lütfen <a href="/canli-destek">Canlı Destek</a> kanalımızı kullanınız.</p>
 
     <h2>📨 Hızlı Hukuki Başvuru Formu</h2>
     <p>Resmi başvurunuzu aşağıdaki form aracılığıyla da gönderebilirsiniz:</p>
@@ -201,7 +190,6 @@
     </form>
   </div>
 
-  <!-- ✅ Gönderildi Toast Mesajı -->
   <script>
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get("gonderildi") === "true") {
@@ -227,6 +215,4 @@
         setTimeout(() => toast.remove(), 500);
       }, 3500);
     }
-  </script>
-</body>
-</html>
+ 
