@@ -29,7 +29,7 @@ from flask_migrate import Migrate
 from flask.cli import FlaskGroup
 from flask_mail import Message
 from threading import Thread
-from eventlet.green import smtplib
+
 
 from datetime import datetime, timezone
 from datetime import timedelta
