@@ -74,6 +74,7 @@ pytesseract.pytesseract.tesseract_cmd = r"O:\tesseract\tesseract.exe"
 os.environ['TESSDATA_PREFIX'] = r"O:\tesseract\tessdata"
 
 from email.mime.text import MIMEText
+from email.header import Header
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 
@@ -395,11 +396,11 @@ def derin_yanit_uret(metin):
 
 
 
-# ── E-posta Göndericiler ─────────────────────────────────────────
+# ── Aktivasyon E-postası ─────────────────────────────
 def send_activation_email(email, token):
     try:
         smtp_host = os.getenv("SMTP_HOST", "smtp.gmail.com")
-        smtp_port = int(os.getenv("SMTP_PORT", 587))  # ✅ 587 çünkü starttls() kullanılacak
+        smtp_port = int(os.getenv("SMTP_PORT", 587))
         smtp_user = os.getenv("SMTP_USER")
         smtp_pass = os.getenv("SMTP_PASS")
         site_url = os.getenv("SITE_URL", "http://127.0.0.1:5000")
@@ -407,8 +408,7 @@ def send_activation_email(email, token):
         link = f"{site_url}/activate/{token}"
 
         subject = "🔐 SAM Hesap Aktivasyonu"
-        body = f"""
-Merhaba,
+        body = f"""Merhaba,
 
 SAM sistemine kaydınız başarıyla alındı. Hesabınızı aktif etmek için aşağıdaki bağlantıya tıklayın:
 
@@ -419,13 +419,14 @@ Eğer bu işlemi siz yapmadıysanız bu mesajı görmezden gelebilirsiniz.
 Teşekkürler.
 """
 
-        msg = MIMEText(body, "plain", "utf-8")
-        msg["Subject"] = subject
+        msg = MIMEMultipart()
         msg["From"] = smtp_user
         msg["To"] = email
+        msg["Subject"] = Header(subject, "utf-8")
+        msg.attach(MIMEText(body, "plain", "utf-8"))
 
         with smtplib.SMTP(smtp_host, smtp_port) as server:
-            server.starttls()  # ✅ Güvenli bağlantı başlat
+            server.starttls()
             server.login(smtp_user, smtp_pass)
             server.sendmail(smtp_user, email, msg.as_string())
 
@@ -434,39 +435,45 @@ Teşekkürler.
     except Exception as e:
         print(f"❌ E-posta gönderim hatası: {e}")
 
+
+# ── Admin E-postası ─────────────────────────────
 def send_email_to_admin(subject, content):
     sender_email = os.getenv("SMTP_USER")
     receiver_email = os.getenv("ADMIN_EMAIL")
     password = os.getenv("SMTP_PASS")
 
-    msg = MIMEText(content, "plain", "utf-8")
-    msg["Subject"] = subject
+    msg = MIMEMultipart()
     msg["From"] = sender_email
     msg["To"] = receiver_email
+    msg["Subject"] = Header(subject, "utf-8")
+    msg.attach(MIMEText(content, "plain", "utf-8"))
 
     try:
-        server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
-        server.login(sender_email, password)
-        server.sendmail(sender_email, receiver_email, msg.as_string())
-        server.quit()
+        with smtplib.SMTP(os.getenv("SMTP_HOST", "smtp.gmail.com"), int(os.getenv("SMTP_PORT", 587))) as server:
+            server.starttls()
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_email, msg.as_string())
         print("✅ Admin'e e-posta bildirimi gönderildi.")
     except Exception as e:
         print("❌ E-posta gönderme hatası:", e)
 
+
+# ── Kullanıcıya Genel E-posta ─────────────────────
 def send_email_to_user(recipient_email, subject, content):
     sender_email = os.getenv("SMTP_USER")
     password = os.getenv("SMTP_PASS")
 
-    msg = MIMEText(content, "plain", "utf-8")
-    msg["Subject"] = subject
+    msg = MIMEMultipart()
     msg["From"] = sender_email
     msg["To"] = recipient_email
+    msg["Subject"] = Header(subject, "utf-8")
+    msg.attach(MIMEText(content, "plain", "utf-8"))
 
     try:
-        server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
-        server.login(sender_email, password)
-        server.sendmail(sender_email, recipient_email, msg.as_string())
-        server.quit()
+        with smtplib.SMTP(os.getenv("SMTP_HOST", "smtp.gmail.com"), int(os.getenv("SMTP_PORT", 587))) as server:
+            server.starttls()
+            server.login(sender_email, password)
+            server.sendmail(sender_email, recipient_email, msg.as_string())
         print(f"📤 Kullanıcıya e-posta gönderildi: {recipient_email}")
     except Exception as e:
         print("❌ Kullanıcıya e-posta gönderme hatası:", e)
