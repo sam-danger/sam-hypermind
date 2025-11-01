@@ -358,18 +358,42 @@ def derin_yanit_uret(metin):
 
 
 
-# ── Aktivasyon E-postası ─────────────────────────
-def send_activation_email(email, token):
+def send_email_generic(recipient_email, subject, content):
     try:
         smtp_host = os.getenv("SMTP_HOST")
-        smtp_port = int(os.getenv("SMTP_PORT", 587))
+        smtp_port = int(os.getenv("SMTP_PORT", 465))
         smtp_user = os.getenv("SMTP_USER")
         smtp_pass = os.getenv("SMTP_PASS")
-        site_url = os.getenv("SITE_URL")  # Render ortamında SITE_URL alınır
 
-        link = f"{site_url}/activate/{token}"
-        subject = "🔐 SAM Hesap Aktivasyonu"
-        body = f"""Merhaba,
+        msg = MIMEText(content, "plain", "utf-8")
+        msg["Subject"] = Header(subject, "utf-8")
+        msg["From"] = smtp_user
+        msg["To"] = recipient_email
+
+        if smtp_port == 465:
+            # SSL ile bağlantı
+            with smtplib.SMTP_SSL(smtp_host, smtp_port) as server:
+                server.login(smtp_user, smtp_pass)
+                server.sendmail(smtp_user, [recipient_email], msg.as_bytes())
+        else:
+            # TLS ile bağlantı
+            with smtplib.SMTP(smtp_host, smtp_port) as server:
+                server.starttls()
+                server.login(smtp_user, smtp_pass)
+                server.sendmail(smtp_user, [recipient_email], msg.as_bytes())
+
+        print(f"📤 E-posta gönderildi: {recipient_email}")
+
+    except Exception as e:
+        print(f"❌ E-posta gönderme hatası: {e}")
+        print(traceback.format_exc())
+
+# ── Aktivasyon E-postası ─────────────────────────
+def send_activation_email(email, token):
+    site_url = os.getenv("SITE_URL")
+    link = f"{site_url}/activate/{token}"
+    subject = "🔐 SAM Hesap Aktivasyonu"
+    body = f"""Merhaba,
 
 SAM sistemine kaydınız başarıyla alındı. Hesabınızı aktif etmek için aşağıdaki bağlantıya tıklayın:
 
@@ -379,68 +403,17 @@ Eğer bu işlemi siz yapmadıysanız bu mesajı görmezden gelebilirsiniz.
 
 Teşekkürler.
 """
-
-        # UTF-8 encode edilmiş MIMEText
-        msg = MIMEText(body, "plain", "utf-8")
-        msg["Subject"] = Header(subject, "utf-8")
-        msg["From"] = smtp_user
-        msg["To"] = email
-
-        # SMTP SSL ile güvenli gönderim
-        with smtplib.SMTP_SSL(smtp_host, 465) as server:
-            server.login(smtp_user, smtp_pass)
-            server.sendmail(smtp_user, [email], msg.as_string())
-
-        print(f"✅ Aktivasyon e-postası gönderildi: {email}")
-
-    except Exception as e:
-        print(f"❌ E-posta gönderim hatası: {e}")
-
-
-# ── Admin E-postası ─────────────────────────────
-def send_email_to_admin(subject, content):
-    import smtplib
-    from email.mime.text import MIMEText
-    from email.header import Header
-    import os
-
-    sender_email = os.getenv("SMTP_USER")
-    receiver_email = os.getenv("ADMIN_EMAIL")
-    password = os.getenv("SMTP_PASS")
-    
-    msg = MIMEText(content, "plain", "utf-8")
-    msg["Subject"] = Header(subject, "utf-8")
-    msg["From"] = sender_email
-    msg["To"] = receiver_email
-
-    with smtplib.SMTP_SSL(os.getenv("SMTP_HOST"), 465) as server:
-        server.login(sender_email, password)
-        server.sendmail(sender_email, [receiver_email], msg.as_string())
-
-    print("✅ Admin'e e-posta bildirimi gönderildi.")
-
-
+    send_email_generic(email, subject, body)
 
 # ── Kullanıcıya E-posta ─────────────────────────
 def send_email(recipient_email, subject, content):
-    try:
-        sender_email = os.getenv("SMTP_USER")
-        password = os.getenv("SMTP_PASS")
+    send_email_generic(recipient_email, subject, content)
 
-        msg = MIMEText(content, "plain", "utf-8")
-        msg["Subject"] = Header(subject, "utf-8")
-        msg["From"] = sender_email
-        msg["To"] = recipient_email
+# ── Admin E-postası ─────────────────────────────
+def send_email_to_admin(subject, content):
+    admin_email = os.getenv("ADMIN_EMAIL")
+    send_email_generic(admin_email, subject, content)
 
-        # SMTP SSL ile gönderim
-        with smtplib.SMTP_SSL(os.getenv("SMTP_HOST"), 465) as server:
-            server.login(sender_email, password)
-            server.sendmail(sender_email, [recipient_email], msg.as_string())
-
-        print(f"📤 E-posta gönderildi: {recipient_email}")
-
-    except Exception as e:
-        print("❌ E-posta gönderme hatası:", e)
 
 # ── OPENAI ve Admin Ayarı ────────────────────────────────────────
 openai.api_key = os.getenv("OPENAI_API_KEY")
