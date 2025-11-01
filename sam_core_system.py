@@ -6,12 +6,11 @@ eventlet.monkey_patch()
 # ── GEREKLİ MODÜLLER ─────────────────────────────────────────────
 from flask import (
     Flask, render_template, request, redirect, url_for,
-    session, jsonify, send_file, send_from_directory, flash
+    session, jsonify, send_file, send_from_directory, flash, Response
 )
 from flask_socketio import SocketIO, emit
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String, Text, DateTime
-from sqlalchemy import or_
+from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, or_
 from flask_cors import CORS
 from dotenv import load_dotenv
 from requests_oauthlib import OAuth2Session
@@ -21,33 +20,26 @@ from config import APP_VERSION
 from email.charset import Charset, QP
 from sklearn.ensemble import IsolationForest
 from modules import hardware_monitor
-from flask import Response
-from seo_data import SEO_PAGES
-from models import User
 from uuid import uuid4
 from flask_migrate import Migrate
 from flask.cli import FlaskGroup
-from flask_mail import Message
 from threading import Thread
 
-
-from datetime import datetime, timezone
-from datetime import timedelta
+from datetime import datetime, timezone, timedelta
 from io import BytesIO
 from werkzeug.utils import secure_filename
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-from sqlalchemy import Boolean
 from werkzeug.security import generate_password_hash, check_password_hash
 
-import os
+import cv2
 import json
 import base64
 import pytesseract
 from PIL import Image
 import secrets
 import zipfile
-import tempfile  # ✅ EKSİKTİ: Geçici klasör için şart
+import tempfile
 import smtplib
 import requests
 import pyzipper
@@ -68,11 +60,8 @@ sound_enabled = False
 pyaudio = None
 print("🔇 Sunucuda sesli giriş devre dışı. sounddevice ve PyAudio kullanılmayacak.")
 
-
 # ── Tesseract ayarları ──────────────────────────────────────
-# Tesseract exe yolu
 pytesseract.pytesseract.tesseract_cmd = r"O:\tesseract\tesseract.exe"
-# TESSDATA_PREFIX ortam değişkeni (Python içinde)
 os.environ['TESSDATA_PREFIX'] = r"O:\tesseract\tessdata"
 
 from email.mime.text import MIMEText
@@ -90,16 +79,14 @@ model = IsolationForest(n_estimators=50, contamination=0.05)
 history = []
 
 def learn(data_point):
-    """Sistemi öğren ve anomaly modelini güncelle"""
     history.append(data_point)
-    if len(history) > 50:  # max history
+    if len(history) > 50:
         history.pop(0)
     if len(history) >= 5:
         X = np.array([[d["cpu"], d["ram"]] for d in history])
         model.fit(X)
 
 def detect_anomaly(point):
-    """Anomaly tespiti"""
     X = np.array([[point["cpu"], point["ram"]]])
     try:
         if len(history) < 5:
@@ -111,7 +98,6 @@ def detect_anomaly(point):
 
 # ── Sistem / Donanım Durumu ───────────────────────────────
 def get_status():
-    """CPU, RAM, Disk, Sıcaklık, OS, Timestamp bilgisi"""
     try:
         temps = psutil.sensors_temperatures()
         temp = temps.get("coretemp", [{}])[0].get("current", 0) if temps else 0
@@ -131,13 +117,12 @@ def get_status():
 
 # ── Mikrofon Seviyesi ─────────────────────────────────────
 def mic_level():
-    """Mikrofon ses seviyesini ölç"""
     try:
         p = pyaudio.PyAudio()
         stream = p.open(format=pyaudio.paInt16, channels=1, rate=44100,
                         input=True, frames_per_buffer=1024)
         data = np.frombuffer(stream.read(1024, exception_on_overflow=False), dtype=np.int16)
-        level = np.average(np.abs(data)) / 32768  # 16-bit max
+        level = np.average(np.abs(data)) / 32768
         stream.stop_stream()
         stream.close()
         p.terminate()
@@ -148,7 +133,6 @@ def mic_level():
 
 # ── Kamera Capture ───────────────────────────────────────
 def capture_frame():
-    """Kameradan frame al ve byte olarak döndür"""
     try:
         cam = cv2.VideoCapture(0)
         ret, frame = cam.read()
@@ -163,7 +147,6 @@ def capture_frame():
 
 # ── Blockchain / Log / Dosya ─────────────────────────────
 def write_log(event):
-    """Olayları blockchain tarzında JSON dosyasına yaz"""
     logs = []
     if os.path.exists("blockchain_log.json"):
         with open("blockchain_log.json","r") as f:
@@ -181,48 +164,24 @@ def write_log(event):
     with open("blockchain_log.json","w") as f:
         json.dump(logs, f, indent=2)
 
-
-
 # ── ORTAM DEĞİŞKENLERİ ───────────────────────────────────────────
 load_dotenv()
-# OpenAI API anahtarı .env dosyasından alınır
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
 
 # ── FLASK ve SOCKETIO ────────────────────────────────────────────
 app = Flask(__name__, template_folder='.')
 app.secret_key = 'supersecretkey'
 CORS(app)
-
-# Windows + Python 3.13 uyumlu
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
-
 app.permanent_session_lifetime = timedelta(days=30)
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB limit
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-scheduled_tasks = [
-    {"id": 1, "task": "Günlük temizlik", "time": "03:00"},
-    {"id": 2, "task": "E-posta bildirimleri", "time": "09:00"}
-]
-
+# ── VERİTABANI VE MAIL ─────────────────────────────────────────
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
-app.config['MAIL_SERVER'] = os.getenv("SMTP_HOST")
-app.config['MAIL_PORT'] = int(os.getenv("SMTP_PORT"))
-app.config['MAIL_USERNAME'] = os.getenv("SMTP_USER")
-app.config['MAIL_PASSWORD'] = os.getenv("SMTP_PASS")
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_ASCII_ATTACHMENTS'] = False
-
-mail = Mail(app)
-
-
-
-
-
-# ── VERİTABANI AYARLARI ──────────────────────────────────────────
 app.config['MAIL_SERVER'] = os.getenv("SMTP_HOST", "localhost")
 app.config['MAIL_PORT'] = int(os.getenv("SMTP_PORT", 25))
 app.config['MAIL_USERNAME'] = os.getenv("SMTP_USER", "")
@@ -3633,17 +3592,11 @@ def schedule_cleanup_jobs():
 # 📌 Uygulama başlatıldığında scheduler otomatik devreye girer
 schedule_cleanup_jobs()
 
+# ── APP START ────────────────────────────────────────────────
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
     print("🔧 SAM Shadow Mode başlatılıyor...")
     port = int(os.getenv("PORT", 5000))
     socketio.run(app, host="0.0.0.0", port=port, debug=True, use_reloader=False)
-
-
-
-
-
 
 
 
