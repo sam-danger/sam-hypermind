@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
@@ -8,173 +7,16 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/static/style.css">
   <script src="/static/script.js" defer></script>
-
-  <style>
-  /* 🌌 GENEL BODY YAPISI */
-  body {
-    margin: 0;
-    padding: 0;
-    background-color: #000;
-    color: #fff;
-    font-family: 'Segoe UI', sans-serif;
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  /* 📸 GÖRSEL ALANI */
-  .image-container {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-  }
-  .background-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  /* 🖱️ TIKLANABİLİR ALANLAR */
-  .camera-click, .shadow-clickable, .Blockchain-clickable {
-    position: absolute;
-    background-color: rgba(255,0,0,0);
-    cursor: pointer;
-    z-index: 5;
-  }
-  .camera-click { top: 40%; left: 10%; width: 25%; height: 5%; }
-  .shadow-clickable { top: 13%; left: 70%; width: 7%; height: 15%; }
-  .Blockchain-clickable { top: 39%; left: 83%; width: 8%; height: 12%; }
-
-  /* 🎙️ MİKROFON */
-  #microphone-overlay {
-    position: absolute;
-    bottom: 5%;
-    right: 5%;
-    width: 15vw;
-    height: 15vw;
-    max-width: 100px;
-    max-height: 100px;
-    cursor: pointer;
-    z-index: 5;
-  }
-
-  /* ⚙️ AYARLAR BUTONU */
-  .settings-button {
-    position: fixed;
-    top: 2vh;
-    right: 2vw;
-    background-color: #111;
-    color: cyan;
-    padding: 1vh 2vw;
-    border-radius: 6px;
-    cursor: pointer;
-    z-index: 10000;
-    font-weight: bold;
-    font-size: 1rem;
-    transition: background-color 0.3s;
-  }
-  .settings-button:hover { background-color: #222; }
-
-  /* ⚙️ AYARLAR PANELİ */
-  .settings-panel {
-    position: fixed;
-    top: 0;
-    right: -90vw;
-    width: 80vw;
-    max-width: 320px;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    color: white;
-    padding: 3vh 3vw;
-    box-shadow: -2px 0 6px rgba(0, 255, 255, 0.2);
-    border-left: 1px solid rgba(0, 255, 255, 0.08);
-    transition: right 0.4s ease-in-out;
-    z-index: 9999;
-  }
-  .settings-panel.open { right: 0; }
-  .settings-panel h2 { margin-top: 0; font-size: 2vh; border-bottom: 1px solid #444; padding-bottom: 1vh; }
-  .settings-panel ul { list-style: none; padding: 0; margin-top: 2vh; }
-  .settings-panel li { margin: 1.5vh 0; }
-  .settings-panel a { color: #00e0ff; text-decoration: none; font-weight: bold; font-size: 1.8vh; }
-  .settings-panel a:hover { text-decoration: underline; }
-
-  /* 👑 ADMIN GİRİŞ LİNKİ */
-  .admin-link {
-    position: absolute;
-    top: 1vh;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1.2vh;
-    color: rgba(0, 224, 255, 0.6);
-    text-shadow: 0 0 4px rgba(0, 217, 255, 0.3);
-    text-decoration: none;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    z-index: 1000;
-    transition: 0.3s ease;
-  }
-  .admin-link:hover {
-    text-shadow: 0 0 6px rgba(0, 255, 229, 0.5);
-    color: rgba(0, 255, 255, 0.8);
-  }
-  .admin-link img { width: 1.5vh; height: auto; vertical-align: middle; margin-right: 0.5vh; }
-
-  /* 📱 MOBİL GÖRÜNÜM */
-  @media (max-width: 480px) {
-    body { overflow-y: auto; }
-    .background-img { object-fit: cover !important; }
-
-    /* Tıklanabilir alanlar mobilde kapalı */
-    .camera-click, .shadow-clickable, .Blockchain-clickable, #microphone-overlay {
-      display: none !important;
-    }
-
-    /* 📱 Mobil Buton Paneli */
-    .mobile-panel {
-      position: fixed;
-      bottom: 6vh;
-      left: 0;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 1.5vh;
-      z-index: 10000;
-    }
-    .mobile-button {
-      width: 80%;
-      text-align: center;
-      background: rgba(0,255,255,0.1);
-      border: 1px solid cyan;
-      border-radius: 10px;
-      padding: 10px 0;
-      font-size: 1rem;
-      color: #fff;
-      font-weight: 500;
-      backdrop-filter: blur(6px);
-      transition: 0.3s;
-    }
-    .mobile-button:hover {
-      background: rgba(0,255,255,0.25);
-    }
-  }
-  </style>
-
 </head>
-
 <body>
+
   <!-- ⚙️ Ayarlar Butonu -->
-  <div class="settings-button" onclick="toggleSettingsPanel()" title="Ayarlar">
+  <button class="settings-button" aria-label="Ayarlar" onclick="toggleSettingsPanel()">
     <i class="fas fa-cog"></i>
-  </div>
+  </button>
 
   <!-- ⚙️ Ayarlar Paneli -->
-
-  <div id="settingsPanel" class="settings-panel">
+  <nav id="settingsPanel" class="settings-panel" aria-label="Ayarlar Menüsü">
     <h2>Ayarlar</h2>
     <ul>
       <li><a href="/profil">Profil Bilgilerim</a></li>
@@ -185,49 +27,33 @@
       <li><a href="/oturum">Hesap ve Oturum</a></li>
       <li><a href="/feedback" target="_parent">📬 Destek ve Geri Bildirim</a></li>
       <li><a href="/canli-destek" target="_parent">💬 Canlı Destek</a></li>
-      <li><a href="#" onclick="logoutUser()">Çıkış Yap</a></li>
+      <li><button onclick="logoutUser()">Çıkış Yap</button></li>
     </ul>
-  </div>
+  </nav>
 
   <!-- 🧠 ARKA PLAN + TIKLANABİLİR ALANLAR -->
-
   <div class="image-container">
-    <img src="/static/sam_login_ui.png" alt="SAM Interface" class="background-img">
+    <img src="/static/sam_login_ui.png" alt="SAM Interface" class="background-img" loading="lazy">
 
-    <div class="camera-click" onclick="window.location.href='/camera'" title="Camera"></div>
-    <div class="shadow-clickable" onclick="window.location.href='/shadow-mode'"></div>
-    <div class="Blockchain-clickable" onclick="window.location.href='/blockchain-security'"></div>
-    <div id="microphone-overlay" onclick="window.location.href='/microphone'" title="Microphone"></div>
-
+    <div class="camera-click" onclick="location.href='/camera'" aria-label="Kamera"></div>
+    <div class="shadow-clickable" onclick="location.href='/shadow-mode'" aria-label="Shadow Mode"></div>
+    <div class="Blockchain-clickable" onclick="location.href='/blockchain-security'" aria-label="Blockchain Güvenliği"></div>
+    <div id="microphone-overlay" onclick="location.href='/microphone'" aria-label="Mikrofon"></div>
   </div>
 
   <!-- 📱 MOBİL PANEL -->
-
-  <div class="mobile-panel">
-    <div class="mobile-button" onclick="window.location.href='/chat'">💬 Sohbet</div>
-    <div class="mobile-button" onclick="window.location.href='/microphone'">🎤 Mikrofon</div>
-    <div class="mobile-button" onclick="window.location.href='/camera'">📷 Kamera</div>
-    <div class="mobile-button" onclick="window.location.href='/profil'">👤 Profil</div>
+  <div class="mobile-panel" aria-label="Mobil Menü">
+    <button class="mobile-button" onclick="location.href='/chat'">💬 Sohbet</button>
+    <button class="mobile-button" onclick="location.href='/microphone'">🎤 Mikrofon</button>
+    <button class="mobile-button" onclick="location.href='/camera'">📷 Kamera</button>
+    <button class="mobile-button" onclick="location.href='/profil'">👤 Profil</button>
   </div>
 
   <!-- 👑 ADMIN LİNK -->
-
   <a href="/admin-login" class="admin-link">
-    <img src="/static/admin_icon.png" alt="Admin Icon" class="admin-icon">
+    <img src="/static/admin_icon.png" alt="Admin Icon">
     SAM Neural Operations Interface
   </a>
-
-  <script>
-  function toggleSettingsPanel() {
-    const panel = document.getElementById("settingsPanel");
-    panel.classList.toggle("open");
-  }
-  function logoutUser() {
-    fetch("/logout", { method: "POST", headers: { "Content-Type": "application/json" } })
-      .then(res => res.json())
-      .then(data => { if (data.redirect) window.location.href = data.redirect; });
-  }
-  </script>
 
 </body>
 </html>

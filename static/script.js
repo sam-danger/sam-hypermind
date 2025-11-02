@@ -95,3 +95,16 @@ function runSearch() {
     });
 }
 
+// ⚙️ Ayarlar paneli aç/kapa
+function toggleSettingsPanel() {
+  const panel = document.getElementById("settingsPanel");
+  panel.classList.toggle("open");
+}
+
+// ⚡ Çıkış yap
+function logoutUser() {
+  fetch("/logout", { method: "POST", headers: { "Content-Type": "application/json" } })
+    .then(res => res.json())
+    .then(data => { if (data.redirect) location.href = data.redirect; })
+    .catch(err => console.error("Logout failed:", err));
+}
