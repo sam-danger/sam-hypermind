@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SAM System Interface</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="/static/style.css">
-  <script src="/static/script.js" defer></script>
-  <style>
-/* 🖤 Genel Body Ayarları */
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAM System Interface</title>
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="/static/script.js" defer></script>
+<style>
+/* 🖤 Genel Body ve Arka Plan */
 body {
   margin: 0;
   padding: 0;
@@ -18,13 +18,17 @@ body {
   height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
+}
 
-  /* Arka plan resmi */
-  background-image: url('sam_login_ui.png');
-  background-repeat: no-repeat;
-  background-position: center top;
-  background-size: 100% auto;   /* Mobilde genişliği %100 yap, yükseklik otomatik */
-  background-attachment: scroll; /* Mobilde sabitleme yapma */
+/* 🌌 Arka Plan Görseli - Tam Ekran */
+.bg-img {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;   /* Ekrana sığdırır, taşmayı önler */
+  z-index: -1;
 }
 
 /* ⚙️ Ayarlar Butonu */
@@ -63,20 +67,10 @@ body {
   z-index: 9999;
 }
 .settings-panel.open { right: 0; }
-.settings-panel h2 {
-  margin-top: 0;
-  font-size: 2vh;
-  border-bottom: 1px solid #444;
-  padding-bottom: 1vh;
-}
+.settings-panel h2 { margin-top: 0; font-size: 2vh; border-bottom: 1px solid #444; padding-bottom: 1vh; }
 .settings-panel ul { list-style: none; padding: 0; margin-top: 2vh; }
 .settings-panel li { margin: 1.5vh 0; }
-.settings-panel a {
-  color: #00e0ff;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 1.8vh;
-}
+.settings-panel a { color: #00e0ff; text-decoration: none; font-weight: bold; font-size: 1.8vh; }
 .settings-panel a:hover { text-decoration: underline; }
 
 /* Admin Giriş Linki */
@@ -101,12 +95,7 @@ body {
 .admin-link img { width: 1.5vh; height: auto; vertical-align: middle; margin-right: 0.5vh; }
 
 /* Overlay ve Tıklanabilir Alanlar */
-.overlay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
+.overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
 .clickable-area { cursor: pointer; }
 
 /* Mikrofon */
@@ -149,13 +138,14 @@ body {
 
 /* Responsive: Mobil için font ve panel ayarları */
 @media (max-width: 480px) {
-  body {
-    background-image: url('sam_login_ui_mobile.png'); /* Küçük boyutlu mobil resmi */
-    background-size: cover;
-    background-position: center top;
-  }
+  body { font-size: 0.85rem; }
+  .settings-panel { width: 90vw; right: -95vw; padding: 3vh 5vw; }
+  .settings-panel h2 { font-size: 2.2vh; }
+  .settings-panel a { font-size: 2vh; }
+  .admin-link { font-size: 1.5vh; }
+  #microphone-overlay { width: 18vw; height: 18vw; }
+  .camera-click { width: 30vw; height: 6vh; }
 }
-
 </style>
 </head>
 <body>
