@@ -14,130 +14,143 @@
   <style>
     /* 🖤 Genel Body Ayarları */
     body {
-      margin: 0;
-      padding: 0;
-      background-image: url('sam_login_ui.png');
-      background-size: cover;
-      background-position: center;
-      font-family: 'Segoe UI', Arial, sans-serif;
-      height: 100vh;
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
+  margin: 0;
+  padding: 0;
+  background-image: url('static/sam_login_ui.png'); /* static klasöründen */
+  background-size: cover;
+  background-position: center;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 
-    /* ⚙️ Ayarlar Butonu */
-    .settings-button {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background-color: transparent;
-      padding: 10px;
-      border: none;
-      cursor: pointer;
-      z-index: 10000;
-    }
-    .settings-button i {
-      font-size: 22px;
-      color: #cccccc;
-      transition: transform 0.3s ease;
-    }
-    .settings-button:hover i {
-      transform: rotate(20deg);
-    }
+/* ⚙️ Ayarlar Butonu */
+.settings-button {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  background-color: transparent;
+  padding: 8px;
+  border: none;
+  cursor: pointer;
+  z-index: 10000;
+}
+.settings-button i {
+  font-size: 20px;
+  color: #cccccc;
+  transition: transform 0.3s ease;
+}
+.settings-button:hover i {
+  transform: rotate(20deg);
+}
 
-    /* ⚙️ Sağdan Kayan Ayarlar Paneli */
-    .settings-panel {
-      position: fixed;
-      top: 0;
-      right: -320px;
-      width: 300px;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(10px);
-      color: white;
-      padding: 20px;
-      box-shadow: -2px 0 6px rgba(0, 255, 255, 0.2);
-      border-left: 1px solid rgba(0, 255, 255, 0.08);
-      transition: right 0.4s ease-in-out;
-      z-index: 9999;
-    }
-    .settings-panel.open { right: 0; }
-    .settings-panel h2 { margin-top: 0; font-size: 20px; border-bottom: 1px solid #444; padding-bottom: 10px; }
-    .settings-panel ul { list-style: none; padding: 0; margin-top: 20px; }
-    .settings-panel li { margin: 14px 0; }
-    .settings-panel a { color: #00e0ff; text-decoration: none; font-weight: bold; }
-    .settings-panel a:hover { text-decoration: underline; }
+/* ⚙️ Sağdan Kayan Ayarlar Paneli */
+.settings-panel {
+  position: fixed;
+  top: 0;
+  right: -280px;
+  width: 260px;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  color: white;
+  padding: 15px;
+  box-shadow: -2px 0 6px rgba(0, 255, 255, 0.2);
+  border-left: 1px solid rgba(0, 255, 255, 0.08);
+  transition: right 0.4s ease-in-out;
+  z-index: 9999;
+}
+.settings-panel.open { right: 0; }
+.settings-panel h2 { margin-top: 0; font-size: 18px; border-bottom: 1px solid #444; padding-bottom: 8px; }
+.settings-panel ul { list-style: none; padding: 0; margin-top: 15px; }
+.settings-panel li { margin: 10px 0; }
+.settings-panel a { color: #00e0ff; text-decoration: none; font-weight: bold; font-size: 14px; }
+.settings-panel a:hover { text-decoration: underline; }
 
-    /* Admin Linki */
-    .admin-link {
-      position: absolute;
-      top: 9px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 13px;
-      color: rgba(0, 224, 255, 0.6);
-      text-decoration: none;
-      font-weight: 500;
-      letter-spacing: 0.5px;
-      z-index: 1000;
-    }
-    .admin-link img { width: 16px; height: auto; margin-right: 5px; vertical-align: middle; }
-    .admin-link:hover { color: rgba(0, 255, 255, 0.8); }
+/* Admin Linki */
+.admin-link {
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: rgba(0, 224, 255, 0.6);
+  text-decoration: none;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  z-index: 1000;
+}
+.admin-link img { width: 14px; height: auto; margin-right: 4px; vertical-align: middle; }
+.admin-link:hover { color: rgba(0, 255, 255, 0.8); }
 
-    /* Overlay ve Tıklanabilir Alanlar */
-    .overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-    .clickable-area { cursor: pointer; }
+/* Overlay ve Tıklanabilir Alanlar */
+.overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.clickable-area { cursor: pointer; }
 
-    /* Mikrofon */
-    #microphone-overlay {
-      position: absolute;
-      bottom: 50px;
-      right: 50px;
-      width: 100px;
-      height: 100px;
-      cursor: pointer;
-      z-index: 9999;
-    }
+/* Mikrofon */
+#microphone-overlay {
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  width: 70px;
+  height: 70px;
+  cursor: pointer;
+  z-index: 9999;
+}
 
-    /* Kamera Tıklama Alanı */
-    .camera-click {
-      position: absolute;
-      top: 43%;
-      left: 11%;
-      transform: translateX(-50%);
-      width: 140px;
-      height: 25px;
-      cursor: pointer;
-      z-index: 9999;
-      background-color: rgba(255, 0, 0, 0);
-    }
+/* Kamera Tıklama Alanı */
+.camera-click {
+  position: absolute;
+  top: 40%;
+  left: 10%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 20px;
+  cursor: pointer;
+  z-index: 9999;
+  background-color: rgba(255, 0, 0, 0);
+}
 
-    /* Shadow ve Blockchain Alanları */
-    .shadow-clickable, .Blockchain-clickable {
-      position: fixed;
-      cursor: pointer;
-      background-color: rgba(255, 0, 0, 0);
-      z-index: 9999;
-    }
-    .shadow-clickable { top: 13vh; left: 70vw; width: 7vw; height: 15vh; }
-    .Blockchain-clickable { top: 39vh; left: 83vw; width: 8vw; height: 12vh; }
+/* Shadow ve Blockchain Alanları */
+.shadow-clickable, .Blockchain-clickable {
+  position: fixed;
+  cursor: pointer;
+  background-color: rgba(255, 0, 0, 0);
+  z-index: 9999;
+}
+.shadow-clickable { top: 12vh; left: 65vw; width: 6vw; height: 12vh; }
+.Blockchain-clickable { top: 38vh; left: 80vw; width: 7vw; height: 10vh; }
 
-    /* Çerez Uyarısı */
-    #cookieConsent {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      right: 20px;
-      background: #222;
-      color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px #00ffff;
-      z-index: 9999;
-      display: none;
-    }
-    #cookieConsent a { color: #00ffff; text-decoration: underline; }
-    #cookieConsent button { margin-top: 10px; padding: 6px 14px; background:#00ffff; color:#000; border:none; border-radius:4px; cursor:pointer; }
+/* Çerez Uyarısı */
+#cookieConsent {
+  position: fixed;
+  bottom: 15px;
+  left: 10px;
+  right: 10px;
+  background: #222;
+  color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 0 8px #00ffff;
+  z-index: 9999;
+  display: none;
+}
+#cookieConsent a { color: #00ffff; text-decoration: underline; font-size: 13px; }
+#cookieConsent button { margin-top: 8px; padding: 6px 12px; background:#00ffff; color:#000; border:none; border-radius:4px; cursor:pointer; font-size: 13px; }
+
+/* 📱 Responsive Mobil Düzenlemeleri */
+@media only screen and (max-width: 480px) {
+  .settings-panel { width: 220px; padding: 10px; right: -240px; }
+  .settings-panel h2 { font-size: 16px; }
+  .settings-panel a { font-size: 13px; }
+  .admin-link { font-size: 11px; }
+  #microphone-overlay { width: 60px; height: 60px; bottom: 20px; right: 20px; }
+  .camera-click { width: 100px; height: 18px; top: 38%; left: 12%; }
+  .shadow-clickable { width: 5vw; height: 10vh; top: 10vh; left: 60vw; }
+  .Blockchain-clickable { width: 6vw; height: 8vh; top: 35vh; left: 75vw; }
+  #cookieConsent { padding: 12px; font-size: 12px; bottom: 10px; left: 5px; right: 5px; }
+}
   </style>
 </head>
 <body>
