@@ -21,10 +21,20 @@ body {
 
   /* PC Arka Plan */
   background-image: url('/static/sam_login_ui.png');
-  background-size: cover;           /* Ekranı tamamen kaplar */
+  background-size: cover;           /* PC tam ekran */
   background-position: center;      /* Ortalar */
-  background-repeat: no-repeat;     /* Tekrar etmez */
+  background-repeat: no-repeat;     
 }
+
+/* 🔹 Mobil için arka plan ayarları */
+@media (max-width: 480px) {
+  body {
+    background-size: 60% auto;       /* Mobilde genişlik %60, yükseklik otomatik */
+    background-position: top center; /* Üstte ortala */
+    background-repeat: no-repeat;    
+  }
+}
+
 
 /* ⚙️ Ayarlar Butonu */
 .settings-button {
@@ -132,12 +142,6 @@ body {
 .Blockchain-clickable { top: 39vh; left: 83vw; width: 8vw; height: 12vh; }
 
 /* 🔹 Mobil için arka plan ve panel ayarları */
-@media (max-width: 480px) {
-  body {
-    background-size: 60% auto;       /* Mobilde genişlik %60, yükseklik otomatik */
-    background-position: top center; /* Üstte ortala */
-    background-repeat: no-repeat;    /* Tekrar etmesin */
-  }
   body { font-size: 0.85rem; }
   .settings-panel { width: 90vw; right: -95vw; padding: 3vh 5vw; }
   .settings-panel h2 { font-size: 2.2vh; }
