@@ -10,21 +10,19 @@
   <style>
     /* Temel body ve arka plan */
     body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-      color: #fff;
-      overflow-x: hidden;
-      background: url("/static/sam_login_ui.png") no-repeat center center fixed;
-      background-size: cover;
-    }
+  background: url("/static/sam_login_ui.png") no-repeat center center fixed;
+  background-size: contain; /* resim tamamen ekrana sığacak */
+  background-repeat: no-repeat;
+  background-position: center center;
+}
 
     @media (max-width: 768px) {
-      body {
-        background-size: contain;
-        background-position: center top;
-      }
-    }
+  body {
+    background-size: contain; /* mobilde ekrana sığdır */
+    background-position: center top;
+  }
+}
+
 
     /* ⚙️ Ayarlar Butonu */
     .settings-button {
