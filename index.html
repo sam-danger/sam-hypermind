@@ -2,17 +2,27 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SAM System Interface</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <!-- Harici Stil -->
   <link rel="stylesheet" href="/static/style.css">
-  <script src="/static/script.js" defer></script>
+
   <style>
+    /* 🖤 Genel Body Ayarları */
     body {
-      background-color: #111;
-      color: #fff;
-      font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 0;
+      background-image: url('sam_login_ui.png');
+      background-size: cover;
+      background-position: center;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
 
     /* ⚙️ Ayarlar Butonu */
@@ -20,80 +30,45 @@
       position: fixed;
       top: 20px;
       right: 20px;
-      background-color: #111;
-      color: cyan;
-      padding: 10px 14px;
-      border-radius: 6px;
+      background-color: transparent;
+      padding: 10px;
+      border: none;
       cursor: pointer;
       z-index: 10000;
-      font-weight: bold;
-      transition: background-color 0.3s;
+    }
+    .settings-button i {
+      font-size: 22px;
+      color: #cccccc;
+      transition: transform 0.3s ease;
+    }
+    .settings-button:hover i {
+      transform: rotate(20deg);
     }
 
-    .settings-button:hover {
-      background-color: #222;
-    }
-
+    /* ⚙️ Sağdan Kayan Ayarlar Paneli */
     .settings-panel {
-  position: fixed;
-  top: 0;
-  right: -320px;
-  width: 300px;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);                /* daha saydam ve şık */
-  backdrop-filter: blur(10px);                  /* cam efekti */
-  -webkit-backdrop-filter: blur(10px);
-  color: white;
-  padding: 20px;
-  box-shadow: -2px 0 6px rgba(0, 255, 255, 0.2); /* neon çizgi efekti */
-  border-left: 1px solid rgba(0, 255, 255, 0.08);
-  transition: right 0.4s ease-in-out;
-  z-index: 9999;
-}
-
-    .settings-panel.open {
-      right: 0;
+      position: fixed;
+      top: 0;
+      right: -320px;
+      width: 300px;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 20px;
+      box-shadow: -2px 0 6px rgba(0, 255, 255, 0.2);
+      border-left: 1px solid rgba(0, 255, 255, 0.08);
+      transition: right 0.4s ease-in-out;
+      z-index: 9999;
     }
+    .settings-panel.open { right: 0; }
+    .settings-panel h2 { margin-top: 0; font-size: 20px; border-bottom: 1px solid #444; padding-bottom: 10px; }
+    .settings-panel ul { list-style: none; padding: 0; margin-top: 20px; }
+    .settings-panel li { margin: 14px 0; }
+    .settings-panel a { color: #00e0ff; text-decoration: none; font-weight: bold; }
+    .settings-panel a:hover { text-decoration: underline; }
 
-    .settings-panel h2 {
-      margin-top: 0;
-      font-size: 20px;
-      border-bottom: 1px solid #444;
-      padding-bottom: 10px;
-    }
-
-    .settings-panel ul {
-      list-style: none;
-      padding: 0;
-      margin-top: 20px;
-    }
-
-    .settings-panel li {
-      margin: 14px 0;
-    }
-
-    .settings-panel a {
-      color: #00e0ff;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .settings-panel a:hover {
-      text-decoration: underline;
-    }
-
-    .close-btn {
-      background: none;
-      border: none;
-      color: red;
-      font-size: 18px;
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      cursor: pointer;
-    }
-
-    /* Admin Giriş Linki */
+    /* Admin Linki */
     .admin-link {
       position: absolute;
       top: 9px;
@@ -101,40 +76,68 @@
       transform: translateX(-50%);
       font-size: 13px;
       color: rgba(0, 224, 255, 0.6);
-      text-shadow: 0 0 4px rgba(0, 217, 255, 0.3);
       text-decoration: none;
       font-weight: 500;
       letter-spacing: 0.5px;
       z-index: 1000;
-      transition: 0.3s ease;
     }
+    .admin-link img { width: 16px; height: auto; margin-right: 5px; vertical-align: middle; }
+    .admin-link:hover { color: rgba(0, 255, 255, 0.8); }
 
-    .admin-link:hover {
-      text-shadow: 0 0 6px rgba(0, 255, 229, 0.5);
-      color: rgba(0, 255, 255, 0.8);
-    }
+    /* Overlay ve Tıklanabilir Alanlar */
+    .overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+    .clickable-area { cursor: pointer; }
 
-    /* Giriş Alanı (Tıklanabilir alan) */
-    .overlay {
+    /* Mikrofon */
+    #microphone-overlay {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      bottom: 50px;
+      right: 50px;
+      width: 100px;
+      height: 100px;
+      cursor: pointer;
+      z-index: 9999;
     }
 
-   
-/* 🎤 Mikrofon Overlay */
-#microphone-overlay {
-  position: absolute;
-  bottom: 50px;
-  right: 50px;
-  width: 100px;
-  height: 100px;
-  cursor: pointer;
-  z-index: 9999;
-}
+    /* Kamera Tıklama Alanı */
+    .camera-click {
+      position: absolute;
+      top: 43%;
+      left: 11%;
+      transform: translateX(-50%);
+      width: 140px;
+      height: 25px;
+      cursor: pointer;
+      z-index: 9999;
+      background-color: rgba(255, 0, 0, 0);
+    }
 
+    /* Shadow ve Blockchain Alanları */
+    .shadow-clickable, .Blockchain-clickable {
+      position: fixed;
+      cursor: pointer;
+      background-color: rgba(255, 0, 0, 0);
+      z-index: 9999;
+    }
+    .shadow-clickable { top: 13vh; left: 70vw; width: 7vw; height: 15vh; }
+    .Blockchain-clickable { top: 39vh; left: 83vw; width: 8vw; height: 12vh; }
 
+    /* Çerez Uyarısı */
+    #cookieConsent {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      background: #222;
+      color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #00ffff;
+      z-index: 9999;
+      display: none;
+    }
+    #cookieConsent a { color: #00ffff; text-decoration: underline; }
+    #cookieConsent button { margin-top: 10px; padding: 6px 14px; background:#00ffff; color:#000; border:none; border-radius:4px; cursor:pointer; }
   </style>
 </head>
 <body>
