@@ -15,26 +15,15 @@ body {
   font-family: 'Segoe UI', sans-serif;
   background-color: #111;
   color: #fff;
-  height: 100vh;
+  min-height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
 
+  /* Arka plan görseli */
   background-image: url('sam_login_ui.png');
   background-size: cover;       /* ekranı kaplar */
   background-position: center;  /* ortalar */
   background-repeat: no-repeat; /* tekrar etmez */
-}
-
-
-/* 🌌 Arka Plan Görseli - Tam Ekran */
-.bg-img {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;   /* Ekrana sığdırır, taşmayı önler */
-  z-index: -1;
 }
 
 /* ⚙️ Ayarlar Butonu */
@@ -145,6 +134,10 @@ body {
 /* Responsive: Mobil için font ve panel ayarları */
 @media (max-width: 480px) {
   body { font-size: 0.85rem; }
+  body {
+    background-size: contain;    /* Mobilde taşma yerine sığdır */
+    background-position: center top;
+  }
   .settings-panel { width: 90vw; right: -95vw; padding: 3vh 5vw; }
   .settings-panel h2 { font-size: 2.2vh; }
   .settings-panel a { font-size: 2vh; }
