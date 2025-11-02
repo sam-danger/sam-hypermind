@@ -661,10 +661,10 @@ body.flash {
 
 .microphone-click {
   position: absolute;
-  top: 15%;       /* yukarıdan % olarak konum */
-  left: 10%;      /* soldan % olarak konum */
-  width: 10%;     /* genişlik */
-  height: 5%;     /* yükseklik */
+  top: 120px;     /* Bu değeri yazının tam üstüne denk gelecek şekilde ayarlayacağız */
+  left: 100px;    /* Yazının bulunduğu koordinata göre ayarla */
+  width: 150px;   /* Yazının genişliği kadar */
+  height: 40px;   /* Yeterli tıklama alanı */
   cursor: pointer;
   z-index: 10;
 }
