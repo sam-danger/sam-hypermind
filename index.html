@@ -192,6 +192,41 @@
     box-shadow: none;
   }
 }
+@media (max-width: 480px) {
+  .settings-panel {
+    width: 100%;        /* Tüm ekran genişliği */
+    height: 100%;       /* Tüm ekran yüksekliği */
+    top: 0;
+    left: 0;
+    right: 0;
+    border-left: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 1rem;      /* İç boşluk mobil için uygun */
+    font-size: 0.85rem;
+  }
+  .settings-panel.open { right: 0; }
+}
+@media (max-width: 480px) {
+  .settings-panel ul li {
+    margin-bottom: 0.5rem; /* Daha sıkışık */
+  }
+  .settings-panel ul li a {
+    font-size: 1rem;
+    display: block;        /* Tüm satırı kapsar */
+    padding: 0.5rem 0;
+    word-wrap: break-word; /* Uzun yazılar taşmasın */
+  }
+}
+@media (max-width: 480px) {
+  .overlay {
+    width: 95%;
+    height: auto;
+    max-height: 50%;
+  }
+  .microphone-click { width: 4rem; height: 4rem; bottom: 1rem; right: 1rem; }
+  .camera-click { width: 5rem; height: 1.5rem; top: 35%; left: 18%; }
+}
 
   </style>
 </head>
