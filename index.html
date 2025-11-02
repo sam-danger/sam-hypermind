@@ -168,12 +168,12 @@
 <body>
 
   <!-- ⚙️ Ayarlar Butonu -->
-  <div class="settings-button" onclick="toggleSettingsPanel()" title="Ayarlar">
+  <button class="settings-button" aria-label="Ayarlar" onclick="toggleSettingsPanel()">
     <i class="fas fa-cog"></i>
-  </div>
+  </button>
 
   <!-- ⚙️ Ayarlar Paneli -->
-  <div id="settingsPanel" class="settings-panel">
+  <nav id="settingsPanel" class="settings-panel" aria-label="Ayarlar Menüsü">
     <h2>Ayarlar</h2>
     <ul>
       <li><a href="/profil">Profil Bilgilerim</a></li>
@@ -184,106 +184,42 @@
       <li><a href="/oturum">Hesap ve Oturum</a></li>
       <li><a href="/feedback" target="_parent">📬 Destek ve Geri Bildirim</a></li>
       <li><a href="/canli-destek" target="_parent">💬 Canlı Destek</a></li>
-      <li><a href="#" onclick="logoutUser()">Çıkış Yap</a></li>
+      <li><button onclick="logoutUser()">Çıkış Yap</button></li>
     </ul>
+  </nav>
+
+  <!-- 🧠 ARKA PLAN + TIKLANABİLİR ALANLAR -->
+  <div class="image-container">
+    <img src="/static/sam_login_ui.png" alt="SAM Interface" class="background-img" loading="lazy">
+
+    <div class="camera-click" onclick="location.href='/camera'" aria-label="Kamera"></div>
+    <div class="shadow-clickable" onclick="location.href='/shadow-mode'" aria-label="Shadow Mode"></div>
+    <div class="Blockchain-clickable" onclick="location.href='/blockchain-security'" aria-label="Blockchain Güvenliği"></div>
+    <div id="microphone-overlay" onclick="location.href='/microphone'" aria-label="Mikrofon"></div>
   </div>
 
-  <!-- Admin Linki -->
+  <!-- 📱 MOBİL PANEL -->
+<div class="mobile-panel" aria-label="Mobil Menü">
+  <button class="mobile-button" onclick="window.location.href='/chat'">💬 Sohbet</button>
+  <button class="mobile-button" onclick="window.location.href='/microphone'">🎤 Mikrofon</button>
+  <button class="mobile-button" onclick="window.location.href='/camera'">📷 Kamera</button>
+  <button class="mobile-button" onclick="window.location.href='/profil'">👤 Profil</button>
+  <button class="mobile-button" onclick="window.location.href='/shadow-mode'">🕶️ Shadow Mode</button>
+  <button class="mobile-button" onclick="window.location.href='/blockchain-security'">🔗 Blockchain Security</button>
+</div>
+
+<!-- Masaüstü tıklanabilir alanlar -->
+<div class="clickable-area microphone-click" onclick="window.location.href='/microphone'" title="Microphone"></div>
+<div class="clickable-area camera-click" onclick="window.location.href='/camera'" title="Camera"></div>
+<div class="shadow-clickable" onclick="window.location.href='/shadow-mode'"></div>
+<div class="Blockchain-clickable" onclick="window.location.href='/blockchain-security'"></div>
+
+
+  <!-- 👑 ADMIN LİNK -->
   <a href="/admin-login" class="admin-link">
-    <img src="/static/admin_icon.png" alt="Admin Icon" class="admin-icon">
+    <img src="/static/admin_icon.png" alt="Admin Icon">
     SAM Neural Operations Interface
   </a>
 
-  <!-- Overlay ve Tıklanabilir Alanlar -->
-  <div id="index-overlay" class="overlay">
-    <div class="clickable-area" onclick="window.location.href='/chat'" title="DIGITAL TWIN"></div>
-  </div>
-  <div class="clickable-area microphone-click" onclick="window.location.href='/microphone'" title="Microphone"></div>
-  <div class="clickable-area camera-click" onclick="window.location.href='/camera'" title="Camera"></div>
-  <div class="shadow-clickable" onclick="window.location.href='/shadow-mode'"></div>
-  <div class="Blockchain-clickable" onclick="window.location.href='/blockchain-security'"></div>
-
-  <!-- 🍪 Çerez Onayı -->
-  <div id="cookieConsent" style="position:fixed; bottom:20px; left:20px; right:20px; background:#222; color:#fff; padding:20px; border-radius:8px; box-shadow:0 0 10px #00ffff; z-index:9999; display:none;">
-    <p style="margin:0; font-size:14px;"> 🍪 Bu site, deneyiminizi iyileştirmek için çerez kullanır.
-      <a href="/cerez-politikasi" style="color:#00ffff; text-decoration:underline;">Detaylı bilgi</a>
-    </p>
-    <button onclick="acceptCookies()" style="margin-top:10px; padding:6px 14px; background:#00ffff; color:#000; border:none; border-radius:4px; cursor:pointer;">Kabul Ediyorum</button>
-  </div>
-
-  <script>
-    // Çerez Fonksiyonları
-    function setCookie(name, value, days) {
-      const expires = new Date(Date.now() + days*24*60*60*1000).toUTCString();
-      document.cookie = name + "=" + value + "; expires=" + expires + "; path=/";
-    }
-    function getCookie(name) {
-      const value = document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)");
-      return value ? value.pop() : "";
-    }
-    function acceptCookies() {
-      setCookie("cookieAccepted", "true", 365);
-      setCookie("cookieAcceptedDate", new Date().toISOString(), 365);
-      document.getElementById("cookieConsent").style.display = "none";
-    }
-    window.onload = function () {
-      if (getCookie("cookieAccepted") !== "true") {
-        document.getElementById("cookieConsent").style.display = "block";
-      }
-    }
-
-    // Ayarlar Paneli Aç/Kapat
-    function toggleSettingsPanel() {
-      const panel = document.getElementById("settingsPanel");
-      panel.classList.toggle("open");
-    }
-
-    // Çıkış Fonksiyonu
-    function logoutUser() {
-      fetch("/logout", { method: "POST", headers: { "Content-Type": "application/json" } })
-        .then(res => res.json())
-        .then(data => {
-          if (data.redirect) { window.location.href = data.redirect; }
-        });
-    }
-
-    // SAM Güvenlik Overlay (İnaktivite)
-    let samTimeout, samOverlay;
-    function createSecurityOverlay() {
-      samOverlay = document.createElement("div");
-      samOverlay.id = "samOverlay";
-      samOverlay.style.position = "fixed";
-      samOverlay.style.top = 0;
-      samOverlay.style.left = 0;
-      samOverlay.style.width = "100%";
-      samOverlay.style.height = "100%";
-      samOverlay.style.background = "rgba(0, 0, 0, 0.9)";
-      samOverlay.style.backdropFilter = "blur(10px)";
-      samOverlay.style.display = "flex";
-      samOverlay.style.alignItems = "center";
-      samOverlay.style.justifyContent = "center";
-      samOverlay.style.zIndex = 999999;
-      samOverlay.innerHTML = `<div style="color:#00ffff; font-size:20px; text-align:center;">
-        🔒 SAM Güvenlik Modu <br><br>
-        Uzun süreli hareketsizlik algılandı.<br>
-        Sistemi devam ettirmek için ekrana dokunun...
-      </div>`;
-      document.body.appendChild(samOverlay);
-    }
-    function removeSecurityOverlay() {
-      if (samOverlay) { samOverlay.remove(); samOverlay = null; }
-    }
-    function resetSamInactivityTimer() {
-      clearTimeout(samTimeout);
-      samTimeout = setTimeout(createSecurityOverlay, 120000); // 2 dakika
-    }
-    ["click", "mousemove", "keydown", "touchstart"].forEach(evt => {
-      document.addEventListener(evt, () => {
-        removeSecurityOverlay();
-        resetSamInactivityTimer();
-      });
-    });
-    window.addEventListener("load", resetSamInactivityTimer);
-  </script>
 </body>
 </html>
