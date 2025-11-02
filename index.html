@@ -19,8 +19,10 @@ body {
   overflow-x: hidden;
   overflow-y: auto;
   background-image: url('sam_login_ui.png');
-  background-size: cover;
+  background-size: cover;       /* Desktop için */
   background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: scroll; /* Mobilde taşmayı önler */
 }
 
 /* ⚙️ Ayarlar Butonu */
@@ -145,13 +147,10 @@ body {
 
 /* Responsive: Mobil için font ve panel ayarları */
 @media (max-width: 480px) {
-  body { font-size: 0.85rem; }
-  .settings-panel { width: 90vw; right: -95vw; padding: 3vh 5vw; }
-  .settings-panel h2 { font-size: 2.2vh; }
-  .settings-panel a { font-size: 2vh; }
-  .admin-link { font-size: 1.5vh; }
-  #microphone-overlay { width: 18vw; height: 18vw; }
-  .camera-click { width: 30vw; height: 6vh; }
+  body {
+    background-size: 150% auto; /* Genişliği biraz büyüt, yüksekliği otomatik */
+    background-position: center top;
+  }
 }
 </style>
 </head>
