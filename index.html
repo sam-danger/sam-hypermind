@@ -25,16 +25,17 @@
     /* ⚙️ Ayarlar Butonu */
     .settings-button {
       position: fixed;
-      top: 20px;
-      right: 20px;
+      top: 1.5rem;
+      right: 1.5rem;
       background-color: #111;
       color: cyan;
-      padding: 10px 14px;
-      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
       cursor: pointer;
       z-index: 10010;
       font-weight: bold;
       transition: background-color 0.3s;
+      font-size: 1rem;
     }
     .settings-button:hover { background-color: #222; }
 
@@ -42,28 +43,31 @@
     .settings-panel {
       position: fixed;
       top: 0;
-      right: -320px;
-      width: 300px;
+      right: -20vw;
+      width: 18vw;
+      min-width: 280px;
+      max-width: 320px;
       height: 100%;
       background: rgba(0, 0, 0, 0.85);
       backdrop-filter: blur(12px);
       color: white;
-      padding: 20px;
-      box-shadow: -2px 0 12px rgba(0, 255, 255, 0.3);
+      padding: 1.25rem;
+      box-shadow: -2px 0 1rem rgba(0, 255, 255, 0.3);
       border-left: 1px solid rgba(0, 255, 255, 0.08);
       transition: right 0.4s ease-in-out;
       z-index: 10005;
       overflow-y: auto;
+      font-size: 1rem;
     }
     .settings-panel.open { right: 0; }
 
     .settings-panel ul {
       list-style: none;
       padding: 0;
-      margin: 10px 0 0 0;
+      margin: 1rem 0 0 0;
     }
     .settings-panel ul li {
-      margin-bottom: 12px;
+      margin-bottom: 0.75rem;
     }
     .settings-panel ul li a {
       color: cyan;
@@ -72,18 +76,18 @@
     }
     .settings-panel ul li a:hover {
       color: #0ff;
-      text-shadow: 0 0 6px rgba(0,255,255,0.5);
+      text-shadow: 0 0 0.5rem rgba(0,255,255,0.5);
     }
 
     /* Admin Giriş Linki */
     .admin-link {
       position: fixed;
-      top: 9px;
+      top: 0.5rem;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 13px;
+      font-size: 0.85rem;
       color: rgba(0, 224, 255, 0.6);
-      text-shadow: 0 0 4px rgba(0, 217, 255, 0.3);
+      text-shadow: 0 0 0.25rem rgba(0, 217, 255, 0.3);
       text-decoration: none;
       font-weight: 500;
       letter-spacing: 0.5px;
@@ -91,7 +95,7 @@
       transition: 0.3s ease;
     }
     .admin-link:hover {
-      text-shadow: 0 0 6px rgba(0, 255, 229, 0.5);
+      text-shadow: 0 0 0.5rem rgba(0, 255, 229, 0.5);
       color: rgba(0, 255, 255, 0.8);
     }
 
@@ -101,21 +105,27 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 400px;
+      height: 40%;
+      max-height: 350px;
       z-index: 10000;
     }
     .clickable-area {
       cursor: pointer;
       background-color: rgba(0,255,0,0.15);
-      z-index: 10000;
+      width: 100%;
+      height: 100%;
+      display: block;
     }
 
     /* Mikrofon */
     .microphone-click {
       position: fixed;
-      bottom: 50px;
-      right: 50px;
-      width: 100px;
-      height: 100px;
+      bottom: 3rem;
+      right: 3rem;
+      width: 6rem;
+      height: 6rem;
       z-index: 10000;
     }
 
@@ -125,8 +135,8 @@
       top: 43%;
       left: 11%;
       transform: translateX(-50%);
-      width: 140px;
-      height: 25px;
+      width: 8.5rem;
+      height: 2rem;
       cursor: pointer;
       z-index: 10000;
     }
@@ -143,16 +153,17 @@
 
     /* Mobil ve tablet uyumlu tasarım */
     @media (max-width: 1024px) {
-      .settings-panel { width: 85%; right: -85%; }
-      .microphone-click { width: 60px; height: 60px; bottom: 20px; right: 20px; }
-      .camera-click { width: 100px; top: 40%; left: 20%; }
+      .settings-panel { width: 85%; right: -85%; font-size: 0.9rem; }
+      .microphone-click { width: 4rem; height: 4rem; bottom: 1.5rem; right: 1.5rem; }
+      .camera-click { width: 6rem; top: 40%; left: 20%; }
       .shadow-clickable, .Blockchain-clickable { display: none; }
       .overlay { width: 80%; height: 35%; }
     }
     @media (max-width: 480px) {
-      .settings-panel { width: 95%; right: -95%; }
-      .microphone-click { width: 50px; height: 50px; bottom: 15px; right: 15px; }
-      .camera-click { width: 80px; top: 38%; left: 18%; }
+      .settings-panel { width: 95%; right: -95%; font-size: 0.8rem; }
+      .microphone-click { width: 3.5rem; height: 3.5rem; bottom: 1rem; right: 1rem; }
+      .camera-click { width: 5rem; top: 38%; left: 18%; }
+      .overlay { width: 90%; height: 30%; }
     }
   </style>
 </head>
