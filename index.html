@@ -18,11 +18,13 @@ body {
   height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
+
+  /* Arka plan resmi */
   background-image: url('sam_login_ui.png');
-  background-size: cover;       /* Desktop için */
-  background-position: center;
   background-repeat: no-repeat;
-  background-attachment: scroll; /* Mobilde taşmayı önler */
+  background-position: center top;
+  background-size: 100% auto;   /* Mobilde genişliği %100 yap, yükseklik otomatik */
+  background-attachment: scroll; /* Mobilde sabitleme yapma */
 }
 
 /* ⚙️ Ayarlar Butonu */
@@ -148,10 +150,12 @@ body {
 /* Responsive: Mobil için font ve panel ayarları */
 @media (max-width: 480px) {
   body {
-    background-size: 150% auto; /* Genişliği biraz büyüt, yüksekliği otomatik */
+    background-image: url('sam_login_ui_mobile.png'); /* Küçük boyutlu mobil resmi */
+    background-size: cover;
     background-position: center top;
   }
 }
+
 </style>
 </head>
 <body>
