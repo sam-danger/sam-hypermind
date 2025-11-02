@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
@@ -8,172 +7,144 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/static/style.css">
   <script src="/static/script.js" defer></script>
-
   <style>
-  /* 🌌 GENEL BODY YAPISI */
-  body {
-    margin: 0;
-    padding: 0;
-    background-color: #000;
-    color: #fff;
-    font-family: 'Segoe UI', sans-serif;
-    height: 100vh;
-    overflow: hidden;
-  }
+    body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  color: #fff;
+  background-color: #111;
+  
+  /* Render için doğru statik yol */
+  background-image: url('/static/sam_login_ui.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 
-  /* 📸 GÖRSEL ALANI */
-  .image-container {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-  }
-  .background-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
 
-  /* 🖱️ TIKLANABİLİR ALANLAR */
-  .camera-click, .shadow-clickable, .Blockchain-clickable {
-    position: absolute;
-    background-color: rgba(255,0,0,0);
-    cursor: pointer;
-    z-index: 5;
-  }
-  .camera-click { top: 40%; left: 10%; width: 25%; height: 5%; }
-  .shadow-clickable { top: 13%; left: 70%; width: 7%; height: 15%; }
-  .Blockchain-clickable { top: 39%; left: 83%; width: 8%; height: 12%; }
-
-  /* 🎙️ MİKROFON */
-  #microphone-overlay {
-    position: absolute;
-    bottom: 5%;
-    right: 5%;
-    width: 15vw;
-    height: 15vw;
-    max-width: 100px;
-    max-height: 100px;
-    cursor: pointer;
-    z-index: 5;
-  }
-
-  /* ⚙️ AYARLAR BUTONU */
-  .settings-button {
-    position: fixed;
-    top: 2vh;
-    right: 2vw;
-    background-color: #111;
-    color: cyan;
-    padding: 1vh 2vw;
-    border-radius: 6px;
-    cursor: pointer;
-    z-index: 10000;
-    font-weight: bold;
-    font-size: 1rem;
-    transition: background-color 0.3s;
-  }
-  .settings-button:hover { background-color: #222; }
-
-  /* ⚙️ AYARLAR PANELİ */
-  .settings-panel {
-    position: fixed;
-    top: 0;
-    right: -90vw;
-    width: 80vw;
-    max-width: 320px;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    color: white;
-    padding: 3vh 3vw;
-    box-shadow: -2px 0 6px rgba(0, 255, 255, 0.2);
-    border-left: 1px solid rgba(0, 255, 255, 0.08);
-    transition: right 0.4s ease-in-out;
-    z-index: 9999;
-  }
-  .settings-panel.open { right: 0; }
-  .settings-panel h2 { margin-top: 0; font-size: 2vh; border-bottom: 1px solid #444; padding-bottom: 1vh; }
-  .settings-panel ul { list-style: none; padding: 0; margin-top: 2vh; }
-  .settings-panel li { margin: 1.5vh 0; }
-  .settings-panel a { color: #00e0ff; text-decoration: none; font-weight: bold; font-size: 1.8vh; }
-  .settings-panel a:hover { text-decoration: underline; }
-
-  /* 👑 ADMIN GİRİŞ LİNKİ */
-  .admin-link {
-    position: absolute;
-    top: 1vh;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1.2vh;
-    color: rgba(0, 224, 255, 0.6);
-    text-shadow: 0 0 4px rgba(0, 217, 255, 0.3);
-    text-decoration: none;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    z-index: 1000;
-    transition: 0.3s ease;
-  }
-  .admin-link:hover {
-    text-shadow: 0 0 6px rgba(0, 255, 229, 0.5);
-    color: rgba(0, 255, 255, 0.8);
-  }
-  .admin-link img { width: 1.5vh; height: auto; vertical-align: middle; margin-right: 0.5vh; }
-
-  /* 📱 MOBİL GÖRÜNÜM */
-  @media (max-width: 480px) {
-    body { overflow-y: auto; }
-    .background-img { object-fit: cover !important; }
-
-    /* Tıklanabilir alanlar mobilde kapalı */
-    .camera-click, .shadow-clickable, .Blockchain-clickable, #microphone-overlay {
-      display: none !important;
-    }
-
-    /* 📱 Mobil Buton Paneli */
-    .mobile-panel {
+    /* ⚙️ Ayarlar Butonu */
+    .settings-button {
       position: fixed;
-      bottom: 6vh;
-      left: 0;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 1.5vh;
+      top: 20px;
+      right: 20px;
+      background-color: #111;
+      color: cyan;
+      padding: 10px 14px;
+      border-radius: 6px;
+      cursor: pointer;
       z-index: 10000;
+      font-weight: bold;
+      transition: background-color 0.3s;
     }
-    .mobile-button {
-      width: 80%;
-      text-align: center;
-      background: rgba(0,255,255,0.1);
-      border: 1px solid cyan;
-      border-radius: 10px;
-      padding: 10px 0;
-      font-size: 1rem;
-      color: #fff;
-      font-weight: 500;
-      backdrop-filter: blur(6px);
-      transition: 0.3s;
-    }
-    .mobile-button:hover {
-      background: rgba(0,255,255,0.25);
-    }
-  }
-  </style>
+    .settings-button:hover { background-color: #222; }
 
+    /* ⚙️ Sağdan kayan Ayarlar Paneli */
+    .settings-panel {
+      position: fixed;
+      top: 0;
+      right: -320px;
+      width: 300px;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: white;
+      padding: 20px;
+      box-shadow: -2px 0 6px rgba(0, 255, 255, 0.2);
+      border-left: 1px solid rgba(0, 255, 255, 0.08);
+      transition: right 0.4s ease-in-out;
+      z-index: 9999;
+    }
+    .settings-panel.open { right: 0; }
+    .settings-panel h2 {
+      margin-top: 0;
+      font-size: 20px;
+      border-bottom: 1px solid #444;
+      padding-bottom: 10px;
+    }
+    .settings-panel ul { list-style: none; padding: 0; margin-top: 20px; }
+    .settings-panel li { margin: 14px 0; }
+    .settings-panel a {
+      color: #00e0ff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .settings-panel a:hover { text-decoration: underline; }
+
+    /* Admin Giriş Linki */
+    .admin-link {
+      position: absolute;
+      top: 9px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 13px;
+      color: rgba(0, 224, 255, 0.6);
+      text-shadow: 0 0 4px rgba(0, 217, 255, 0.3);
+      text-decoration: none;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      z-index: 1000;
+      transition: 0.3s ease;
+    }
+    .admin-link:hover {
+      text-shadow: 0 0 6px rgba(0, 255, 229, 0.5);
+      color: rgba(0, 255, 255, 0.8);
+    }
+
+    /* Overlay ve Tıklanabilir Alanlar */
+    .overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .clickable-area { cursor: pointer; }
+
+    /* Mikrofon */
+    #microphone-overlay {
+      position: absolute;
+      bottom: 50px;
+      right: 50px;
+      width: 100px;
+      height: 100px;
+      cursor: pointer;
+      z-index: 9999;
+    }
+
+    /* Kamera Tıklama Alanı */
+    .camera-click {
+      position: absolute;
+      top: 43%;
+      left: 11%;
+      transform: translateX(-50%);
+      width: 140px;
+      height: 25px;
+      cursor: pointer;
+      z-index: 9999;
+      background-color: rgba(255, 0, 0, 0);
+    }
+
+    /* Shadow ve Blockchain Alanları */
+    .shadow-clickable, .Blockchain-clickable {
+      position: fixed;
+      cursor: pointer;
+      background-color: rgba(255, 0, 0, 0);
+      z-index: 9999;
+    }
+    .shadow-clickable { top: 13vh; left: 70vw; width: 7vw; height: 15vh; }
+    .Blockchain-clickable { top: 39vh; left: 83vw; width: 8vw; height: 12vh; }
+  </style>
 </head>
 <body>
 
   <!-- ⚙️ Ayarlar Butonu -->
-  <button class="settings-button" aria-label="Ayarlar" onclick="toggleSettingsPanel()">
+  <div class="settings-button" onclick="toggleSettingsPanel()" title="Ayarlar">
     <i class="fas fa-cog"></i>
-  </button>
+  </div>
 
   <!-- ⚙️ Ayarlar Paneli -->
-  <nav id="settingsPanel" class="settings-panel" aria-label="Ayarlar Menüsü">
+  <div id="settingsPanel" class="settings-panel">
     <h2>Ayarlar</h2>
     <ul>
       <li><a href="/profil">Profil Bilgilerim</a></li>
@@ -184,42 +155,106 @@
       <li><a href="/oturum">Hesap ve Oturum</a></li>
       <li><a href="/feedback" target="_parent">📬 Destek ve Geri Bildirim</a></li>
       <li><a href="/canli-destek" target="_parent">💬 Canlı Destek</a></li>
-      <li><button onclick="logoutUser()">Çıkış Yap</button></li>
+      <li><a href="#" onclick="logoutUser()">Çıkış Yap</a></li>
     </ul>
-  </nav>
-
-  <!-- 🧠 ARKA PLAN + TIKLANABİLİR ALANLAR -->
-  <div class="image-container">
-    <img src="/static/sam_login_ui.png" alt="SAM Interface" class="background-img" loading="lazy">
-
-    <div class="camera-click" onclick="location.href='/camera'" aria-label="Kamera"></div>
-    <div class="shadow-clickable" onclick="location.href='/shadow-mode'" aria-label="Shadow Mode"></div>
-    <div class="Blockchain-clickable" onclick="location.href='/blockchain-security'" aria-label="Blockchain Güvenliği"></div>
-    <div id="microphone-overlay" onclick="location.href='/microphone'" aria-label="Mikrofon"></div>
   </div>
 
-  <!-- 📱 MOBİL PANEL -->
-<div class="mobile-panel" aria-label="Mobil Menü">
-  <button class="mobile-button" onclick="window.location.href='/chat'">💬 Sohbet</button>
-  <button class="mobile-button" onclick="window.location.href='/microphone'">🎤 Mikrofon</button>
-  <button class="mobile-button" onclick="window.location.href='/camera'">📷 Kamera</button>
-  <button class="mobile-button" onclick="window.location.href='/profil'">👤 Profil</button>
-  <button class="mobile-button" onclick="window.location.href='/shadow-mode'">🕶️ Shadow Mode</button>
-  <button class="mobile-button" onclick="window.location.href='/blockchain-security'">🔗 Blockchain Security</button>
-</div>
-
-<!-- Masaüstü tıklanabilir alanlar -->
-<div class="clickable-area microphone-click" onclick="window.location.href='/microphone'" title="Microphone"></div>
-<div class="clickable-area camera-click" onclick="window.location.href='/camera'" title="Camera"></div>
-<div class="shadow-clickable" onclick="window.location.href='/shadow-mode'"></div>
-<div class="Blockchain-clickable" onclick="window.location.href='/blockchain-security'"></div>
-
-
-  <!-- 👑 ADMIN LİNK -->
+  <!-- Admin Linki -->
   <a href="/admin-login" class="admin-link">
-    <img src="/static/admin_icon.png" alt="Admin Icon">
+    <img src="/static/admin_icon.png" alt="Admin Icon" class="admin-icon">
     SAM Neural Operations Interface
   </a>
 
+  <!-- Overlay ve Tıklanabilir Alanlar -->
+  <div id="index-overlay" class="overlay">
+    <div class="clickable-area" onclick="window.location.href='/chat'" title="DIGITAL TWIN"></div>
+  </div>
+  <div class="clickable-area microphone-click" onclick="window.location.href='/microphone'" title="Microphone"></div>
+  <div class="clickable-area camera-click" onclick="window.location.href='/camera'" title="Camera"></div>
+  <div class="shadow-clickable" onclick="window.location.href='/shadow-mode'"></div>
+  <div class="Blockchain-clickable" onclick="window.location.href='/blockchain-security'"></div>
+
+  <!-- 🍪 Çerez Onayı -->
+  <div id="cookieConsent" style="position:fixed; bottom:20px; left:20px; right:20px; background:#222; color:#fff; padding:20px; border-radius:8px; box-shadow:0 0 10px #00ffff; z-index:9999; display:none;">
+    <p style="margin:0; font-size:14px;"> 🍪 Bu site, deneyiminizi iyileştirmek için çerez kullanır.
+      <a href="/cerez-politikasi" style="color:#00ffff; text-decoration:underline;">Detaylı bilgi</a>
+    </p>
+    <button onclick="acceptCookies()" style="margin-top:10px; padding:6px 14px; background:#00ffff; color:#000; border:none; border-radius:4px; cursor:pointer;">Kabul Ediyorum</button>
+  </div>
+
+  <script>
+    // Çerez Fonksiyonları
+    function setCookie(name, value, days) {
+      const expires = new Date(Date.now() + days*24*60*60*1000).toUTCString();
+      document.cookie = name + "=" + value + "; expires=" + expires + "; path=/";
+    }
+    function getCookie(name) {
+      const value = document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)");
+      return value ? value.pop() : "";
+    }
+    function acceptCookies() {
+      setCookie("cookieAccepted", "true", 365);
+      setCookie("cookieAcceptedDate", new Date().toISOString(), 365);
+      document.getElementById("cookieConsent").style.display = "none";
+    }
+    window.onload = function () {
+      if (getCookie("cookieAccepted") !== "true") {
+        document.getElementById("cookieConsent").style.display = "block";
+      }
+    }
+
+    // Ayarlar Paneli Aç/Kapat
+    function toggleSettingsPanel() {
+      const panel = document.getElementById("settingsPanel");
+      panel.classList.toggle("open");
+    }
+
+    // Çıkış Fonksiyonu
+    function logoutUser() {
+      fetch("/logout", { method: "POST", headers: { "Content-Type": "application/json" } })
+        .then(res => res.json())
+        .then(data => {
+          if (data.redirect) { window.location.href = data.redirect; }
+        });
+    }
+
+    // SAM Güvenlik Overlay (İnaktivite)
+    let samTimeout, samOverlay;
+    function createSecurityOverlay() {
+      samOverlay = document.createElement("div");
+      samOverlay.id = "samOverlay";
+      samOverlay.style.position = "fixed";
+      samOverlay.style.top = 0;
+      samOverlay.style.left = 0;
+      samOverlay.style.width = "100%";
+      samOverlay.style.height = "100%";
+      samOverlay.style.background = "rgba(0, 0, 0, 0.9)";
+      samOverlay.style.backdropFilter = "blur(10px)";
+      samOverlay.style.display = "flex";
+      samOverlay.style.alignItems = "center";
+      samOverlay.style.justifyContent = "center";
+      samOverlay.style.zIndex = 999999;
+      samOverlay.innerHTML = `<div style="color:#00ffff; font-size:20px; text-align:center;">
+        🔒 SAM Güvenlik Modu <br><br>
+        Uzun süreli hareketsizlik algılandı.<br>
+        Sistemi devam ettirmek için ekrana dokunun...
+      </div>`;
+      document.body.appendChild(samOverlay);
+    }
+    function removeSecurityOverlay() {
+      if (samOverlay) { samOverlay.remove(); samOverlay = null; }
+    }
+    function resetSamInactivityTimer() {
+      clearTimeout(samTimeout);
+      samTimeout = setTimeout(createSecurityOverlay, 120000); // 2 dakika
+    }
+    ["click", "mousemove", "keydown", "touchstart"].forEach(evt => {
+      document.addEventListener(evt, () => {
+        removeSecurityOverlay();
+        resetSamInactivityTimer();
+      });
+    });
+    window.addEventListener("load", resetSamInactivityTimer);
+  </script>
 </body>
 </html>
