@@ -1,239 +1,209 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SAM System Interface</title>
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <!-- Ana Stil -->
-  <link rel="stylesheet" href="/static/style.css">
-  <script src="/static/script.js" defer></script>
-  <style>
-    body {
-      background-color: #111;
-      color: #fff;
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
-    }
-
-    /* ⚙️ Ayarlar Butonu */
-    .settings-button {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background-color: #111;
-      color: cyan;
-      padding: 10px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      z-index: 10010; /* Her zaman panel üstünde */
-      font-weight: bold;
-      transition: background-color 0.3s;
-    }
-    .settings-button:hover { background-color: #222; }
-
-    /* ⚙️ Sağdan kayan Ayarlar Paneli */
-    .settings-panel {
-      position: fixed;
-      top: 0;
-      right: -320px;
-      width: 300px;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(12px);
-      color: white;
-      padding: 20px;
-      box-shadow: -2px 0 12px rgba(0, 255, 255, 0.3);
-      border-left: 1px solid rgba(0, 255, 255, 0.08);
-      transition: right 0.4s ease-in-out;
-      z-index: 10005;
-      overflow-y: auto;
-    }
-    .settings-panel.open { right: 0; }
-
-    .settings-panel ul {
-      list-style: none;
-      padding: 0;
-      margin: 10px 0 0 0;
-    }
-    .settings-panel ul li {
-      margin-bottom: 12px;
-    }
-    .settings-panel ul li a {
-      color: cyan;
-      text-decoration: none;
-      transition: 0.3s;
-    }
-    .settings-panel ul li a:hover {
-      color: #0ff;
-      text-shadow: 0 0 6px rgba(0,255,255,0.5);
-    }
-
-    /* Admin Giriş Linki */
-    .admin-link {
-      position: fixed;
-      top: 9px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 13px;
-      color: rgba(0, 224, 255, 0.6);
-      text-shadow: 0 0 4px rgba(0, 217, 255, 0.3);
-      text-decoration: none;
-      font-weight: 500;
-      letter-spacing: 0.5px;
-      z-index: 10007;
-      transition: 0.3s ease;
-    }
-    .admin-link:hover {
-      text-shadow: 0 0 6px rgba(0, 255, 229, 0.5);
-      color: rgba(0, 255, 255, 0.8);
-    }
-
-    /* Overlay ve Tıklanabilir Alanlar */
-    .overlay {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 10000;
-    }
-    .clickable-area {
-      cursor: pointer;
-      background-color: rgba(0,255,0,0.15);
-      z-index: 10000;
-    }
-
-    /* Mikrofon */
-    .microphone-click {
-      position: absolute;
-      bottom: 50px;
-      right: 50px;
-      width: 100px;
-      height: 100px;
-      z-index: 10000;
-    }
-
-    /* Kamera */
-    .camera-click {
-      position: absolute;
-      top: 43%;
-      left: 11%;
-      transform: translateX(-50%);
-      width: 140px;
-      height: 25px;
-      cursor: pointer;
-      z-index: 10000;
-    }
-
-    /* Shadow ve Blockchain */
-    .shadow-clickable, .Blockchain-clickable {
-      position: fixed;
-      cursor: pointer;
-      background-color: rgba(255, 0, 0, 0);
-      z-index: 10000;
-    }
-    .shadow-clickable { top: 13vh; left: 70vw; width: 7vw; height: 15vh; }
-    .Blockchain-clickable { top: 39vh; left: 83vw; width: 8vw; height: 12vh; }
-
-/* Mobil ve tablet uyumlu tasarım */
-@media (max-width: 768px) {
-  /* Ayarlar paneli mobilde tam genişlik */
-  .settings-panel {
-    width: 85%;
-    right: -85%;
-  }
-
-  /* Overlay küçültme ve konum ayarı */
-  .overlay {
-    width: 80%;
-    height: 35%;
-  }
-
-  /* Mikrofon küçültme ve konum */
-  .microphone-click {
-    width: 60px;
-    height: 60px;
-    bottom: 20px;
-    right: 20px;
-  }
-
-  /* Kamera küçültme ve konum */
-  .camera-click {
-    width: 100px;
-    top: 40%;
-    left: 20%;
-  }
-
-  /* Shadow ve Blockchain tıklanabilir alanları gizle */
-  .shadow-clickable,
-  .Blockchain-clickable {
-    display: none;
-  }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAM System Interface</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/static/style.css">
+<script src="/static/script.js" defer></script>
+<style>
+/* 🔧 GENEL YAPI */
+body {
+  background: url("/static/backgrounds/sam-bg.jpg") no-repeat center center fixed;
+  background-size: cover;
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Arka plan sabit, sayfa kaymaz */
 }
-  </style>
+
+/* ⚙️ Ayarlar Butonu */
+.settings-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: rgba(17,17,17,0.8);
+  color: cyan;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 10010;
+  font-weight: bold;
+  transition: 0.3s;
+}
+.settings-button:hover { background-color: rgba(30,30,30,0.9); }
+
+/* ⚙️ Kayan Ayarlar Paneli */
+.settings-panel {
+  position: fixed;
+  top: 0;
+  right: -320px;
+  width: 300px;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(12px);
+  color: white;
+  padding: 20px;
+  box-shadow: -2px 0 12px rgba(0, 255, 255, 0.3);
+  border-left: 1px solid rgba(0, 255, 255, 0.1);
+  transition: right 0.4s ease-in-out;
+  z-index: 10005;
+  overflow-y: auto;
+}
+.settings-panel.open { right: 0; }
+
+.settings-panel ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+.settings-panel ul li { margin-bottom: 14px; }
+.settings-panel ul li a {
+  color: cyan;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s, text-shadow 0.3s;
+}
+.settings-panel ul li a:hover {
+  color: #0ff;
+  text-shadow: 0 0 8px rgba(0,255,255,0.6);
+}
+
+/* 🧠 Admin Bağlantısı */
+.admin-link {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 13px;
+  color: rgba(0, 224, 255, 0.7);
+  text-shadow: 0 0 5px rgba(0, 217, 255, 0.4);
+  text-decoration: none;
+  font-weight: 500;
+  z-index: 10007;
+  transition: 0.3s ease;
+}
+.admin-link:hover { color: #0ff; text-shadow: 0 0 8px rgba(0,255,255,0.6); }
+
+/* 🎯 Merkez Overlay */
+.overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 🔘 Tıklanabilir Bölgeler */
+.clickable-area {
+  cursor: pointer;
+  z-index: 10000;
+  transition: 0.3s ease;
+}
+.clickable-area:hover {
+  box-shadow: 0 0 10px rgba(0,255,255,0.6);
+}
+
+/* 🎙️ Mikrofon */
+.microphone-click {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  width: 90px;
+  height: 90px;
+}
+
+/* 📸 Kamera */
+.camera-click {
+  position: fixed;
+  top: 45%;
+  left: 12%;
+  width: 130px;
+  height: 25px;
+}
+
+/* 🌑 Shadow ve Blockchain */
+.shadow-clickable, .Blockchain-clickable {
+  position: fixed;
+  cursor: pointer;
+  background-color: transparent;
+  z-index: 10000;
+}
+.shadow-clickable { top: 13vh; left: 70vw; width: 8vw; height: 15vh; }
+.Blockchain-clickable { top: 39vh; left: 83vw; width: 8vw; height: 12vh; }
+
+/* 📱 Mobil Düzeltmeler */
+@media (max-width: 768px) {
+  body { overflow: hidden; background-attachment: scroll; }
+
+  .settings-panel { width: 80%; right: -80%; }
+  .overlay { width: 90%; height: 40%; }
+  .microphone-click { width: 60px; height: 60px; bottom: 20px; right: 20px; }
+  .camera-click { width: 100px; top: 42%; left: 10%; }
+
+  .shadow-clickable, .Blockchain-clickable { display: none; }
+}
+</style>
 </head>
 <body>
 
-  <!-- ⚙️ Ayarlar Butonu -->
-  <div class="settings-button" onclick="toggleSettingsPanel()" title="Ayarlar">
-    <i class="fas fa-cog"></i>
-  </div>
+<!-- ⚙️ Ayarlar Butonu -->
+<div class="settings-button" onclick="toggleSettingsPanel()" title="Ayarlar">
+  <i class="fas fa-cog"></i>
+</div>
 
-  <!-- ⚙️ Ayarlar Paneli -->
-  <div id="settingsPanel" class="settings-panel">
-    <h2>Ayarlar</h2>
-    <ul>
-      <li><a href="/profil">Profil Bilgilerim</a></li>
-      <li><a href="/security">Güvenlik</a></li>
-      <li><a href="/connections">Bağlantılar</a></li>
-      <li><a href="/data">Veri İşlemleri</a></li>
-      <li><a href="/notes">Notlarım / Randevu</a></li>
-      <li><a href="/oturum">Hesap ve Oturum</a></li>
-      <li><a href="/feedback" target="_parent">📬 Destek ve Geri Bildirim</a></li>
-      <li><a href="/canli-destek" target="_parent">💬 Canlı Destek</a></li>
-      <li><a href="#" onclick="logoutUser()">Çıkış Yap</a></li>
-    </ul>
-  </div>
+<!-- ⚙️ Panel -->
+<div id="settingsPanel" class="settings-panel">
+  <h2>Ayarlar</h2>
+  <ul>
+    <li><a href="/profil">Profil Bilgilerim</a></li>
+    <li><a href="/security">Güvenlik</a></li>
+    <li><a href="/connections">Bağlantılar</a></li>
+    <li><a href="/data">Veri İşlemleri</a></li>
+    <li><a href="/notes">Notlar / Randevu</a></li>
+    <li><a href="/oturum">Oturum</a></li>
+    <li><a href="/feedback">📬 Geri Bildirim</a></li>
+    <li><a href="/canli-destek">💬 Canlı Destek</a></li>
+    <li><a href="#" onclick="logoutUser()">Çıkış Yap</a></li>
+  </ul>
+</div>
 
-  <!-- Admin Linki -->
-  <a href="/admin-login" class="admin-link">
-    <img src="/static/admin_icon.png" alt="Admin Icon" class="admin-icon">
-    SAM Neural Operations Interface
-  </a>
+<!-- 🧠 Admin Linki -->
+<a href="/admin-login" class="admin-link">SAM Neural Operations Interface</a>
 
-  <!-- Overlay ve Tıklanabilir Alanlar -->
-  <div id="index-overlay" class="overlay">
-    <div class="clickable-area" onclick="window.location.href='/chat'" title="DIGITAL TWIN"></div>
-  </div>
-  <div class="clickable-area microphone-click" onclick="window.location.href='/microphone'" title="Microphone"></div>
-  <div class="clickable-area camera-click" onclick="window.location.href='/camera'" title="Camera"></div>
-  <div class="shadow-clickable" onclick="window.location.href='/shadow-mode'"></div>
-  <div class="Blockchain-clickable" onclick="window.location.href='/blockchain-security'"></div>
+<!-- 🔘 Ana Alanlar -->
+<div class="overlay" onclick="window.location.href='/chat'" title="DIGITAL TWIN"></div>
+<div class="microphone-click clickable-area" onclick="window.location.href='/microphone'" title="Microphone"></div>
+<div class="camera-click clickable-area" onclick="window.location.href='/camera'" title="Camera"></div>
+<div class="shadow-clickable" onclick="window.location.href='/shadow-mode'"></div>
+<div class="Blockchain-clickable" onclick="window.location.href='/blockchain-security'"></div>
 
-  <script>
-    const settingsButton = document.querySelector('.settings-button');
-    const settingsPanel = document.getElementById('settingsPanel');
+<script>
+const settingsPanel = document.getElementById("settingsPanel");
+const settingsButton = document.querySelector(".settings-button");
 
-    function toggleSettingsPanel() {
-      settingsPanel.classList.toggle('open');
-    }
+function toggleSettingsPanel() {
+  settingsPanel.classList.toggle("open");
+}
 
-    // Panel dışında tıklayınca panel kapanması
-    document.addEventListener('click', function(e) {
-      if (!settingsPanel.contains(e.target) && !settingsButton.contains(e.target)) {
-        settingsPanel.classList.remove('open');
-      }
-    });
+// Dış tıklama ile kapanma
+document.addEventListener("click", (e) => {
+  if (!settingsPanel.contains(e.target) && !settingsButton.contains(e.target)) {
+    settingsPanel.classList.remove("open");
+  }
+});
 
-    function logoutUser() {
-      fetch("/logout", { method: "POST", headers: { "Content-Type": "application/json" } })
-        .then(res => res.json())
-        .then(data => { if (data.redirect) window.location.href = data.redirect; });
-    }
-  </script>
-
+function logoutUser() {
+  fetch("/logout", { method: "POST", headers: { "Content-Type": "application/json" } })
+    .then(res => res.json())
+    .then(data => { if (data.redirect) window.location.href = data.redirect; });
+}
+</script>
 </body>
 </html>
