@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SAM System Interface</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="/static/style.css">
 <script src="/static/script.js" defer></script>
 <style>
 /* Temel Body ve Arka Plan */
@@ -15,10 +14,9 @@ body {
   font-family: 'Segoe UI', sans-serif;
   color: #fff;
   overflow-x: hidden;
-  /* Arka plan görseli tam ekran ve responsive */
-  background: url('/static/sam_login_ui.png') no-repeat center center;
-  background-size: cover;
   min-height: 100vh;
+  background: url('/static/sam_login_ui.png') no-repeat center center;
+  background-size: cover; /* her zaman ekranı kaplar */
 }
 
 /* ⚙️ Ayarlar Butonu */
@@ -42,8 +40,8 @@ body {
   position: fixed;
   top: 0;
   right: -85vw;
-  width: 300px;
-  max-width: 85vw;
+  width: 25vw;
+  max-width: 300px;
   height: 100vh;
   background: rgba(0,0,0,0.85);
   backdrop-filter: blur(12px);
@@ -88,21 +86,21 @@ body {
   color: rgba(0,255,255,0.8);
 }
 
-/* Overlay ve Tıklanabilir Alanlar */
+/* Overlay ve Tıklanabilir Alanlar - Ölçüleri vw/vh */
 .overlay {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 10000;
   width: 20vw;
   height: 20vh;
+  z-index: 10000;
 }
 .clickable-area {
-  cursor: pointer;
-  background-color: rgba(0,255,0,0.15);
   width: 100%;
   height: 100%;
+  cursor: pointer;
+  background-color: rgba(0,255,0,0.15);
 }
 
 /* Mikrofon */
@@ -138,7 +136,7 @@ body {
 .shadow-clickable { top: 13vh; left: 70vw; width: 7vw; height: 15vh; }
 .Blockchain-clickable { top: 39vh; left: 83vw; width: 8vw; height: 12vh; }
 
-/* Mobil ve tablet ayarları */
+/* Mobil & Tablet */
 @media (max-width: 768px) {
   body { background-size: contain; background-position: center top; }
   .settings-panel { width: 85vw; right: -85vw; }
