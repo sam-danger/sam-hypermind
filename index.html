@@ -10,152 +10,79 @@
 
 <style>
   /* ===== Genel Ayarlar ===== */
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    background-color: #111;
-    color: #fff;
-    overflow-x: hidden;
-  }
-
-  a { text-decoration: none; color: inherit; }
+  * { box-sizing: border-box; margin:0; padding:0; }
+  html, body { width:100%; height:100%; overflow-x:hidden; font-family:'Segoe UI', sans-serif; background:#111; color:#fff; }
+  a { text-decoration:none; color:inherit; }
 
   /* ===== Ayarlar Butonu ===== */
   .settings-button {
-    position: fixed;
-    top: 2vh;
-    right: 2vw;
-    background: #111;
-    color: cyan;
-    padding: 1vh 2vw;
-    border-radius: 8px;
-    cursor: pointer;
-    z-index: 1000;
-    font-size: 3vw;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: fixed; top:2vh; right:2vw; background:#111; color:cyan; padding:1vh 2vw;
+    border-radius:8px; cursor:pointer; z-index:10000; font-size:3vw; display:flex; align-items:center; justify-content:center;
     transition: background 0.3s;
   }
-  .settings-button:hover { background: #222; }
+  .settings-button:hover { background:#222; }
 
   /* ===== Ayarlar Paneli ===== */
   .settings-panel {
-    position: fixed;
-    top: 0;
-    right: -80vw;
-    width: 75vw;
-    max-width: 320px;
-    height: 100%;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(10px);
-    color: #fff;
-    padding: 5vw;
-    transition: right 0.4s ease-in-out;
-    z-index: 999;
+    position: fixed; top:0; right:-85vw; width:75vw; max-width:320px; height:100%; background:rgba(0,0,0,0.7);
+    backdrop-filter:blur(10px); color:#fff; padding:5vw; transition:right 0.4s ease-in-out; z-index:9999;
+    overflow-y:auto;
   }
-  .settings-panel.open { right: 0; }
-  .settings-panel h2 {
-    font-size: 5vw;
-    margin-bottom: 4vh;
-    border-bottom: 1px solid #444;
-    padding-bottom: 1vh;
-  }
-  .settings-panel ul { list-style: none; }
-  .settings-panel li { margin: 3vh 0; font-size: 4vw; }
-  .settings-panel a { color: #0ff; font-weight: bold; }
-  .settings-panel a:hover { text-decoration: underline; }
+  .settings-panel.open { right:0; }
+  .settings-panel h2 { font-size:5vw; margin-bottom:4vh; border-bottom:1px solid #444; padding-bottom:1vh; }
+  .settings-panel ul { list-style:none; padding:0; }
+  .settings-panel li { margin:3vh 0; font-size:4vw; }
+  .settings-panel a { color:#0ff; font-weight:bold; }
+  .settings-panel a:hover { text-decoration:underline; }
 
   /* ===== Admin Link ===== */
   .admin-link {
-    position: fixed;
-    top: 2vh;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 3.5vw;
-    color: rgba(0,224,255,0.7);
-    text-shadow: 0 0 4px rgba(0,217,255,0.3);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    gap: 1vw;
+    position: fixed; top:2vh; left:50%; transform:translateX(-50%);
+    font-size:3.5vw; color:rgba(0,224,255,0.7); text-shadow:0 0 4px rgba(0,217,255,0.3);
+    z-index:1000; display:flex; align-items:center; gap:1vw;
   }
+  .admin-link img { height:3vw; }
 
   /* ===== Overlay ve Tıklanabilir Alanlar ===== */
-  .clickable-area { cursor: pointer; }
-  .overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); }
+  .clickable-area { cursor:pointer; }
+  .overlay { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); }
 
-  #microphone-overlay {
-    position: fixed;
-    bottom: 5vh;
-    right: 5vw;
-    width: 12vw;
-    height: 12vw;
-    cursor: pointer;
-    z-index: 999;
-  }
-  .camera-click {
-    position: fixed;
-    top: 40%;
-    left: 10%;
-    width: 30vw;
-    height: 5vh;
-    background: rgba(255,0,0,0);
-    cursor: pointer;
-    z-index: 999;
-  }
+  #microphone-overlay { position:fixed; bottom:5vh; right:5vw; width:12vw; height:12vw; cursor:pointer; z-index:9999; }
+  .camera-click { position:fixed; top:40%; left:10%; width:30vw; height:5vh; background:rgba(255,0,0,0); cursor:pointer; z-index:9999; }
 
-  .shadow-clickable, .Blockchain-clickable {
-    position: fixed;
-    cursor: pointer;
-    background: rgba(255,0,0,0);
-    z-index: 999;
-  }
-  .shadow-clickable { top: 13vh; left: 70vw; width: 15vw; height: 15vh; }
-  .Blockchain-clickable { top: 39vh; left: 82vw; width: 16vw; height: 12vh; }
+  .shadow-clickable, .Blockchain-clickable { position:fixed; cursor:pointer; background:rgba(255,0,0,0); z-index:9999; }
+  .shadow-clickable { top:13vh; left:70vw; width:15vw; height:15vh; }
+  .Blockchain-clickable { top:39vh; left:82vw; width:16vw; height:12vh; }
 
   /* ===== Çerez Onayı ===== */
   #cookieConsent {
-    position: fixed;
-    bottom: 3vh;
-    left: 3vw;
-    right: 3vw;
-    background: #222;
-    color: #fff;
-    padding: 4vw;
-    border-radius: 8px;
-    box-shadow: 0 0 10px #0ff;
-    z-index: 9999;
-    display: none;
-    font-size: 3.5vw;
+    position:fixed; bottom:3vh; left:3vw; right:3vw; background:#222; color:#fff; padding:4vw; border-radius:8px;
+    box-shadow:0 0 10px #0ff; z-index:99999; display:none; font-size:3.5vw;
   }
   #cookieConsent button {
-    margin-top: 2vh;
-    padding: 2vw 4vw;
-    background: #0ff;
-    color: #000;
-    border: none;
-    border-radius: 4px;
-    font-size: 3.5vw;
-    cursor: pointer;
+    margin-top:2vh; padding:2vw 4vw; background:#0ff; color:#000; border:none; border-radius:4px; font-size:3.5vw; cursor:pointer;
   }
 
-  /* ===== Media Queries ===== */
-  @media screen and (max-width: 480px) {
-    .settings-button { font-size: 4vw; padding: 2vw 3vw; }
-    .settings-panel h2 { font-size: 6vw; }
-    .settings-panel li { font-size: 5vw; }
-    .admin-link { font-size: 4.5vw; }
-    .camera-click { width: 35vw; height: 6vh; }
+  /* ===== Mobil Uyumluluk ===== */
+  @media screen and (max-width:768px){
+    .settings-button { font-size:4vw; padding:2vw 3vw; }
+    .settings-panel h2 { font-size:6vw; }
+    .settings-panel li { font-size:5vw; }
+    .admin-link { font-size:4.5vw; }
+    .camera-click { width:35vw; height:6vh; }
+    .shadow-clickable { width:25vw; height:20vh; left:60vw; top:12vh; }
+    .Blockchain-clickable { width:28vw; height:18vh; left:65vw; top:36vh; }
   }
+  @media screen and (max-width:480px){
+    .settings-button { font-size:4.5vw; padding:3vw 4vw; }
+    .settings-panel h2 { font-size:7vw; }
+    .settings-panel li { font-size:6vw; }
+    .admin-link { font-size:5vw; }
+    .camera-click { width:40vw; height:7vh; }
+  }
+
 </style>
 </head>
-
 <body>
 
 <!-- ⚙️ Ayarlar Butonu -->
